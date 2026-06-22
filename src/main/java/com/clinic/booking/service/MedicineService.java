@@ -14,6 +14,12 @@ public class MedicineService {
 
     private final MedicineRepository medicineRepository;
 
+    // THÊM MỚI: Lấy toàn bộ danh sách thuốc (kể cả đã ẩn) cho Admin xem
+    public List<Medicine> getAllMedicines() {
+        return medicineRepository.findAllByOrderByNameAsc();
+    }
+
+    // Lấy danh sách thuốc đang hoạt động
     public List<Medicine> getAllActiveMedicines() {
         return medicineRepository.findByIsActiveTrueOrderByNameAsc();
     }
@@ -51,7 +57,7 @@ public class MedicineService {
         Medicine medicine = medicineRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy thuốc!"));
 
-        // SỬA: Dùng getIsActive() và setIsActive() do đã đổi sang đối tượng Boolean
+        // Dùng getIsActive() và setIsActive() do đã đổi sang đối tượng Boolean
         Boolean currentStatus = medicine.getIsActive();
         if (currentStatus == null) {
             currentStatus = true; // Mặc định an toàn

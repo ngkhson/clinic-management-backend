@@ -10,7 +10,10 @@ import java.util.List;
 @Repository
 public interface MedicineRepository extends JpaRepository<Medicine, Long> {
 
-    // Lấy tất cả thuốc đang được sử dụng
+    // THÊM MỚI: Lấy tất cả thuốc (cho Admin xem toàn bộ kho kể cả thuốc bị ẩn/tạm ngưng)
+    List<Medicine> findAllByOrderByNameAsc();
+
+    // Lấy tất cả thuốc đang được sử dụng (Dùng cho giao diện Kê đơn của Bác sĩ)
     List<Medicine> findByIsActiveTrueOrderByNameAsc();
 
     // Tính năng: Lọc danh sách thuốc sắp hết (Hiện còn <= Cơ số)

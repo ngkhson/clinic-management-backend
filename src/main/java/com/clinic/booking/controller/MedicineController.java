@@ -18,7 +18,7 @@ public class MedicineController {
 
     @GetMapping
     public ResponseEntity<List<Medicine>> getAllMedicines() {
-        return ResponseEntity.ok(medicineService.getAllActiveMedicines());
+        return ResponseEntity.ok(medicineService.getAllMedicines());
     }
 
     @GetMapping("/alerts/low-stock")

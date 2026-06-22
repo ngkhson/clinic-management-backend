@@ -152,7 +152,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/doctor/**").hasRole("DOCTOR")
 
                         // Định nghĩa chính xác cho /api/medicines và các sub-path
-                        .requestMatchers("/api/medicines", "/api/medicines/**").hasAnyRole("ADMIN", "DOCTOR")
+                        .requestMatchers("/api/medicines", "/api/medicines/**", "/api/services", "/api/services/**").hasAnyRole("ADMIN", "DOCTOR")
 
                         // Các đường dẫn còn lại bắt buộc phải có Token
                         .anyRequest().authenticated()
