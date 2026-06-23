@@ -19,6 +19,10 @@ public class AppointmentDTO {
     private LocalDate appointmentDate;
     private String symptoms;
 
+    // --- THÊM 2 TRƯỜNG MỚI ĐỂ NHẬN LOẠI THANH TOÁN VÀ TRẢ VỀ URL ---
+    private String paymentType; // 'PAY_NOW' hoặc 'PAY_LATER'
+    private String paymentUrl;  // Chứa URL của VNPAY nếu PAY_NOW
+
     // Các trường dưới đây dùng để trả về thông tin (Response) cho Front-end xem
     private String doctorName;
     private String patientName;

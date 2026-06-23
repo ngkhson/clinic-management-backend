@@ -23,46 +23,51 @@ public class AppointmentService {
     private final DoctorRepository doctorRepository;
     private final UserRepository userRepository;
 
-    // Annotation @Transactional cực kỳ quan trọng:
-    // Đảm bảo nếu bị lỗi giữa chừng (ví dụ lưu Appointment thành công nhưng cập nhật Schedule thất bại),
-    // toàn bộ giao dịch sẽ bị rollback (hủy bỏ) để không làm sai lệch dữ liệu.
+    // THÊM: Inject PaymentService
+    private final PaymentService paymentService;
+
     @Transactional
-    public AppointmentDTO createAppointment(AppointmentDTO request) {
-        // 1. Lấy thông tin User đang đăng nhập (nhờ JwtAuthenticationFilter)
+    public AppointmentDTO createAppointment(AppointmentDTO request, String ipAddress) {
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         User patient = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng!"));
 
-        // 2. Kiểm tra Bác sĩ và Lịch khám
         Doctor doctor = doctorRepository.findById(request.getDoctorId())
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy Bác sĩ!"));
 
         Schedule schedule = scheduleRepository.findById(request.getScheduleId())
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy Lịch khám!"));
 
-        // 3. Kiểm tra logic kinh doanh: Lịch khám đã đầy chưa?
         if (schedule.getCurrentPatients() >= schedule.getMaxPatients()) {
             throw new RuntimeException("Xin lỗi, ca khám này đã nhận đủ số lượng bệnh nhân!");
         }
 
-        // 4. Tạo Lịch hẹn mới
         Appointment appointment = Appointment.builder()
                 .patient(patient)
                 .doctor(doctor)
                 .schedule(schedule)
                 .appointmentDate(schedule.getWorkDate())
-                .status("PENDING") // Trạng thái ban đầu
+                .status("PENDING")
                 .symptoms(request.getSymptoms())
                 .build();
 
         appointment = appointmentRepository.save(appointment);
 
-        // 5. Cập nhật tăng số lượng bệnh nhân trong ca đó
         schedule.setCurrentPatients(schedule.getCurrentPatients() + 1);
         scheduleRepository.save(schedule);
 
-        // 6. Trả về kết quả
-        return mapToDTO(appointment);
+        AppointmentDTO responseDTO = mapToDTO(appointment);
+
+        // THÊM LOGIC THANH TOÁN VNPAY NẾU NGƯỜI DÙNG CHỌN "PAY_NOW"
+        if ("PAY_NOW".equals(request.getPaymentType())) {
+            // Lấy giá khám của Bác sĩ làm số tiền thanh toán
+            double amount = doctor.getExaminationPrice() != null ? doctor.getExaminationPrice().doubleValue() : 0.0;
+            // Gọi Service để sinh URL VNPAY
+            String paymentUrl = paymentService.createVnPayUrl(appointment.getId(), amount, ipAddress);
+            responseDTO.setPaymentUrl(paymentUrl);
+        }
+
+        return responseDTO;
     }
 
     private AppointmentDTO mapToDTO(Appointment appointment) {
