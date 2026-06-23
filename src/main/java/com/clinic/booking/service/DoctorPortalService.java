@@ -6,12 +6,15 @@ import com.clinic.booking.entity.Appointment;
 import com.clinic.booking.entity.Doctor;
 import com.clinic.booking.entity.MedicalRecord;
 import com.clinic.booking.entity.MedicalService;
+import com.clinic.booking.entity.Medicine;
+import com.clinic.booking.entity.PrescriptionDetail;
 import com.clinic.booking.entity.User;
 import com.clinic.booking.repository.AppointmentRepository;
 import com.clinic.booking.repository.DoctorRepository;
 import com.clinic.booking.repository.MedicalRecordRepository;
+import com.clinic.booking.repository.MedicalServiceRepository;
+import com.clinic.booking.repository.MedicineRepository;
 import com.clinic.booking.repository.UserRepository;
-import com.clinic.booking.repository.MedicalServiceRepository; // IMPORT THÊM
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -29,7 +32,8 @@ public class DoctorPortalService {
     private final DoctorRepository doctorRepository;
     private final AppointmentRepository appointmentRepository;
     private final MedicalRecordRepository medicalRecordRepository;
-    private final MedicalServiceRepository medicalServiceRepository; // THÊM REPOSITORY DỊCH VỤ
+    private final MedicalServiceRepository medicalServiceRepository;
+    private final MedicineRepository medicineRepository; // THÊM REPOSITORY KHO THUỐC
     private final NotificationService notificationService;
 
     private Doctor getCurrentDoctor() {
@@ -81,6 +85,7 @@ public class DoctorPortalService {
         );
     }
 
+    // LƯU Ý @Transactional RẤT QUAN TRỌNG: NẾU TRỪ KHO LỖI (VÍ DỤ HẾT THUỐC), TOÀN BỘ GIAO DỊCH SẼ BỊ HỦY BỎ (ROLLBACK)
     @Transactional
     public MedicalRecordDTO createMedicalRecord(MedicalRecordDTO request) {
         Doctor currentDoctor = getCurrentDoctor();
@@ -99,19 +104,56 @@ public class DoctorPortalService {
             assignedServices = medicalServiceRepository.findAllById(request.getServiceIds());
         }
 
+        // Khởi tạo Bệnh án
         MedicalRecord record = MedicalRecord.builder()
                 .appointment(appointment)
                 .diagnosis(request.getDiagnosis())
                 .treatmentPlan(request.getTreatmentPlan())
-                .prescription(request.getPrescription())
+                .prescription(request.getPrescription()) // Thuốc ngoài / Thuốc tự túc (Nhập tay)
                 .notes(request.getNotes())
-                .services(assignedServices) // Lưu danh sách dịch vụ vào DB
+                .services(assignedServices)
                 .build();
+
+        // THÊM MỚI: XỬ LÝ ĐƠN THUỐC ĐIỆN TỬ VÀ TRỪ KHO TỰ ĐỘNG
+        List<PrescriptionDetail> details = new ArrayList<>();
+        if (request.getPrescriptionDetails() != null && !request.getPrescriptionDetails().isEmpty()) {
+            for (var dto : request.getPrescriptionDetails()) {
+                Medicine medicine = medicineRepository.findById(dto.getMedicineId())
+                        .orElseThrow(() -> new RuntimeException("Không tìm thấy thuốc ID: " + dto.getMedicineId()));
+
+                int currentQty = medicine.getCurrentQuantity() != null ? medicine.getCurrentQuantity() : 0;
+
+                // Kiểm tra xem số lượng trong kho có đủ để Bác sĩ kê không
+                if (currentQty < dto.getQuantity()) {
+                    throw new RuntimeException("Thuốc " + medicine.getName() + " không đủ tồn kho. Hiện chỉ còn: " + currentQty + " " + medicine.getUnit());
+                }
+
+                // Tự động trừ tồn kho
+                medicine.setCurrentQuantity(currentQty - dto.getQuantity());
+                medicineRepository.save(medicine);
+
+                // Tạo chi tiết toa thuốc
+                PrescriptionDetail detail = PrescriptionDetail.builder()
+                        .medicalRecord(record)
+                        .medicine(medicine)
+                        .quantity(dto.getQuantity())
+                        .dosageInstruction(dto.getDosageInstruction())
+                        .build();
+                details.add(detail);
+            }
+        }
+
+        // Liên kết đơn thuốc vào bệnh án (Do cascade = CascadeType.ALL, khi save record nó sẽ tự lưu các chi tiết này)
+        record.setPrescriptionDetails(details);
+
+        // Lưu toàn bộ thông tin bệnh án, dịch vụ và đơn thuốc xuống DB
         record = medicalRecordRepository.save(record);
 
+        // Chuyển trạng thái lịch hẹn thành Đã xong
         appointment.setStatus("COMPLETED");
         appointmentRepository.save(appointment);
 
+        // Bắn thông báo cho bệnh nhân
         notificationService.sendNotification(
                 appointment.getPatient(),
                 "Bác sĩ " + currentDoctor.getUser().getFullName() + " đã cập nhật Hồ sơ bệnh án và Kê đơn thuốc cho ca khám ngày " + appointment.getAppointmentDate() + ". Bạn có thể in đơn thuốc ngay!"

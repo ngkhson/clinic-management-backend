@@ -2,9 +2,10 @@ package com.clinic.booking.service;
 
 import com.clinic.booking.dto.AppointmentDTO;
 import com.clinic.booking.dto.MedicalRecordDTO;
+import com.clinic.booking.dto.PrescriptionDetailDTO;
 import com.clinic.booking.entity.Appointment;
 import com.clinic.booking.entity.MedicalRecord;
-import com.clinic.booking.entity.MedicalService; // THÊM DÒNG NÀY
+import com.clinic.booking.entity.MedicalService;
 import com.clinic.booking.entity.User;
 import com.clinic.booking.repository.AppointmentRepository;
 import com.clinic.booking.repository.MedicalRecordRepository;
@@ -24,42 +25,36 @@ public class PatientPortalService {
     private final AppointmentRepository appointmentRepository;
     private final MedicalRecordRepository medicalRecordRepository;
 
-    private User getCurrentUser() {
+    private User getCurrentPatient() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy User!"));
+        return userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Không tìm thấy Bệnh nhân!"));
     }
 
-    // 1. Lấy danh sách lịch hẹn của bệnh nhân đang đăng nhập
     public List<AppointmentDTO> getMyAppointments() {
-        User currentUser = getCurrentUser();
-
-        // Sửa lại thành findByPatientId vì patient chính là User
-        List<Appointment> appointments = appointmentRepository.findByPatientId(currentUser.getId());
-
-        return appointments.stream().map(app -> AppointmentDTO.builder()
-                .id(app.getId())
-                .doctorId(app.getDoctor().getId())
-                .doctorName(app.getDoctor().getUser().getFullName())
-                .scheduleId(app.getSchedule().getId())
-                .timeSlot(app.getSchedule().getTimeSlot())
-                .appointmentDate(app.getAppointmentDate())
-                .status(app.getStatus())
-                .symptoms(app.getSymptoms())
-                .createdAt(app.getCreatedAt())
-                .build()
-        ).collect(Collectors.toList());
+        User currentPatient = getCurrentPatient();
+        return appointmentRepository.findByPatientId(currentPatient.getId())
+                .stream()
+                .map(app -> AppointmentDTO.builder()
+                        .id(app.getId())
+                        .doctorId(app.getDoctor().getId())
+                        .doctorName(app.getDoctor().getUser().getFullName())
+                        .patientName(app.getPatient().getFullName())
+                        .scheduleId(app.getSchedule().getId())
+                        .timeSlot(app.getSchedule().getTimeSlot())
+                        .appointmentDate(app.getAppointmentDate())
+                        .status(app.getStatus())
+                        .symptoms(app.getSymptoms())
+                        .createdAt(app.getCreatedAt())
+                        .build())
+                .collect(Collectors.toList());
     }
 
-    // 2. Lấy hồ sơ bệnh án của một lịch hẹn cụ thể
     public MedicalRecordDTO getMedicalRecord(Long appointmentId) {
-        User currentUser = getCurrentUser();
-
+        User currentPatient = getCurrentPatient();
         Appointment appointment = appointmentRepository.findById(appointmentId)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy lịch hẹn!"));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy Lịch hẹn!"));
 
-        // Bảo mật: Sửa lỗi gọi thẳng getId() vì patient đã là User
-        if (!appointment.getPatient().getId().equals(currentUser.getId())) {
+        if (!appointment.getPatient().getId().equals(currentPatient.getId())) {
             throw new RuntimeException("Bạn không có quyền xem bệnh án này!");
         }
 
@@ -74,8 +69,18 @@ public class PatientPortalService {
                 .treatmentPlan(record.getTreatmentPlan())
                 .prescription(record.getPrescription())
                 .notes(record.getNotes())
-                // THÊM DÒNG NÀY ĐỂ LẤY TÊN CÁC DỊCH VỤ ĐÃ CHỈ ĐỊNH
+                // LẤY TÊN CÁC DỊCH VỤ ĐÃ CHỈ ĐỊNH (MODULE 3)
                 .serviceNames(record.getServices() != null ? record.getServices().stream().map(MedicalService::getName).collect(Collectors.toList()) : List.of())
+                // LẤY CHI TIẾT TOA THUỐC VỀ CHO BỆNH NHÂN (MODULE 5)
+                .prescriptionDetails(record.getPrescriptionDetails() != null ?
+                        record.getPrescriptionDetails().stream().map(d -> PrescriptionDetailDTO.builder()
+                                .id(d.getId())
+                                .medicineId(d.getMedicine().getId())
+                                .medicineName(d.getMedicine().getName())
+                                .unit(d.getMedicine().getUnit())
+                                .quantity(d.getQuantity())
+                                .dosageInstruction(d.getDosageInstruction())
+                                .build()).collect(Collectors.toList()) : List.of())
                 .createdAt(record.getCreatedAt())
                 .build();
     }
