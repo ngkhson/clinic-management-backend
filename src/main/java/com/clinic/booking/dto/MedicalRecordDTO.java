@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -20,4 +21,8 @@ public class MedicalRecordDTO {
     private String prescription;
     private String notes;
     private LocalDateTime createdAt;
+
+    // THÊM MỚI
+    private List<Long> serviceIds;       // Dùng khi Bác sĩ gửi yêu cầu tạo (từ React lên)
+    private List<String> serviceNames;   // Dùng để hiển thị tên dịch vụ (từ Spring Boot trả về)
 }

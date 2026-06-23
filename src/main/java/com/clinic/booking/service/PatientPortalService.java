@@ -4,6 +4,7 @@ import com.clinic.booking.dto.AppointmentDTO;
 import com.clinic.booking.dto.MedicalRecordDTO;
 import com.clinic.booking.entity.Appointment;
 import com.clinic.booking.entity.MedicalRecord;
+import com.clinic.booking.entity.MedicalService; // THÊM DÒNG NÀY
 import com.clinic.booking.entity.User;
 import com.clinic.booking.repository.AppointmentRepository;
 import com.clinic.booking.repository.MedicalRecordRepository;
@@ -73,6 +74,8 @@ public class PatientPortalService {
                 .treatmentPlan(record.getTreatmentPlan())
                 .prescription(record.getPrescription())
                 .notes(record.getNotes())
+                // THÊM DÒNG NÀY ĐỂ LẤY TÊN CÁC DỊCH VỤ ĐÃ CHỈ ĐỊNH
+                .serviceNames(record.getServices() != null ? record.getServices().stream().map(MedicalService::getName).collect(Collectors.toList()) : List.of())
                 .createdAt(record.getCreatedAt())
                 .build();
     }

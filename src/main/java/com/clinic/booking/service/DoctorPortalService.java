@@ -5,16 +5,19 @@ import com.clinic.booking.dto.MedicalRecordDTO;
 import com.clinic.booking.entity.Appointment;
 import com.clinic.booking.entity.Doctor;
 import com.clinic.booking.entity.MedicalRecord;
+import com.clinic.booking.entity.MedicalService;
 import com.clinic.booking.entity.User;
 import com.clinic.booking.repository.AppointmentRepository;
 import com.clinic.booking.repository.DoctorRepository;
 import com.clinic.booking.repository.MedicalRecordRepository;
 import com.clinic.booking.repository.UserRepository;
+import com.clinic.booking.repository.MedicalServiceRepository; // IMPORT THÊM
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,8 +29,7 @@ public class DoctorPortalService {
     private final DoctorRepository doctorRepository;
     private final AppointmentRepository appointmentRepository;
     private final MedicalRecordRepository medicalRecordRepository;
-
-    // THÊM: Inject Service thông báo
+    private final MedicalServiceRepository medicalServiceRepository; // THÊM REPOSITORY DỊCH VỤ
     private final NotificationService notificationService;
 
     private Doctor getCurrentDoctor() {
@@ -72,7 +74,6 @@ public class DoctorPortalService {
         appointment.setStatus(newStatus.toUpperCase());
         appointmentRepository.save(appointment);
 
-        // THÊM: Gửi thông báo cho Bệnh nhân
         String statusVN = newStatus.equals("CONFIRMED") ? "Đã xác nhận" : newStatus.equals("CANCELLED") ? "Bị hủy" : newStatus;
         notificationService.sendNotification(
                 appointment.getPatient(),
@@ -92,19 +93,25 @@ public class DoctorPortalService {
             throw new RuntimeException("Lịch hẹn này đã có hồ sơ bệnh án!");
         }
 
+        // Lấy danh sách dịch vụ bác sĩ đã tick chọn
+        List<MedicalService> assignedServices = new ArrayList<>();
+        if (request.getServiceIds() != null && !request.getServiceIds().isEmpty()) {
+            assignedServices = medicalServiceRepository.findAllById(request.getServiceIds());
+        }
+
         MedicalRecord record = MedicalRecord.builder()
                 .appointment(appointment)
                 .diagnosis(request.getDiagnosis())
                 .treatmentPlan(request.getTreatmentPlan())
                 .prescription(request.getPrescription())
                 .notes(request.getNotes())
+                .services(assignedServices) // Lưu danh sách dịch vụ vào DB
                 .build();
         record = medicalRecordRepository.save(record);
 
         appointment.setStatus("COMPLETED");
         appointmentRepository.save(appointment);
 
-        // THÊM: Gửi thông báo cho Bệnh nhân
         notificationService.sendNotification(
                 appointment.getPatient(),
                 "Bác sĩ " + currentDoctor.getUser().getFullName() + " đã cập nhật Hồ sơ bệnh án và Kê đơn thuốc cho ca khám ngày " + appointment.getAppointmentDate() + ". Bạn có thể in đơn thuốc ngay!"
@@ -118,6 +125,7 @@ public class DoctorPortalService {
                 .treatmentPlan(record.getTreatmentPlan())
                 .prescription(record.getPrescription())
                 .notes(record.getNotes())
+                .serviceNames(assignedServices.stream().map(MedicalService::getName).collect(Collectors.toList()))
                 .createdAt(record.getCreatedAt())
                 .build();
     }
