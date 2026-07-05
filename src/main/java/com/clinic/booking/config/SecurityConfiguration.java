@@ -142,6 +142,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET, "/api/admin/doctors").permitAll()
                         .requestMatchers("/api/admin/doctors").permitAll()
                         .requestMatchers("/ws/**").permitAll()
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/reviews").authenticated()
                         .requestMatchers("/api/reviews/doctor/**").permitAll()
 
