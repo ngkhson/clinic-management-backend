@@ -44,7 +44,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // 3. Cắt chuỗi để lấy phần token thực sự (bỏ chữ "Bearer ")
         jwt = authHeader.substring(7);
-        userEmail = jwtService.extractUsername(jwt);
+        try {
+            userEmail = jwtService.extractUsername(jwt);
+        } catch (io.jsonwebtoken.ExpiredJwtException e) {
+            System.err.println("JWT Token đã hết hạn: " + e.getMessage());
+            filterChain.doFilter(request, response);
+            return;
+        } catch (Exception e) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         // 4. Kiểm tra xem đã trích xuất được email và chưa có ai được xác thực trong Context hiện tại
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {

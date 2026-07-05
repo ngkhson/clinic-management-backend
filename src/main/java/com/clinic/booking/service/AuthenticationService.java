@@ -91,14 +91,14 @@ public class AuthenticationService {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(toEmail);
-            message.setSubject("Mã OTP Khôi Phục Mật Khẩu - Hệ Thống MediCare");
+            message.setSubject("Mã OTP Khôi Phục Mật Khẩu - Hệ Thống MediPro");
             message.setText("Xin chào,\n\n"
                     + "Chúng tôi nhận được yêu cầu khôi phục mật khẩu từ tài khoản của bạn.\n"
                     + "Mã OTP xác nhận của bạn là: " + otp + "\n\n"
                     + "Lưu ý: Mã này chỉ có giá trị sử dụng một lần. Vui lòng không chia sẻ mã này cho bất kỳ ai để đảm bảo an toàn cho tài khoản của bạn.\n\n"
                     + "Nếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua email này hoặc liên hệ ngay với bộ phận hỗ trợ.\n\n"
                     + "Trân trọng,\n"
-                    + "Đội ngũ Phòng khám MediCare.");
+                    + "Đội ngũ Phòng khám MediPro.");
 
             mailSender.send(message);
         } catch (Exception e) {

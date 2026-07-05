@@ -18,6 +18,11 @@ public class MedicalServiceService {
         return medicalServiceRepository.findByIsActiveTrueOrderByNameAsc();
     }
 
+    // THÊM HÀM NÀY: Lấy tất cả dịch vụ cho Admin
+    public List<MedicalService> getAllServices() {
+        return medicalServiceRepository.findAllByOrderByNameAsc();
+    }
+
     @Transactional
     public MedicalService createService(MedicalService service) {
         return medicalServiceRepository.save(service);

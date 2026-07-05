@@ -28,33 +28,59 @@ public class AdminReceptionService {
 
     @Transactional
     public AppointmentDTO createReceptionAndVitals(AdminReceptionRequest request) {
-        User patient = userRepository.findById(request.getPatientId())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy bệnh nhân!"));
-        Doctor doctor = doctorRepository.findById(request.getDoctorId())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy Bác sĩ!"));
-        Schedule schedule = scheduleRepository.findById(request.getScheduleId())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy Lịch khám!"));
+        Appointment appointment;
+        User patient;
+        Doctor doctor;
+        String timeSlotStr;
 
-        if (schedule.getCurrentPatients() >= schedule.getMaxPatients()) {
-            throw new RuntimeException("Ca khám này đã đầy!");
+        // KIỂM TRA: LÀ KHÁCH ĐẶT TRƯỚC HAY VÃNG LAI?
+        if (request.getAppointmentId() != null) {
+            // 1. KHÁCH ĐÃ ĐẶT LỊCH TRƯỚC -> Dùng lại lịch cũ
+            appointment = appointmentRepository.findById(request.getAppointmentId())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy Lịch hẹn!"));
+
+            appointment.setStatus("CONFIRMED"); // Lễ tân xác nhận khách đã đến
+
+            // Cập nhật thêm triệu chứng nếu Lễ tân có gõ thêm
+            if (request.getSymptoms() != null && !request.getSymptoms().isEmpty()) {
+                appointment.setSymptoms(request.getSymptoms());
+            }
+            appointment = appointmentRepository.save(appointment);
+
+            patient = appointment.getPatient();
+            doctor = appointment.getDoctor();
+            timeSlotStr = appointment.getSchedule().getTimeSlot();
+
+        } else {
+            // 2. KHÁCH VÃNG LAI -> Tạo lịch mới hoàn toàn
+            patient = userRepository.findById(request.getPatientId())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy bệnh nhân!"));
+            doctor = doctorRepository.findById(request.getDoctorId())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy Bác sĩ!"));
+            Schedule schedule = scheduleRepository.findById(request.getScheduleId())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy Lịch khám!"));
+
+            if (schedule.getCurrentPatients() >= schedule.getMaxPatients()) {
+                throw new RuntimeException("Ca khám này đã đầy!");
+            }
+
+            appointment = Appointment.builder()
+                    .patient(patient)
+                    .doctor(doctor)
+                    .schedule(schedule)
+                    .appointmentDate(schedule.getWorkDate())
+                    .status("CONFIRMED")
+                    .symptoms(request.getSymptoms())
+                    .build();
+            appointment = appointmentRepository.save(appointment);
+
+            schedule.setCurrentPatients(schedule.getCurrentPatients() + 1);
+            scheduleRepository.save(schedule);
+
+            timeSlotStr = schedule.getTimeSlot();
         }
 
-        // 1. Tạo Lịch hẹn (Vì Lễ tân tạo nên trạng thái mặc định là CONFIRMED - Đã xác nhận/Sắp khám)
-        Appointment appointment = Appointment.builder()
-                .patient(patient)
-                .doctor(doctor)
-                .schedule(schedule)
-                .appointmentDate(schedule.getWorkDate())
-                .status("CONFIRMED")
-                .symptoms(request.getSymptoms())
-                .build();
-        appointment = appointmentRepository.save(appointment);
-
-        // 2. Cập nhật số lượng bệnh nhân của ca khám
-        schedule.setCurrentPatients(schedule.getCurrentPatients() + 1);
-        scheduleRepository.save(schedule);
-
-        // 3. Lưu Chỉ số sinh tồn (Nếu có nhập)
+        // 3. LƯU CHỈ SỐ SINH TỒN (Chung cho cả 2 trường hợp)
         if (request.getHeight() != null || request.getWeight() != null || request.getBloodPressure() != null) {
             VitalSign vitals = VitalSign.builder()
                     .appointment(appointment)
@@ -74,7 +100,7 @@ public class AdminReceptionService {
                 .id(appointment.getId())
                 .patientName(patient.getFullName())
                 .doctorName(doctor.getUser().getFullName())
-                .timeSlot(schedule.getTimeSlot())
+                .timeSlot(timeSlotStr)
                 .status(appointment.getStatus())
                 .build();
     }

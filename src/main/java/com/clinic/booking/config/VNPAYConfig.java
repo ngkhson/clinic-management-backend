@@ -12,8 +12,8 @@ public class VNPAYConfig {
     // --- THÔNG SỐ SANDBOX TỪ VNPAY (Bạn có thể thay bằng key thật sau này) ---
     public static final String vnp_PayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
     public static final String vnp_Returnurl = "http://localhost:5173/payment-result"; // Trang React sẽ hứng kết quả
-    public static final String vnp_TmnCode = "QTT2026M"; // Mã Website (Dummy)
-    public static final String vnp_HashSecret = "1234567890QWERTYUIOPASDFGHJKLZXC"; // Chuỗi bí mật (Dummy)
+    public static final String vnp_TmnCode = "YBKGKPEP"; // Mã Website (Dummy)
+    public static final String vnp_HashSecret = "UXP9YCBV1PH80WTBGSKHXZ2EP9DONMXC"; // Chuỗi bí mật (Dummy)
     public static final String vnp_apiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";
 
     // Hàm tạo chuỗi hash bảo mật (HMAC SHA512) theo chuẩn của VNPAY

@@ -134,6 +134,7 @@ public class SecurityConfiguration {
                         // CÁC ĐƯỜNG DẪN CÔNG KHAI
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/test").permitAll()
+                        .requestMatchers("/api/payment/**").permitAll()
 
                         // MỞ TẠM THỜI ĐỂ DỄ TEST
                         .requestMatchers("/api/specialties/**").permitAll()

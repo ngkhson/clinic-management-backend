@@ -2,6 +2,7 @@ package com.clinic.booking.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -20,16 +21,34 @@ public class MedicalRecord {
     @JoinColumn(name = "appointment_id", nullable = false)
     private Appointment appointment;
 
+    // --- CÁC CHỈ SỐ SINH HIỆU BỔ SUNG ---
+    private Integer pulse;           // Mạch (lần/phút)
+    private Double temp;             // Nhiệt độ (°C)
+    private String bp;               // Huyết áp (VD: 120/80)
+    private Integer resp;            // Nhịp thở (lần/phút)
+    private Double height;           // Chiều cao (cm)
+    private Double weight;           // Cân nặng (kg)
+
+    // Sinh hiệu & Tiền sử khác
+    @Column(columnDefinition = "TEXT") private String medicalHistory;
+    @Column(columnDefinition = "TEXT") private String allergies;
+
+    // Lâm sàng
+    @Column(columnDefinition = "TEXT") private String reasonForVisit;
+    @Column(columnDefinition = "TEXT") private String illnessHistory;
+    @Column(columnDefinition = "TEXT") private String clinicalSymptoms;
+
+    // Cận lâm sàng & Chẩn đoán
+    @Column(columnDefinition = "TEXT") private String paraclinicalResults;
     private String diagnosis;
     private String treatmentPlan;
 
-    // Vẫn giữ lại trường này để bác sĩ có thể gõ thêm các loại thuốc tự túc/mua ngoài (không có trong kho)
+    // Kê toa & Dặn dò
     @Column(columnDefinition = "TEXT")
-    private String prescription;
-
+    private String prescription; // Thuốc mua ngoài
     private String notes;
+    private LocalDate followUpDate; // Ngày tái khám
 
-    // DANH SÁCH DỊCH VỤ CẬN LÂM SÀNG ĐƯỢC CHỈ ĐỊNH (Từ Module 3)
     @ManyToMany
     @JoinTable(
             name = "medical_record_services",
@@ -38,14 +57,20 @@ public class MedicalRecord {
     )
     private List<MedicalService> services;
 
-    // THÊM MỚI (MODULE 5): Danh sách chi tiết Đơn thuốc điện tử (Thuốc lấy từ Kho của phòng khám)
     @OneToMany(mappedBy = "medicalRecord", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PrescriptionDetail> prescriptionDetails;
 
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
     }
 }

@@ -4,7 +4,10 @@ import lombok.Data;
 
 @Data
 public class AdminReceptionRequest {
-    // Thông tin Phiếu khám
+    // THÊM TRƯỜNG NÀY ĐỂ XỬ LÝ KHÁCH ĐÃ ĐẶT LỊCH TRƯỚC
+    private Long appointmentId;
+
+    // Thông tin Phiếu khám (Dùng cho khách vãng lai)
     private Long patientId;
     private Long doctorId;
     private Long scheduleId;

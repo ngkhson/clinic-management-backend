@@ -52,6 +52,14 @@ public class AdminDashboardService {
         return stats;
     }
 
+    // THÊM HÀM NÀY ĐỂ ADMIN CẬP NHẬT TRẠNG THÁI LỊCH HẸN
+    public void updateAppointmentStatus(Long appointmentId, String status) {
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy Lịch hẹn!"));
+        appointment.setStatus(status);
+        appointmentRepository.save(appointment);
+    }
+
     public List<AppointmentDTO> getAllAppointments() {
         return appointmentRepository.findAll().stream().map(app -> AppointmentDTO.builder()
                 .id(app.getId())

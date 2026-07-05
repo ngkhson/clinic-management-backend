@@ -21,6 +21,12 @@ public class MedicalServiceController {
         return ResponseEntity.ok(medicalServiceService.getAllActiveServices());
     }
 
+    // THÊM API NÀY: Dành cho Admin (lấy tất cả)
+    @GetMapping("/all")
+    public ResponseEntity<List<MedicalService>> getAllForAdmin() {
+        return ResponseEntity.ok(medicalServiceService.getAllServices());
+    }
+
     @PostMapping
     public ResponseEntity<MedicalService> create(@RequestBody MedicalService service) {
         return ResponseEntity.ok(medicalServiceService.createService(service));

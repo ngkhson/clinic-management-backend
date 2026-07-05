@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +20,10 @@ public class JwtService {
 
     // CHÚ Ý: Key này phải là một chuỗi ngẫu nhiên dài ít nhất 256 bits (32 ký tự).
     // Trong thực tế, KHÔNG bao giờ hardcode ở đây mà phải lấy từ application.properties
-    private static final String SECRET_KEY = "YourSuperSecretKeyForClinicBookingSystemWhichMustBeVeryLongAndSecure";
+//    private static final String SECRET_KEY = "YourSuperSecretKeyForClinicBookingSystemWhichMustBeVeryLongAndSecure";
+
+    @Value("${jwt.signerKey}")
+    private String signerKey;
 
     // Trích xuất Username (Email) từ Token
     public String extractUsername(String token) {
@@ -72,7 +76,7 @@ public class JwtService {
     }
 
     private Key getSignInKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        byte[] keyBytes = Decoders.BASE64.decode(signerKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }

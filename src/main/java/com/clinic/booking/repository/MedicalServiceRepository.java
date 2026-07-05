@@ -10,4 +10,6 @@ import java.util.List;
 public interface MedicalServiceRepository extends JpaRepository<MedicalService, Long> {
     List<MedicalService> findByIsActiveTrueOrderByNameAsc();
     List<MedicalService> findByCategoryAndIsActiveTrueOrderByNameAsc(String category);
+    // THÊM HÀM NÀY: Lấy tất cả dịch vụ (kể cả đã tắt)
+    List<MedicalService> findAllByOrderByNameAsc();
 }

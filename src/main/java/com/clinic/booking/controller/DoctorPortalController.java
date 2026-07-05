@@ -17,13 +17,11 @@ public class DoctorPortalController {
 
     private final DoctorPortalService doctorPortalService;
 
-    // 1. Lấy danh sách lịch hẹn của Bác sĩ (có thể truyền tham số ?status=PENDING)
     @GetMapping("/appointments")
     public ResponseEntity<List<AppointmentDTO>> getAppointments(@RequestParam(required = false) String status) {
         return ResponseEntity.ok(doctorPortalService.getDoctorAppointments(status));
     }
 
-    // 2. Cập nhật trạng thái lịch hẹn
     @PutMapping("/appointments/{id}/status")
     public ResponseEntity<String> updateStatus(
             @PathVariable Long id,
@@ -32,9 +30,23 @@ public class DoctorPortalController {
         return ResponseEntity.ok("Cập nhật trạng thái thành công!");
     }
 
-    // 3. Tạo Hồ sơ bệnh án
+    // THÊM: API Lấy bệnh án nháp nếu Bác sĩ mở lại ca khám
+    @GetMapping("/medical-records/appointment/{appointmentId}")
+    public ResponseEntity<MedicalRecordDTO> getDraftRecord(@PathVariable Long appointmentId) {
+        MedicalRecordDTO record = doctorPortalService.getDraftRecord(appointmentId);
+        if (record == null) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(record);
+    }
+
+    // API Lưu Bệnh Án (Xử lý cả Lưu nháp và Hoàn tất dựa vào cờ isDraft)
     @PostMapping("/medical-records")
-    public ResponseEntity<MedicalRecordDTO> createMedicalRecord(@RequestBody MedicalRecordDTO request) {
-        return ResponseEntity.ok(doctorPortalService.createMedicalRecord(request));
+    public ResponseEntity<?> saveMedicalRecord(@RequestBody MedicalRecordDTO request) {
+        try {
+            return ResponseEntity.ok(doctorPortalService.saveMedicalRecord(request));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

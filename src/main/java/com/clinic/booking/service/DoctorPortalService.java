@@ -2,19 +2,9 @@ package com.clinic.booking.service;
 
 import com.clinic.booking.dto.AppointmentDTO;
 import com.clinic.booking.dto.MedicalRecordDTO;
-import com.clinic.booking.entity.Appointment;
-import com.clinic.booking.entity.Doctor;
-import com.clinic.booking.entity.MedicalRecord;
-import com.clinic.booking.entity.MedicalService;
-import com.clinic.booking.entity.Medicine;
-import com.clinic.booking.entity.PrescriptionDetail;
-import com.clinic.booking.entity.User;
-import com.clinic.booking.repository.AppointmentRepository;
-import com.clinic.booking.repository.DoctorRepository;
-import com.clinic.booking.repository.MedicalRecordRepository;
-import com.clinic.booking.repository.MedicalServiceRepository;
-import com.clinic.booking.repository.MedicineRepository;
-import com.clinic.booking.repository.UserRepository;
+import com.clinic.booking.dto.PrescriptionDetailDTO;
+import com.clinic.booking.entity.*;
+import com.clinic.booking.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -33,7 +23,7 @@ public class DoctorPortalService {
     private final AppointmentRepository appointmentRepository;
     private final MedicalRecordRepository medicalRecordRepository;
     private final MedicalServiceRepository medicalServiceRepository;
-    private final MedicineRepository medicineRepository; // THÊM REPOSITORY KHO THUỐC
+    private final MedicineRepository medicineRepository;
     private final NotificationService notificationService;
 
     private Doctor getCurrentDoctor() {
@@ -77,98 +67,136 @@ public class DoctorPortalService {
 
         appointment.setStatus(newStatus.toUpperCase());
         appointmentRepository.save(appointment);
-
-        String statusVN = newStatus.equals("CONFIRMED") ? "Đã xác nhận" : newStatus.equals("CANCELLED") ? "Bị hủy" : newStatus;
-        notificationService.sendNotification(
-                appointment.getPatient(),
-                "Lịch hẹn khám của bạn vào ngày " + appointment.getAppointmentDate() + " đã được Bác sĩ chuyển sang trạng thái: " + statusVN + "."
-        );
     }
 
-    // LƯU Ý @Transactional RẤT QUAN TRỌNG: NẾU TRỪ KHO LỖI (VÍ DỤ HẾT THUỐC), TOÀN BỘ GIAO DỊCH SẼ BỊ HỦY BỎ (ROLLBACK)
+    public MedicalRecordDTO getDraftRecord(Long appointmentId) {
+        return medicalRecordRepository.findByAppointmentId(appointmentId)
+                .map(this::mapToDTO)
+                .orElse(null);
+    }
+
     @Transactional
-    public MedicalRecordDTO createMedicalRecord(MedicalRecordDTO request) {
+    public MedicalRecordDTO saveMedicalRecord(MedicalRecordDTO request) {
         Doctor currentDoctor = getCurrentDoctor();
         Appointment appointment = appointmentRepository.findById(request.getAppointmentId()).orElseThrow();
 
         if (!appointment.getDoctor().getId().equals(currentDoctor.getId())) {
-            throw new RuntimeException("Bạn không có quyền tạo bệnh án!");
-        }
-        if (medicalRecordRepository.findByAppointmentId(appointment.getId()).isPresent()) {
-            throw new RuntimeException("Lịch hẹn này đã có hồ sơ bệnh án!");
+            throw new RuntimeException("Bạn không có quyền cập nhật bệnh án này!");
         }
 
-        // Lấy danh sách dịch vụ bác sĩ đã tick chọn
-        List<MedicalService> assignedServices = new ArrayList<>();
+        MedicalRecord record = medicalRecordRepository.findByAppointmentId(appointment.getId())
+                .orElse(new MedicalRecord());
+
+        record.setAppointment(appointment);
+
+        // --- LƯU CHỈ SỐ SINH HIỆU ---
+        record.setPulse(request.getPulse());
+        record.setTemp(request.getTemp());
+        record.setBp(request.getBp());
+        record.setResp(request.getResp());
+        record.setHeight(request.getHeight());
+        record.setWeight(request.getWeight());
+
+        // Lưu thông tin lâm sàng & Dặn dò
+        record.setMedicalHistory(request.getMedicalHistory());
+        record.setAllergies(request.getAllergies());
+        record.setReasonForVisit(request.getReasonForVisit());
+        record.setIllnessHistory(request.getIllnessHistory());
+        record.setClinicalSymptoms(request.getClinicalSymptoms());
+        record.setParaclinicalResults(request.getParaclinicalResults());
+        record.setDiagnosis(request.getDiagnosis());
+        record.setTreatmentPlan(request.getTreatmentPlan());
+        record.setPrescription(request.getPrescription());
+        record.setNotes(request.getNotes());
+        record.setFollowUpDate(request.getFollowUpDate());
+
+        // Cập nhật dịch vụ
         if (request.getServiceIds() != null && !request.getServiceIds().isEmpty()) {
-            assignedServices = medicalServiceRepository.findAllById(request.getServiceIds());
+            record.setServices(medicalServiceRepository.findAllById(request.getServiceIds()));
+        } else {
+            record.setServices(new ArrayList<>());
         }
 
-        // Khởi tạo Bệnh án
-        MedicalRecord record = MedicalRecord.builder()
-                .appointment(appointment)
-                .diagnosis(request.getDiagnosis())
-                .treatmentPlan(request.getTreatmentPlan())
-                .prescription(request.getPrescription()) // Thuốc ngoài / Thuốc tự túc (Nhập tay)
-                .notes(request.getNotes())
-                .services(assignedServices)
-                .build();
+        // Cập nhật đơn thuốc
+        if (record.getPrescriptionDetails() == null) {
+            record.setPrescriptionDetails(new ArrayList<>());
+        } else {
+            record.getPrescriptionDetails().clear();
+        }
 
-        // THÊM MỚI: XỬ LÝ ĐƠN THUỐC ĐIỆN TỬ VÀ TRỪ KHO TỰ ĐỘNG
-        List<PrescriptionDetail> details = new ArrayList<>();
-        if (request.getPrescriptionDetails() != null && !request.getPrescriptionDetails().isEmpty()) {
+        if (request.getPrescriptionDetails() != null) {
             for (var dto : request.getPrescriptionDetails()) {
                 Medicine medicine = medicineRepository.findById(dto.getMedicineId())
-                        .orElseThrow(() -> new RuntimeException("Không tìm thấy thuốc ID: " + dto.getMedicineId()));
+                        .orElseThrow(() -> new RuntimeException("Không tìm thấy thuốc: " + dto.getMedicineId()));
 
-                int currentQty = medicine.getCurrentQuantity() != null ? medicine.getCurrentQuantity() : 0;
-
-                // Kiểm tra xem số lượng trong kho có đủ để Bác sĩ kê không
-                if (currentQty < dto.getQuantity()) {
-                    throw new RuntimeException("Thuốc " + medicine.getName() + " không đủ tồn kho. Hiện chỉ còn: " + currentQty + " " + medicine.getUnit());
+                if (!request.isDraft() && !"COMPLETED".equals(appointment.getStatus())) {
+                    int currentQty = medicine.getCurrentQuantity() != null ? medicine.getCurrentQuantity() : 0;
+                    if (currentQty < dto.getQuantity()) {
+                        throw new RuntimeException("Thuốc " + medicine.getName() + " không đủ tồn kho!");
+                    }
+                    medicine.setCurrentQuantity(currentQty - dto.getQuantity());
+                    medicineRepository.save(medicine);
                 }
 
-                // Tự động trừ tồn kho
-                medicine.setCurrentQuantity(currentQty - dto.getQuantity());
-                medicineRepository.save(medicine);
-
-                // Tạo chi tiết toa thuốc
                 PrescriptionDetail detail = PrescriptionDetail.builder()
                         .medicalRecord(record)
                         .medicine(medicine)
                         .quantity(dto.getQuantity())
                         .dosageInstruction(dto.getDosageInstruction())
                         .build();
-                details.add(detail);
+                record.getPrescriptionDetails().add(detail);
             }
         }
 
-        // Liên kết đơn thuốc vào bệnh án (Do cascade = CascadeType.ALL, khi save record nó sẽ tự lưu các chi tiết này)
-        record.setPrescriptionDetails(details);
-
-        // Lưu toàn bộ thông tin bệnh án, dịch vụ và đơn thuốc xuống DB
         record = medicalRecordRepository.save(record);
 
-        // Chuyển trạng thái lịch hẹn thành Đã xong
-        appointment.setStatus("COMPLETED");
+        if (request.isDraft()) {
+            appointment.setStatus("EXAMINING");
+        } else {
+            appointment.setStatus("COMPLETED");
+            notificationService.sendNotification(
+                    appointment.getPatient(),
+                    "Bác sĩ " + currentDoctor.getUser().getFullName() + " đã cập nhật Hồ sơ bệnh án của bạn. Vui lòng xem chi tiết trong phần Hồ sơ của tôi."
+            );
+        }
         appointmentRepository.save(appointment);
 
-        // Bắn thông báo cho bệnh nhân
-        notificationService.sendNotification(
-                appointment.getPatient(),
-                "Bác sĩ " + currentDoctor.getUser().getFullName() + " đã cập nhật Hồ sơ bệnh án và Kê đơn thuốc cho ca khám ngày " + appointment.getAppointmentDate() + ". Bạn có thể in đơn thuốc ngay!"
-        );
+        return mapToDTO(record);
+    }
 
+    private MedicalRecordDTO mapToDTO(MedicalRecord record) {
         return MedicalRecordDTO.builder()
                 .id(record.getId())
-                .appointmentId(appointment.getId())
-                .patientName(appointment.getPatient().getFullName())
+                .appointmentId(record.getAppointment().getId())
+                .patientName(record.getAppointment().getPatient().getFullName())
+
+                // --- MAP CHỈ SỐ SINH HIỆU TRẢ VỀ FRONT-END ---
+                .pulse(record.getPulse())
+                .temp(record.getTemp())
+                .bp(record.getBp())
+                .resp(record.getResp())
+                .height(record.getHeight())
+                .weight(record.getWeight())
+
+                .medicalHistory(record.getMedicalHistory())
+                .allergies(record.getAllergies())
+                .reasonForVisit(record.getReasonForVisit())
+                .illnessHistory(record.getIllnessHistory())
+                .clinicalSymptoms(record.getClinicalSymptoms())
+                .paraclinicalResults(record.getParaclinicalResults())
                 .diagnosis(record.getDiagnosis())
                 .treatmentPlan(record.getTreatmentPlan())
                 .prescription(record.getPrescription())
                 .notes(record.getNotes())
-                .serviceNames(assignedServices.stream().map(MedicalService::getName).collect(Collectors.toList()))
-                .createdAt(record.getCreatedAt())
+                .followUpDate(record.getFollowUpDate())
+                .serviceIds(record.getServices() != null ? record.getServices().stream().map(MedicalService::getId).collect(Collectors.toList()) : List.of())
+                .prescriptionDetails(record.getPrescriptionDetails() != null ? record.getPrescriptionDetails().stream().map(d -> PrescriptionDetailDTO.builder()
+                        .medicineId(d.getMedicine().getId())
+                        .medicineName(d.getMedicine().getName())
+                        .unit(d.getMedicine().getUnit())
+                        .quantity(d.getQuantity())
+                        .dosageInstruction(d.getDosageInstruction())
+                        .build()).collect(Collectors.toList()) : List.of())
                 .build();
     }
 }

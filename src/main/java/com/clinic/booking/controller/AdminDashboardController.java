@@ -26,4 +26,11 @@ public class AdminDashboardController {
     public ResponseEntity<List<AppointmentDTO>> getAllAppointments() {
         return ResponseEntity.ok(adminDashboardService.getAllAppointments());
     }
+
+    // THÊM API NÀY
+    @PutMapping("/appointments/{id}/status")
+    public ResponseEntity<String> updateAppointmentStatus(@PathVariable Long id, @RequestParam String status) {
+        adminDashboardService.updateAppointmentStatus(id, status);
+        return ResponseEntity.ok("Cập nhật trạng thái thành công");
+    }
 }

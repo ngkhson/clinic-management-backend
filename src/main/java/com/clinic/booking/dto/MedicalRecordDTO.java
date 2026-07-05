@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -16,19 +17,34 @@ public class MedicalRecordDTO {
     private Long id;
     private Long appointmentId;
     private String patientName;
+
+    // --- CÁC CHỈ SỐ SINH HIỆU BỔ SUNG ---
+    private Integer pulse;
+    private Double temp;
+    private String bp;
+    private Integer resp;
+    private Double height;
+    private Double weight;
+
+    // Các trường form đa bước
+    private String medicalHistory;
+    private String allergies;
+    private String reasonForVisit;
+    private String illnessHistory;
+    private String clinicalSymptoms;
+    private String paraclinicalResults;
+    private LocalDate followUpDate;
+
     private String diagnosis;
     private String treatmentPlan;
-
-    // Thuốc kê tay/tự túc (nhập text)
     private String prescription;
-
     private String notes;
-    private LocalDateTime createdAt;
 
-    // --- MODULE 3: DỊCH VỤ CẬN LÂM SÀNG ---
-    private List<Long> serviceIds;       // Dùng khi Bác sĩ gửi yêu cầu tạo (từ React lên)
-    private List<String> serviceNames;   // Dùng để hiển thị tên dịch vụ (từ Spring Boot trả về)
+    private boolean isDraft;
 
-    // --- MODULE 5: ĐƠN THUỐC ĐIỆN TỬ (TRỪ KHO) ---
+    private List<Long> serviceIds;
+    private List<String> serviceNames;
     private List<PrescriptionDetailDTO> prescriptionDetails;
+
+    private LocalDateTime createdAt;
 }
