@@ -1,5 +1,6 @@
 package com.clinic.booking.service;
 
+import com.clinic.booking.dto.appointment.AppointmentRequest;
 import com.clinic.booking.dto.appointment.AppointmentResponse;
 import com.clinic.booking.entity.Appointment;
 import com.clinic.booking.entity.Doctor;
@@ -27,7 +28,7 @@ public class AppointmentService {
     private final PaymentService paymentService;
 
     @Transactional
-    public AppointmentResponse createAppointment(AppointmentResponse request, String ipAddress) {
+    public AppointmentResponse createAppointment(AppointmentRequest request, String ipAddress) {
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         User patient = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng!"));

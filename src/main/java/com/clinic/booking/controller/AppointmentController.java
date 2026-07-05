@@ -1,5 +1,6 @@
 package com.clinic.booking.controller;
 
+import com.clinic.booking.dto.appointment.AppointmentRequest;
 import com.clinic.booking.dto.appointment.AppointmentResponse;
 import com.clinic.booking.service.AppointmentService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,7 +17,7 @@ public class AppointmentController {
     private final AppointmentService appointmentService;
 
     @PostMapping
-    public ResponseEntity<?> createAppointment(@RequestBody AppointmentResponse request, HttpServletRequest httpRequest) {
+    public ResponseEntity<?> createAppointment(@RequestBody AppointmentRequest request, HttpServletRequest httpRequest) {
         try {
             // VNPAY cần IP Address của client để tạo giao dịch
             String ipAddress = httpRequest.getHeader("X-Forwarded-For");
