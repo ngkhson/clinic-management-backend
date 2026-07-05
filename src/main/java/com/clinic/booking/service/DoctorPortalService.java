@@ -1,6 +1,7 @@
 package com.clinic.booking.service;
 
 import com.clinic.booking.dto.appointment.AppointmentResponse;
+import com.clinic.booking.dto.record.MedicalRecordRequest;
 import com.clinic.booking.dto.record.MedicalRecordResponse;
 import com.clinic.booking.dto.pharmacy.PrescriptionDetailResponse;
 import com.clinic.booking.entity.*;
@@ -76,7 +77,7 @@ public class DoctorPortalService {
     }
 
     @Transactional
-    public MedicalRecordResponse saveMedicalRecord(MedicalRecordResponse request) {
+    public MedicalRecordResponse saveMedicalRecord(MedicalRecordRequest request) {
         Doctor currentDoctor = getCurrentDoctor();
         Appointment appointment = appointmentRepository.findById(request.getAppointmentId()).orElseThrow();
 

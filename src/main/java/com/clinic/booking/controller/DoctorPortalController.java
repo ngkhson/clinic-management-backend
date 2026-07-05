@@ -1,6 +1,7 @@
 package com.clinic.booking.controller;
 
 import com.clinic.booking.dto.appointment.AppointmentResponse;
+import com.clinic.booking.dto.record.MedicalRecordRequest;
 import com.clinic.booking.dto.record.MedicalRecordResponse;
 import com.clinic.booking.service.DoctorPortalService;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +43,7 @@ public class DoctorPortalController {
 
     // API Lưu Bệnh Án (Xử lý cả Lưu nháp và Hoàn tất dựa vào cờ isDraft)
     @PostMapping("/medical-records")
-    public ResponseEntity<?> saveMedicalRecord(@RequestBody MedicalRecordResponse request) {
+    public ResponseEntity<?> saveMedicalRecord(@RequestBody MedicalRecordRequest request) {
         try {
             return ResponseEntity.ok(doctorPortalService.saveMedicalRecord(request));
         } catch (RuntimeException e) {

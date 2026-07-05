@@ -1,6 +1,7 @@
 package com.clinic.booking.service;
 
 import com.clinic.booking.dto.auth.ChangePasswordRequest;
+import com.clinic.booking.dto.user.UserProfileRequest;
 import com.clinic.booking.dto.user.UserProfileResponse;
 import com.clinic.booking.entity.User;
 import com.clinic.booking.repository.UserRepository;
@@ -31,7 +32,7 @@ public class UserService {
                 .build();
     }
 
-    public UserProfileResponse updateMyProfile(UserProfileResponse dto) {
+    public UserProfileResponse updateMyProfile(UserProfileRequest dto) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng!"));

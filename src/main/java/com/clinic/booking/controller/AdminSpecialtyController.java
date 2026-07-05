@@ -1,5 +1,6 @@
 package com.clinic.booking.controller;
 
+import com.clinic.booking.dto.specialty.SpecialtyRequest;
 import com.clinic.booking.dto.specialty.SpecialtyResponse;
 import com.clinic.booking.service.SpecialtyService;
 import lombok.RequiredArgsConstructor;
@@ -16,13 +17,13 @@ public class AdminSpecialtyController {
 
     // Đổi kiểu trả về thành SpecialtyDTO
     @PostMapping
-    public ResponseEntity<SpecialtyResponse> createSpecialty(@RequestBody SpecialtyResponse request) {
+    public ResponseEntity<SpecialtyResponse> createSpecialty(@RequestBody SpecialtyRequest request) {
         return ResponseEntity.ok(specialtyService.createSpecialty(request));
     }
 
     // Đổi kiểu trả về thành SpecialtyDTO
     @PutMapping("/{id}")
-    public ResponseEntity<SpecialtyResponse> updateSpecialty(@PathVariable Long id, @RequestBody SpecialtyResponse request) {
+    public ResponseEntity<SpecialtyResponse> updateSpecialty(@PathVariable Long id, @RequestBody SpecialtyRequest request) {
         return ResponseEntity.ok(specialtyService.updateSpecialty(id, request));
     }
 

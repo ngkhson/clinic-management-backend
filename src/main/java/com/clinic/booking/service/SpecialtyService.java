@@ -1,5 +1,6 @@
 package com.clinic.booking.service;
 
+import com.clinic.booking.dto.specialty.SpecialtyRequest;
 import com.clinic.booking.dto.specialty.SpecialtyResponse;
 import com.clinic.booking.entity.Specialty;
 import com.clinic.booking.repository.SpecialtyRepository;
@@ -34,7 +35,7 @@ public class SpecialtyService {
     }
 
     // THÊM CHUYÊN KHOA
-    public SpecialtyResponse createSpecialty(SpecialtyResponse dto) {
+    public SpecialtyResponse createSpecialty(SpecialtyRequest dto) {
         Specialty specialty = Specialty.builder()
                 .name(dto.getName())
                 .description(dto.getDescription())
@@ -45,7 +46,7 @@ public class SpecialtyService {
     }
 
     // CẬP NHẬT CHUYÊN KHOA
-    public SpecialtyResponse updateSpecialty(Long id, SpecialtyResponse dto) {
+    public SpecialtyResponse updateSpecialty(Long id, SpecialtyRequest dto) {
         Specialty specialty = specialtyRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy chuyên khoa!"));
 

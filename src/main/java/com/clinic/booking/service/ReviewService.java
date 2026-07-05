@@ -1,5 +1,6 @@
 package com.clinic.booking.service;
 
+import com.clinic.booking.dto.review.ReviewRequest;
 import com.clinic.booking.dto.review.ReviewResponse;
 import com.clinic.booking.entity.Appointment;
 import com.clinic.booking.entity.Review;
@@ -18,7 +19,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final AppointmentRepository appointmentRepository;
 
-    public ReviewResponse createReview(ReviewResponse request) {
+    public ReviewResponse createReview(ReviewRequest request) {
         // Kiểm tra xem đã đánh giá chưa
         if (reviewRepository.findByAppointmentId(request.getAppointmentId()).isPresent()) {
             throw new RuntimeException("Bạn đã gửi đánh giá cho ca khám này rồi!");

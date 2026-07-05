@@ -1,5 +1,6 @@
 package com.clinic.booking.controller;
 
+import com.clinic.booking.dto.review.ReviewRequest;
 import com.clinic.booking.dto.review.ReviewResponse;
 import com.clinic.booking.service.ReviewService;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ public class ReviewController {
 
     // API: Gửi đánh giá mới
     @PostMapping
-    public ResponseEntity<?> createReview(@RequestBody ReviewResponse request) {
+    public ResponseEntity<?> createReview(@RequestBody ReviewRequest request) {
         try {
             return ResponseEntity.ok(reviewService.createReview(request));
         } catch (RuntimeException e) {
