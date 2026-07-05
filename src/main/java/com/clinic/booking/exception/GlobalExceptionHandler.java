@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -39,7 +41,7 @@ public class GlobalExceptionHandler {
     // 3. Xử lý tất cả các lỗi Hệ thống khác chưa lường trước được (NullPointerException, DataAccessException...)
     @ExceptionHandler(value = Exception.class)
     public ResponseEntity<ErrorResponse> handlingRuntimeException(Exception exception) {
-        // TODO: Có thể bổ sung log.error("Exception: ", exception) ở đây
+        log.error("Unhandled Exception: ", exception);
         
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .code(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode())
