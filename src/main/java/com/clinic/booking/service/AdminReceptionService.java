@@ -1,7 +1,7 @@
 package com.clinic.booking.service;
 
-import com.clinic.booking.dto.AdminReceptionRequest;
-import com.clinic.booking.dto.AppointmentDTO;
+import com.clinic.booking.dto.reception.AdminReceptionRequest;
+import com.clinic.booking.dto.appointment.AppointmentResponse;
 import com.clinic.booking.entity.Appointment;
 import com.clinic.booking.entity.Doctor;
 import com.clinic.booking.entity.Schedule;
@@ -27,7 +27,7 @@ public class AdminReceptionService {
     private final VitalSignRepository vitalSignRepository;
 
     @Transactional
-    public AppointmentDTO createReceptionAndVitals(AdminReceptionRequest request) {
+    public AppointmentResponse createReceptionAndVitals(AdminReceptionRequest request) {
         Appointment appointment;
         User patient;
         Doctor doctor;
@@ -96,7 +96,7 @@ public class AdminReceptionService {
             vitalSignRepository.save(vitals);
         }
 
-        return AppointmentDTO.builder()
+        return AppointmentResponse.builder()
                 .id(appointment.getId())
                 .patientName(patient.getFullName())
                 .doctorName(doctor.getUser().getFullName())

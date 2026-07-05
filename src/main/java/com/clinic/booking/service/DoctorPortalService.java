@@ -1,8 +1,8 @@
 package com.clinic.booking.service;
 
-import com.clinic.booking.dto.AppointmentDTO;
-import com.clinic.booking.dto.MedicalRecordDTO;
-import com.clinic.booking.dto.PrescriptionDetailDTO;
+import com.clinic.booking.dto.appointment.AppointmentResponse;
+import com.clinic.booking.dto.record.MedicalRecordDTO;
+import com.clinic.booking.dto.pharmacy.PrescriptionDetailDTO;
 import com.clinic.booking.entity.*;
 import com.clinic.booking.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +32,7 @@ public class DoctorPortalService {
         return doctorRepository.findByUserId(user.getId()).orElseThrow(() -> new RuntimeException("Tài khoản này không phải là Bác sĩ!"));
     }
 
-    public List<AppointmentDTO> getDoctorAppointments(String status) {
+    public List<AppointmentResponse> getDoctorAppointments(String status) {
         Doctor currentDoctor = getCurrentDoctor();
         List<Appointment> appointments;
         if (status != null && !status.isEmpty()) {
@@ -41,7 +41,7 @@ public class DoctorPortalService {
             appointments = appointmentRepository.findByDoctorId(currentDoctor.getId());
         }
 
-        return appointments.stream().map(app -> AppointmentDTO.builder()
+        return appointments.stream().map(app -> AppointmentResponse.builder()
                 .id(app.getId())
                 .doctorId(app.getDoctor().getId())
                 .doctorName(app.getDoctor().getUser().getFullName())

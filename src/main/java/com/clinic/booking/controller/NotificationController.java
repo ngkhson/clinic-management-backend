@@ -1,6 +1,6 @@
 package com.clinic.booking.controller;
 
-import com.clinic.booking.dto.NotificationDTO;
+import com.clinic.booking.dto.notification.NotificationDTO;
 import com.clinic.booking.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

@@ -1,4 +1,4 @@
-package com.clinic.booking.dto;
+package com.clinic.booking.dto.schedule;
 
 import lombok.Data;
 import java.time.LocalDate;

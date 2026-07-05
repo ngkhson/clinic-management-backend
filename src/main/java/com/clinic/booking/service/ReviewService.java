@@ -1,6 +1,6 @@
 package com.clinic.booking.service;
 
-import com.clinic.booking.dto.ReviewDTO;
+import com.clinic.booking.dto.review.ReviewDTO;
 import com.clinic.booking.entity.Appointment;
 import com.clinic.booking.entity.Review;
 import com.clinic.booking.repository.AppointmentRepository;

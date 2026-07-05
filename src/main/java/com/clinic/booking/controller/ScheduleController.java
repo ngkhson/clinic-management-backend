@@ -1,6 +1,6 @@
 package com.clinic.booking.controller;
 
-import com.clinic.booking.dto.ScheduleDTO;
+import com.clinic.booking.dto.schedule.ScheduleDTO;
 import com.clinic.booking.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;

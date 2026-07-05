@@ -1,5 +1,6 @@
-package com.clinic.booking.dto;
+package com.clinic.booking.dto.record;
 
+import com.clinic.booking.dto.pharmacy.PrescriptionDetailDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -1,6 +1,6 @@
 package com.clinic.booking.service;
 
-import com.clinic.booking.dto.NotificationDTO;
+import com.clinic.booking.dto.notification.NotificationDTO;
 import com.clinic.booking.entity.Notification;
 import com.clinic.booking.entity.User;
 import com.clinic.booking.repository.NotificationRepository;

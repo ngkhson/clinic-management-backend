@@ -1,6 +1,6 @@
 package com.clinic.booking.service;
 
-import com.clinic.booking.dto.ImportRequestDTO;
+import com.clinic.booking.dto.pharmacy.ImportRequestDTO;
 import com.clinic.booking.entity.ImportInvoice;
 import com.clinic.booking.entity.ImportInvoiceDetail;
 import com.clinic.booking.entity.Medicine;

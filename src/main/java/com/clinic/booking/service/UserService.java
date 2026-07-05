@@ -1,7 +1,7 @@
 package com.clinic.booking.service;
 
-import com.clinic.booking.dto.ChangePasswordRequest;
-import com.clinic.booking.dto.UserProfileDTO;
+import com.clinic.booking.dto.auth.ChangePasswordRequest;
+import com.clinic.booking.dto.user.UserProfileDTO;
 import com.clinic.booking.entity.User;
 import com.clinic.booking.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

@@ -1,8 +1,8 @@
 package com.clinic.booking.service;
 
-import com.clinic.booking.dto.AppointmentDTO;
-import com.clinic.booking.dto.MedicalRecordDTO;
-import com.clinic.booking.dto.PrescriptionDetailDTO;
+import com.clinic.booking.dto.appointment.AppointmentResponse;
+import com.clinic.booking.dto.record.MedicalRecordDTO;
+import com.clinic.booking.dto.pharmacy.PrescriptionDetailDTO;
 import com.clinic.booking.entity.Appointment;
 import com.clinic.booking.entity.MedicalRecord;
 import com.clinic.booking.entity.MedicalService;
@@ -30,11 +30,11 @@ public class PatientPortalService {
         return userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Không tìm thấy Bệnh nhân!"));
     }
 
-    public List<AppointmentDTO> getMyAppointments() {
+    public List<AppointmentResponse> getMyAppointments() {
         User currentPatient = getCurrentPatient();
         return appointmentRepository.findByPatientId(currentPatient.getId())
                 .stream()
-                .map(app -> AppointmentDTO.builder()
+                .map(app -> AppointmentResponse.builder()
                         .id(app.getId())
                         .doctorId(app.getDoctor().getId())
                         .doctorName(app.getDoctor().getUser().getFullName())

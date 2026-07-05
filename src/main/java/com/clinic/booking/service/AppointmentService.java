@@ -1,6 +1,6 @@
 package com.clinic.booking.service;
 
-import com.clinic.booking.dto.AppointmentDTO;
+import com.clinic.booking.dto.appointment.AppointmentResponse;
 import com.clinic.booking.entity.Appointment;
 import com.clinic.booking.entity.Doctor;
 import com.clinic.booking.entity.Schedule;
@@ -27,7 +27,7 @@ public class AppointmentService {
     private final PaymentService paymentService;
 
     @Transactional
-    public AppointmentDTO createAppointment(AppointmentDTO request, String ipAddress) {
+    public AppointmentResponse createAppointment(AppointmentResponse request, String ipAddress) {
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         User patient = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng!"));
@@ -56,7 +56,7 @@ public class AppointmentService {
         schedule.setCurrentPatients(schedule.getCurrentPatients() + 1);
         scheduleRepository.save(schedule);
 
-        AppointmentDTO responseDTO = mapToDTO(appointment);
+        AppointmentResponse responseDTO = mapToDTO(appointment);
 
         // THÊM LOGIC THANH TOÁN VNPAY NẾU NGƯỜI DÙNG CHỌN "PAY_NOW"
         if ("PAY_NOW".equals(request.getPaymentType())) {
@@ -70,8 +70,8 @@ public class AppointmentService {
         return responseDTO;
     }
 
-    private AppointmentDTO mapToDTO(Appointment appointment) {
-        return AppointmentDTO.builder()
+    private AppointmentResponse mapToDTO(Appointment appointment) {
+        return AppointmentResponse.builder()
                 .id(appointment.getId())
                 .doctorId(appointment.getDoctor().getId())
                 .doctorName(appointment.getDoctor().getUser().getFullName())

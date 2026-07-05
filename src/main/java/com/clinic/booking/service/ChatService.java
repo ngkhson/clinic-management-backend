@@ -1,7 +1,7 @@
 package com.clinic.booking.service;
 
-import com.clinic.booking.dto.ChatHistoryDTO;
-import com.clinic.booking.dto.ChatRoomDTO;
+import com.clinic.booking.dto.chat.ChatHistoryDTO;
+import com.clinic.booking.dto.chat.ChatRoomDTO;
 import com.clinic.booking.entity.ChatRoom;
 import com.clinic.booking.entity.Message;
 import com.clinic.booking.entity.User;

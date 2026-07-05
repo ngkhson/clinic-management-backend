@@ -1,6 +1,6 @@
 package com.clinic.booking.service;
 
-import com.clinic.booking.dto.AppointmentDTO;
+import com.clinic.booking.dto.appointment.AppointmentResponse;
 import com.clinic.booking.entity.Appointment;
 import com.clinic.booking.repository.AppointmentRepository;
 import com.clinic.booking.repository.DoctorRepository;
@@ -60,8 +60,8 @@ public class AdminDashboardService {
         appointmentRepository.save(appointment);
     }
 
-    public List<AppointmentDTO> getAllAppointments() {
-        return appointmentRepository.findAll().stream().map(app -> AppointmentDTO.builder()
+    public List<AppointmentResponse> getAllAppointments() {
+        return appointmentRepository.findAll().stream().map(app -> AppointmentResponse.builder()
                 .id(app.getId())
                 .doctorId(app.getDoctor().getId())
                 .doctorName(app.getDoctor().getUser().getFullName())

@@ -1,6 +1,6 @@
 package com.clinic.booking.service;
 
-import com.clinic.booking.dto.DoctorDTO;
+import com.clinic.booking.dto.doctor.DoctorDTO;
 import com.clinic.booking.entity.Doctor;
 import com.clinic.booking.repository.DoctorRepository;
 import lombok.RequiredArgsConstructor;

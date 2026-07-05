@@ -1,6 +1,6 @@
 package com.clinic.booking.controller;
 
-import com.clinic.booking.dto.AdminReceptionRequest;
+import com.clinic.booking.dto.reception.AdminReceptionRequest;
 import com.clinic.booking.service.AdminReceptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

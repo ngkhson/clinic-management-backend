@@ -1,6 +1,6 @@
 package com.clinic.booking.controller;
 
-import com.clinic.booking.dto.AppointmentDTO;
+import com.clinic.booking.dto.appointment.AppointmentResponse;
 import com.clinic.booking.service.AdminDashboardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +23,7 @@ public class AdminDashboardController {
     }
 
     @GetMapping("/all-appointments")
-    public ResponseEntity<List<AppointmentDTO>> getAllAppointments() {
+    public ResponseEntity<List<AppointmentResponse>> getAllAppointments() {
         return ResponseEntity.ok(adminDashboardService.getAllAppointments());
     }
 

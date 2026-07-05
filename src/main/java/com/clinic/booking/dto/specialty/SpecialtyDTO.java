@@ -1,4 +1,4 @@
-package com.clinic.booking.dto;
+package com.clinic.booking.dto.specialty;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

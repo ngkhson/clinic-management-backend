@@ -1,7 +1,7 @@
 package com.clinic.booking.controller;
 
-import com.clinic.booking.dto.ChangePasswordRequest;
-import com.clinic.booking.dto.UserProfileDTO;
+import com.clinic.booking.dto.auth.ChangePasswordRequest;
+import com.clinic.booking.dto.user.UserProfileDTO;
 import com.clinic.booking.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

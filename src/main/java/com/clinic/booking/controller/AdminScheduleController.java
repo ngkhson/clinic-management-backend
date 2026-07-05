@@ -1,6 +1,6 @@
 package com.clinic.booking.controller;
 
-import com.clinic.booking.dto.ScheduleGenerateRequest;
+import com.clinic.booking.dto.schedule.ScheduleGenerateRequest;
 import com.clinic.booking.entity.Doctor;
 import com.clinic.booking.entity.Schedule;
 import com.clinic.booking.repository.DoctorRepository;
@@ -9,9 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin/schedules")

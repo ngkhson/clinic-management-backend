@@ -1,7 +1,7 @@
 package com.clinic.booking.controller;
 
-import com.clinic.booking.dto.AppointmentDTO;
-import com.clinic.booking.dto.MedicalRecordDTO;
+import com.clinic.booking.dto.appointment.AppointmentResponse;
+import com.clinic.booking.dto.record.MedicalRecordDTO;
 import com.clinic.booking.service.DoctorPortalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,7 @@ public class DoctorPortalController {
     private final DoctorPortalService doctorPortalService;
 
     @GetMapping("/appointments")
-    public ResponseEntity<List<AppointmentDTO>> getAppointments(@RequestParam(required = false) String status) {
+    public ResponseEntity<List<AppointmentResponse>> getAppointments(@RequestParam(required = false) String status) {
         return ResponseEntity.ok(doctorPortalService.getDoctorAppointments(status));
     }
 

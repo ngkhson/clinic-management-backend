@@ -1,4 +1,4 @@
-package com.clinic.booking.dto;
+package com.clinic.booking.dto.chat;
 
 import lombok.Builder;
 import lombok.Data;

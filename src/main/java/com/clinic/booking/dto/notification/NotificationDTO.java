@@ -1,4 +1,4 @@
-package com.clinic.booking.dto;
+package com.clinic.booking.dto.notification;
 
 import lombok.Builder;
 import lombok.Data;

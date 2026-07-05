@@ -1,6 +1,6 @@
 package com.clinic.booking.service;
 
-import com.clinic.booking.dto.ScheduleDTO;
+import com.clinic.booking.dto.schedule.ScheduleDTO;
 import com.clinic.booking.entity.Schedule;
 import com.clinic.booking.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;

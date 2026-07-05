@@ -1,7 +1,7 @@
 package com.clinic.booking.controller;
 
-import com.clinic.booking.dto.ChatHistoryDTO;
-import com.clinic.booking.dto.ChatRoomDTO;
+import com.clinic.booking.dto.chat.ChatHistoryDTO;
+import com.clinic.booking.dto.chat.ChatRoomDTO;
 import com.clinic.booking.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

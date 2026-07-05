@@ -1,6 +1,6 @@
 package com.clinic.booking.controller;
 
-import com.clinic.booking.dto.ImportRequestDTO;
+import com.clinic.booking.dto.pharmacy.ImportRequestDTO;
 import com.clinic.booking.service.ImportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

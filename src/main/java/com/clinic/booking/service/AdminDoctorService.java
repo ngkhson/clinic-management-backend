@@ -1,7 +1,7 @@
 package com.clinic.booking.service;
 
-import com.clinic.booking.dto.DoctorCreationDTO;
-import com.clinic.booking.dto.DoctorDTO;
+import com.clinic.booking.dto.doctor.DoctorCreationDTO;
+import com.clinic.booking.dto.doctor.DoctorDTO;
 import com.clinic.booking.entity.Doctor;
 import com.clinic.booking.entity.Specialty;
 import com.clinic.booking.entity.User;

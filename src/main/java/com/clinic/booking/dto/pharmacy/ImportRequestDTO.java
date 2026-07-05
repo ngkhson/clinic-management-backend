@@ -1,4 +1,4 @@
-package com.clinic.booking.dto;
+package com.clinic.booking.dto.pharmacy;
 
 import lombok.Data;
 import java.util.List;
