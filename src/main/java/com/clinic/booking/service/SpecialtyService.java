@@ -1,5 +1,8 @@
 package com.clinic.booking.service;
 
+import com.clinic.booking.exception.AppException;
+import com.clinic.booking.exception.ErrorCode;
+
 import com.clinic.booking.dto.specialty.SpecialtyRequest;
 import com.clinic.booking.dto.specialty.SpecialtyResponse;
 import com.clinic.booking.entity.Specialty;
@@ -48,7 +51,7 @@ public class SpecialtyService {
     // CẬP NHẬT CHUYÊN KHOA
     public SpecialtyResponse updateSpecialty(Long id, SpecialtyRequest dto) {
         Specialty specialty = specialtyRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy chuyên khoa!"));
+                .orElseThrow(() -> new AppException(ErrorCode.SPECIALTY_NOT_FOUND));
 
         specialty.setName(dto.getName());
         specialty.setDescription(dto.getDescription());
@@ -61,7 +64,7 @@ public class SpecialtyService {
     // XÓA CHUYÊN KHOA
     public void deleteSpecialty(Long id) {
         if (!specialtyRepository.existsById(id)) {
-            throw new RuntimeException("Không tìm thấy chuyên khoa!");
+            throw new AppException(ErrorCode.SPECIALTY_NOT_FOUND);
         }
         specialtyRepository.deleteById(id);
     }

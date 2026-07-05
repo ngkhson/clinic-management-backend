@@ -16,10 +16,6 @@ public class AdminReceptionController {
 
     @PostMapping
     public ResponseEntity<?> createReception(@RequestBody AdminReceptionRequest request) {
-        try {
-            return ResponseEntity.ok(receptionService.createReceptionAndVitals(request));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        return ResponseEntity.ok(receptionService.createReceptionAndVitals(request));
     }
 }

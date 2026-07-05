@@ -1,5 +1,8 @@
 package com.clinic.booking.service;
 
+import com.clinic.booking.exception.AppException;
+import com.clinic.booking.exception.ErrorCode;
+
 import com.clinic.booking.dto.chat.ChatHistoryResponse;
 import com.clinic.booking.dto.chat.ChatRoomResponse;
 import com.clinic.booking.entity.ChatRoom;
@@ -25,7 +28,7 @@ public class ChatService {
 
     @Transactional
     public ChatHistoryResponse saveMessage(String senderEmail, String receiverEmail, String content) {
-        User sender = userRepository.findByEmail(senderEmail).orElseThrow(() -> new RuntimeException("Sender not found"));
+        User sender = userRepository.findByEmail(senderEmail).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         // Nếu receiver là "STAFF", người gửi chắc chắn là Bệnh nhân.
         // Nếu không, Staff đang trả lời, nên receiver chính là Bệnh nhân.

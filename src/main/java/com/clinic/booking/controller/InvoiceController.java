@@ -33,10 +33,6 @@ public class InvoiceController {
     public ResponseEntity<?> payInvoice(
             @PathVariable Long id,
             @RequestParam String method) {
-        try {
-            return ResponseEntity.ok(invoiceService.payInvoice(id, method));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        return ResponseEntity.ok(invoiceService.payInvoice(id, method));
     }
 }

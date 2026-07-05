@@ -1,5 +1,8 @@
 package com.clinic.booking.service;
 
+import com.clinic.booking.exception.AppException;
+import com.clinic.booking.exception.ErrorCode;
+
 import com.clinic.booking.dto.reception.AdminReceptionRequest;
 import com.clinic.booking.dto.appointment.AppointmentResponse;
 import com.clinic.booking.entity.Appointment;
@@ -37,7 +40,7 @@ public class AdminReceptionService {
         if (request.getAppointmentId() != null) {
             // 1. KHÁCH ĐÃ ĐẶT LỊCH TRƯỚC -> Dùng lại lịch cũ
             appointment = appointmentRepository.findById(request.getAppointmentId())
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy Lịch hẹn!"));
+                    .orElseThrow(() -> new AppException(ErrorCode.APPOINTMENT_NOT_FOUND));
 
             appointment.setStatus("CONFIRMED"); // Lễ tân xác nhận khách đã đến
 
@@ -54,14 +57,14 @@ public class AdminReceptionService {
         } else {
             // 2. KHÁCH VÃNG LAI -> Tạo lịch mới hoàn toàn
             patient = userRepository.findById(request.getPatientId())
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy bệnh nhân!"));
+                    .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
             doctor = doctorRepository.findById(request.getDoctorId())
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy Bác sĩ!"));
+                    .orElseThrow(() -> new AppException(ErrorCode.DOCTOR_NOT_FOUND));
             Schedule schedule = scheduleRepository.findById(request.getScheduleId())
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy Lịch khám!"));
+                    .orElseThrow(() -> new AppException(ErrorCode.APPOINTMENT_NOT_FOUND));
 
             if (schedule.getCurrentPatients() >= schedule.getMaxPatients()) {
-                throw new RuntimeException("Ca khám này đã đầy!");
+                throw new AppException(ErrorCode.INVALID_ACTION);
             }
 
             appointment = Appointment.builder()

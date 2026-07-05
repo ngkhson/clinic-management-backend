@@ -1,5 +1,8 @@
 package com.clinic.booking.service;
 
+import com.clinic.booking.exception.AppException;
+import com.clinic.booking.exception.ErrorCode;
+
 import com.clinic.booking.entity.Medicine;
 import com.clinic.booking.repository.MedicineRepository;
 import lombok.RequiredArgsConstructor;
@@ -55,7 +58,7 @@ public class MedicineService {
     @Transactional
     public void toggleActiveStatus(Long id) {
         Medicine medicine = medicineRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy thuốc!"));
+                .orElseThrow(() -> new AppException(ErrorCode.MEDICINE_NOT_FOUND));
 
         // Dùng getIsActive() và setIsActive() do đã đổi sang đối tượng Boolean
         Boolean currentStatus = medicine.getIsActive();

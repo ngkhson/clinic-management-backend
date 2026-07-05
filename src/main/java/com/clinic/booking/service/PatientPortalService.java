@@ -1,5 +1,8 @@
 package com.clinic.booking.service;
 
+import com.clinic.booking.exception.AppException;
+import com.clinic.booking.exception.ErrorCode;
+
 import com.clinic.booking.dto.appointment.AppointmentResponse;
 import com.clinic.booking.dto.record.MedicalRecordResponse;
 import com.clinic.booking.dto.pharmacy.PrescriptionDetailResponse;
@@ -27,7 +30,7 @@ public class PatientPortalService {
 
     private User getCurrentPatient() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Không tìm thấy Bệnh nhân!"));
+        return userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
     }
 
     public List<AppointmentResponse> getMyAppointments() {
@@ -52,14 +55,14 @@ public class PatientPortalService {
     public MedicalRecordResponse getMedicalRecord(Long appointmentId) {
         User currentPatient = getCurrentPatient();
         Appointment appointment = appointmentRepository.findById(appointmentId)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy Lịch hẹn!"));
+                .orElseThrow(() -> new AppException(ErrorCode.APPOINTMENT_NOT_FOUND));
 
         if (!appointment.getPatient().getId().equals(currentPatient.getId())) {
-            throw new RuntimeException("Bạn không có quyền xem bệnh án này!");
+            throw new AppException(ErrorCode.UNAUTHORIZED);
         }
 
         MedicalRecord record = medicalRecordRepository.findByAppointmentId(appointmentId)
-                .orElseThrow(() -> new RuntimeException("Lịch hẹn này chưa có hoặc chưa cập nhật hồ sơ bệnh án!"));
+                .orElseThrow(() -> new AppException(ErrorCode.INVALID_ACTION));
 
         return MedicalRecordResponse.builder()
                 .id(record.getId())

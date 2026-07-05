@@ -1,5 +1,8 @@
 package com.clinic.booking.service;
 
+import com.clinic.booking.exception.AppException;
+import com.clinic.booking.exception.ErrorCode;
+
 import com.clinic.booking.dto.auth.AuthenticationRequest;
 import com.clinic.booking.dto.auth.AuthenticationResponse;
 import com.clinic.booking.dto.auth.RegisterRequest;
@@ -62,7 +65,7 @@ public class AuthenticationService {
     // --- XỬ LÝ QUÊN MẬT KHẨU BẰNG EMAIL THẬT ---
     public void forgotPassword(String email) {
         userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Email không tồn tại trong hệ thống!"));
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         // Sinh mã OTP 6 số ngẫu nhiên
         String otp = String.format("%06d", new Random().nextInt(999999));
@@ -82,7 +85,7 @@ public class AuthenticationService {
             // Xóa OTP sau khi dùng thành công
             otpStorage.remove(request.getEmail());
         } else {
-            throw new RuntimeException("Mã OTP không chính xác hoặc đã hết hạn!");
+            throw new AppException(ErrorCode.INVALID_KEY);
         }
     }
 
@@ -103,7 +106,7 @@ public class AuthenticationService {
             mailSender.send(message);
         } catch (Exception e) {
             System.err.println("Lỗi khi gửi email: " + e.getMessage());
-            throw new RuntimeException("Lỗi máy chủ: Không thể gửi Email lúc này. Vui lòng thử lại sau!");
+            throw new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
     }
 }

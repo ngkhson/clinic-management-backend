@@ -1,5 +1,8 @@
 package com.clinic.booking.service;
 
+import com.clinic.booking.exception.AppException;
+import com.clinic.booking.exception.ErrorCode;
+
 import com.clinic.booking.dto.doctor.DoctorCreationRequest;
 import com.clinic.booking.dto.doctor.DoctorResponse;
 import com.clinic.booking.entity.Doctor;
@@ -35,7 +38,7 @@ public class AdminDoctorService {
     public DoctorResponse createDoctor(DoctorCreationRequest request) {
         // 1. Kiểm tra Email đã tồn tại chưa
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new RuntimeException("Email này đã được sử dụng!");
+            throw new AppException(ErrorCode.USER_EXISTED);
         }
 
         // 2. Tạo tài khoản User với quyền DOCTOR
@@ -50,7 +53,7 @@ public class AdminDoctorService {
 
         // 3. Tìm Chuyên khoa
         Specialty specialty = specialtyRepository.findById(request.getSpecialtyId())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy Chuyên khoa!"));
+                .orElseThrow(() -> new AppException(ErrorCode.SPECIALTY_NOT_FOUND));
 
         // 4. Tạo Hồ sơ Bác sĩ
         Doctor doctor = Doctor.builder()
@@ -80,7 +83,7 @@ public class AdminDoctorService {
 
     @Transactional
     public DoctorResponse updateDoctor(Long id, DoctorCreationRequest request) {
-        Doctor doctor = doctorRepository.findById(id).orElseThrow(() -> new RuntimeException("Không tìm thấy bác sĩ"));
+        Doctor doctor = doctorRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.DOCTOR_NOT_FOUND));
         User user = doctor.getUser();
 
         user.setFullName(request.getFullName());
@@ -90,7 +93,7 @@ public class AdminDoctorService {
         }
 
         Specialty specialty = specialtyRepository.findById(request.getSpecialtyId())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy Chuyên khoa!"));
+                .orElseThrow(() -> new AppException(ErrorCode.SPECIALTY_NOT_FOUND));
 
         doctor.setSpecialty(specialty);
         doctor.setDegree(request.getDegree());
@@ -110,7 +113,7 @@ public class AdminDoctorService {
             doctorRepository.delete(doctor);
             userRepository.delete(user);
         } catch (Exception e) {
-            throw new RuntimeException("Không thể xóa bác sĩ này do họ đã có dữ liệu Lịch khám trong hệ thống!");
+            throw new AppException(ErrorCode.INVALID_ACTION);
         }
     }
 }

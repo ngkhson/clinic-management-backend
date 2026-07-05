@@ -1,5 +1,8 @@
 package com.clinic.booking.service;
 
+import com.clinic.booking.exception.AppException;
+import com.clinic.booking.exception.ErrorCode;
+
 import com.clinic.booking.entity.MedicalService;
 import com.clinic.booking.repository.MedicalServiceRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +34,7 @@ public class MedicalServiceService {
     @Transactional
     public MedicalService updateService(Long id, MedicalService details) {
         MedicalService service = medicalServiceRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy dịch vụ y tế này!"));
+                .orElseThrow(() -> new AppException(ErrorCode.INVALID_ACTION));
 
         service.setName(details.getName());
         service.setCategory(details.getCategory());
@@ -43,7 +46,7 @@ public class MedicalServiceService {
     @Transactional
     public void toggleStatus(Long id) {
         MedicalService service = medicalServiceRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy dịch vụ y tế này!"));
+                .orElseThrow(() -> new AppException(ErrorCode.INVALID_ACTION));
 
         Boolean currentStatus = service.getIsActive();
         if (currentStatus == null) {

@@ -20,11 +20,7 @@ public class ReviewController {
     // API: Gửi đánh giá mới
     @PostMapping
     public ResponseEntity<?> createReview(@RequestBody ReviewRequest request) {
-        try {
-            return ResponseEntity.ok(reviewService.createReview(request));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        return ResponseEntity.ok(reviewService.createReview(request));
     }
 
     // API: Lấy danh sách đánh giá của Bác sĩ (Công khai)

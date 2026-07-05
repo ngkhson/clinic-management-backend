@@ -4,6 +4,8 @@ import com.clinic.booking.dto.auth.ChangePasswordRequest;
 import com.clinic.booking.dto.user.UserProfileRequest;
 import com.clinic.booking.dto.user.UserProfileResponse;
 import com.clinic.booking.entity.User;
+import com.clinic.booking.exception.AppException;
+import com.clinic.booking.exception.ErrorCode;
 import com.clinic.booking.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,7 +22,7 @@ public class UserService {
     public UserProfileResponse getMyProfile() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng!"));
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         return UserProfileResponse.builder()
                 .fullName(user.getFullName())
@@ -35,7 +37,7 @@ public class UserService {
     public UserProfileResponse updateMyProfile(UserProfileRequest dto) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng!"));
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         user.setFullName(dto.getFullName());
         user.setPhone(dto.getPhone());
@@ -50,11 +52,11 @@ public class UserService {
     // THÊM: Xử lý đổi mật khẩu cho người đang đăng nhập
     public void changePassword(ChangePasswordRequest request) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByEmail(email).orElseThrow();
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         // Kiểm tra mật khẩu cũ xem có khớp với DB không
         if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
-            throw new RuntimeException("Mật khẩu cũ không chính xác!");
+            throw new AppException(ErrorCode.INVALID_PASSWORD);
         }
 
         // Mã hóa và cập nhật mật khẩu mới

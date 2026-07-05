@@ -1,5 +1,8 @@
 package com.clinic.booking.service;
 
+import com.clinic.booking.exception.AppException;
+import com.clinic.booking.exception.ErrorCode;
+
 import com.clinic.booking.dto.invoice.InvoiceResponse;
 import com.clinic.booking.entity.*;
 import com.clinic.booking.repository.*;
@@ -27,7 +30,7 @@ public class InvoiceService {
         }
 
         Appointment appointment = appointmentRepository.findById(appointmentId)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy Lịch hẹn!"));
+                .orElseThrow(() -> new AppException(ErrorCode.APPOINTMENT_NOT_FOUND));
 
         // 2. Tính Tiền Khám (Lấy từ bảng Doctor)
         double consultationFee = appointment.getDoctor().getExaminationPrice() != null
@@ -76,10 +79,10 @@ public class InvoiceService {
     @Transactional
     public InvoiceResponse payInvoice(Long invoiceId, String paymentMethod) {
         Invoice invoice = invoiceRepository.findById(invoiceId)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy Hóa đơn!"));
+                .orElseThrow(() -> new AppException(ErrorCode.INVALID_ACTION));
 
         if ("PAID".equals(invoice.getStatus())) {
-            throw new RuntimeException("Hóa đơn này đã được thanh toán rồi!");
+            throw new AppException(ErrorCode.INVALID_ACTION);
         }
 
         invoice.setStatus("PAID");

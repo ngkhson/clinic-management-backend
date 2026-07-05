@@ -1,5 +1,8 @@
 package com.clinic.booking.service;
 
+import com.clinic.booking.exception.AppException;
+import com.clinic.booking.exception.ErrorCode;
+
 import com.clinic.booking.dto.user.UserResponse;
 import com.clinic.booking.entity.User;
 import com.clinic.booking.repository.UserRepository;
@@ -24,7 +27,7 @@ public class AdminPatientService {
 
     public void togglePatientStatus(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy bệnh nhân"));
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         if ("ACTIVE".equals(user.getStatus())) {
             user.setStatus("LOCKED");

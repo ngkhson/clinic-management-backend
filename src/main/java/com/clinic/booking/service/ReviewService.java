@@ -1,5 +1,8 @@
 package com.clinic.booking.service;
 
+import com.clinic.booking.exception.AppException;
+import com.clinic.booking.exception.ErrorCode;
+
 import com.clinic.booking.dto.review.ReviewRequest;
 import com.clinic.booking.dto.review.ReviewResponse;
 import com.clinic.booking.entity.Appointment;
@@ -22,11 +25,11 @@ public class ReviewService {
     public ReviewResponse createReview(ReviewRequest request) {
         // Kiểm tra xem đã đánh giá chưa
         if (reviewRepository.findByAppointmentId(request.getAppointmentId()).isPresent()) {
-            throw new RuntimeException("Bạn đã gửi đánh giá cho ca khám này rồi!");
+            throw new AppException(ErrorCode.REVIEW_ALREADY_EXISTS);
         }
 
         Appointment appointment = appointmentRepository.findById(request.getAppointmentId())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy lịch hẹn!"));
+                .orElseThrow(() -> new AppException(ErrorCode.APPOINTMENT_NOT_FOUND));
 
         Review review = Review.builder()
                 .appointment(appointment)

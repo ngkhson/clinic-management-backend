@@ -35,20 +35,12 @@ public class AdminDoctorController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateDoctor(@PathVariable Long id, @RequestBody DoctorCreationRequest request) {
-        try {
-            return ResponseEntity.ok(adminDoctorService.updateDoctor(id, request));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        return ResponseEntity.ok(adminDoctorService.updateDoctor(id, request));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteDoctor(@PathVariable Long id) {
-        try {
-            adminDoctorService.deleteDoctor(id);
-            return ResponseEntity.ok("Xóa thành công!");
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        adminDoctorService.deleteDoctor(id);
+        return ResponseEntity.ok("Xóa thành công!");
     }
 }

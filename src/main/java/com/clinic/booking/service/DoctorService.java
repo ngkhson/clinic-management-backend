@@ -1,5 +1,8 @@
 package com.clinic.booking.service;
 
+import com.clinic.booking.exception.AppException;
+import com.clinic.booking.exception.ErrorCode;
+
 import com.clinic.booking.dto.doctor.DoctorResponse;
 import com.clinic.booking.entity.Doctor;
 import com.clinic.booking.repository.DoctorRepository;
@@ -29,7 +32,7 @@ public class DoctorService {
     // Lấy chi tiết 1 bác sĩ theo ID
     public DoctorResponse getDoctorById(Long id) {
         Doctor doctor = doctorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy Bác sĩ!"));
+                .orElseThrow(() -> new AppException(ErrorCode.DOCTOR_NOT_FOUND));
         return mapToDTO(doctor);
     }
 

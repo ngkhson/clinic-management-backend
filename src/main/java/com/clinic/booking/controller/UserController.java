@@ -29,11 +29,7 @@ public class UserController {
     // THÊM: API Đổi mật khẩu
     @PutMapping("/change-password")
     public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest request) {
-        try {
-            userService.changePassword(request);
-            return ResponseEntity.ok("Đổi mật khẩu thành công!");
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        userService.changePassword(request);
+        return ResponseEntity.ok("Đổi mật khẩu thành công!");
     }
 }

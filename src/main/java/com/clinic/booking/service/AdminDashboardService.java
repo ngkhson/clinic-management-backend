@@ -1,5 +1,8 @@
 package com.clinic.booking.service;
 
+import com.clinic.booking.exception.AppException;
+import com.clinic.booking.exception.ErrorCode;
+
 import com.clinic.booking.dto.appointment.AppointmentResponse;
 import com.clinic.booking.entity.Appointment;
 import com.clinic.booking.repository.AppointmentRepository;
@@ -55,7 +58,7 @@ public class AdminDashboardService {
     // THÊM HÀM NÀY ĐỂ ADMIN CẬP NHẬT TRẠNG THÁI LỊCH HẸN
     public void updateAppointmentStatus(Long appointmentId, String status) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy Lịch hẹn!"));
+                .orElseThrow(() -> new AppException(ErrorCode.APPOINTMENT_NOT_FOUND));
         appointment.setStatus(status);
         appointmentRepository.save(appointment);
     }

@@ -1,5 +1,8 @@
 package com.clinic.booking.controller;
 
+import com.clinic.booking.exception.AppException;
+import com.clinic.booking.exception.ErrorCode;
+
 import com.clinic.booking.entity.Appointment;
 import com.clinic.booking.repository.AppointmentRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +33,7 @@ public class PaymentController {
                     Long appointmentId = Long.parseLong(parts[1]);
 
                     Appointment appointment = appointmentRepository.findById(appointmentId)
-                            .orElseThrow(() -> new RuntimeException("Không tìm thấy Lịch hẹn!"));
+                            .orElseThrow(() -> new AppException(ErrorCode.APPOINTMENT_NOT_FOUND));
 
                     // Khách đã trả tiền online -> Cập nhật trạng thái Lịch hẹn thành Đã Xác Nhận
                     appointment.setStatus("CONFIRMED");

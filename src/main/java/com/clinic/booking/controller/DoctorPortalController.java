@@ -44,10 +44,6 @@ public class DoctorPortalController {
     // API Lưu Bệnh Án (Xử lý cả Lưu nháp và Hoàn tất dựa vào cờ isDraft)
     @PostMapping("/medical-records")
     public ResponseEntity<?> saveMedicalRecord(@RequestBody MedicalRecordRequest request) {
-        try {
-            return ResponseEntity.ok(doctorPortalService.saveMedicalRecord(request));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        return ResponseEntity.ok(doctorPortalService.saveMedicalRecord(request));
     }
 }

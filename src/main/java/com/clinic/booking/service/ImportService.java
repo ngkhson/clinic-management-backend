@@ -1,5 +1,8 @@
 package com.clinic.booking.service;
 
+import com.clinic.booking.exception.AppException;
+import com.clinic.booking.exception.ErrorCode;
+
 import com.clinic.booking.dto.pharmacy.ImportMedicineRequest;
 import com.clinic.booking.entity.ImportInvoice;
 import com.clinic.booking.entity.ImportInvoiceDetail;
@@ -27,7 +30,7 @@ public class ImportService {
     public void createImportInvoice(ImportMedicineRequest request) {
         // 1. Kiểm tra nhà cung cấp
         Supplier supplier = supplierRepository.findById(request.getSupplierId())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy Nhà cung cấp!"));
+                .orElseThrow(() -> new AppException(ErrorCode.INVALID_ACTION));
 
         // 2. Tạo Phiếu nhập
         ImportInvoice invoice = ImportInvoice.builder()

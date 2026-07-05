@@ -1,5 +1,8 @@
 package com.clinic.booking.service;
 
+import com.clinic.booking.exception.AppException;
+import com.clinic.booking.exception.ErrorCode;
+
 import com.clinic.booking.dto.appointment.AppointmentRequest;
 import com.clinic.booking.dto.appointment.AppointmentResponse;
 import com.clinic.booking.entity.Appointment;
@@ -31,16 +34,16 @@ public class AppointmentService {
     public AppointmentResponse createAppointment(AppointmentRequest request, String ipAddress) {
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         User patient = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng!"));
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         Doctor doctor = doctorRepository.findById(request.getDoctorId())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy Bác sĩ!"));
+                .orElseThrow(() -> new AppException(ErrorCode.DOCTOR_NOT_FOUND));
 
         Schedule schedule = scheduleRepository.findById(request.getScheduleId())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy Lịch khám!"));
+                .orElseThrow(() -> new AppException(ErrorCode.APPOINTMENT_NOT_FOUND));
 
         if (schedule.getCurrentPatients() >= schedule.getMaxPatients()) {
-            throw new RuntimeException("Xin lỗi, ca khám này đã nhận đủ số lượng bệnh nhân!");
+            throw new AppException(ErrorCode.INVALID_ACTION);
         }
 
         Appointment appointment = Appointment.builder()

@@ -1,5 +1,8 @@
 package com.clinic.booking.service;
 
+import com.clinic.booking.exception.AppException;
+import com.clinic.booking.exception.ErrorCode;
+
 import com.clinic.booking.entity.Supplier;
 import com.clinic.booking.repository.SupplierRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +33,7 @@ public class SupplierService {
     @Transactional
     public Supplier updateSupplier(Long id, Supplier details) {
         Supplier supplier = supplierRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy nhà cung cấp!"));
+                .orElseThrow(() -> new AppException(ErrorCode.INVALID_ACTION));
 
         supplier.setName(details.getName());
         supplier.setContactPerson(details.getContactPerson());
@@ -46,7 +49,7 @@ public class SupplierService {
     @Transactional
     public void toggleStatus(Long id) {
         Supplier supplier = supplierRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy nhà cung cấp!"));
+                .orElseThrow(() -> new AppException(ErrorCode.INVALID_ACTION));
 
         Boolean currentStatus = supplier.getIsActive();
         if (currentStatus == null) currentStatus = true;

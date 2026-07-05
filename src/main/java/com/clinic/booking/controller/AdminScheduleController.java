@@ -1,5 +1,8 @@
 package com.clinic.booking.controller;
 
+import com.clinic.booking.exception.AppException;
+import com.clinic.booking.exception.ErrorCode;
+
 import com.clinic.booking.dto.schedule.ScheduleGenerateRequest;
 import com.clinic.booking.entity.Doctor;
 import com.clinic.booking.entity.Schedule;
@@ -23,7 +26,7 @@ public class AdminScheduleController {
     @Transactional
     public ResponseEntity<String> generateSchedules(@RequestBody ScheduleGenerateRequest request) {
         Doctor doctor = doctorRepository.findById(request.getDoctorId())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy bác sĩ!"));
+                .orElseThrow(() -> new AppException(ErrorCode.DOCTOR_NOT_FOUND));
 
         int count = 0;
         for (String timeSlot : request.getTimeSlots()) {

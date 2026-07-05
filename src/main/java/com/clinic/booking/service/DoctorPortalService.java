@@ -1,5 +1,8 @@
 package com.clinic.booking.service;
 
+import com.clinic.booking.exception.AppException;
+import com.clinic.booking.exception.ErrorCode;
+
 import com.clinic.booking.dto.appointment.AppointmentResponse;
 import com.clinic.booking.dto.record.MedicalRecordRequest;
 import com.clinic.booking.dto.record.MedicalRecordResponse;
@@ -29,8 +32,8 @@ public class DoctorPortalService {
 
     private Doctor getCurrentDoctor() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Không tìm thấy User!"));
-        return doctorRepository.findByUserId(user.getId()).orElseThrow(() -> new RuntimeException("Tài khoản này không phải là Bác sĩ!"));
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        return doctorRepository.findByUserId(user.getId()).orElseThrow(() -> new AppException(ErrorCode.UNAUTHORIZED));
     }
 
     public List<AppointmentResponse> getDoctorAppointments(String status) {
@@ -63,7 +66,7 @@ public class DoctorPortalService {
         Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow();
 
         if (!appointment.getDoctor().getId().equals(currentDoctor.getId())) {
-            throw new RuntimeException("Bạn không có quyền cập nhật lịch hẹn này!");
+            throw new AppException(ErrorCode.UNAUTHORIZED);
         }
 
         appointment.setStatus(newStatus.toUpperCase());
@@ -82,7 +85,7 @@ public class DoctorPortalService {
         Appointment appointment = appointmentRepository.findById(request.getAppointmentId()).orElseThrow();
 
         if (!appointment.getDoctor().getId().equals(currentDoctor.getId())) {
-            throw new RuntimeException("Bạn không có quyền cập nhật bệnh án này!");
+            throw new AppException(ErrorCode.UNAUTHORIZED);
         }
 
         MedicalRecord record = medicalRecordRepository.findByAppointmentId(appointment.getId())
@@ -133,7 +136,7 @@ public class DoctorPortalService {
                 if (!request.isDraft() && !"COMPLETED".equals(appointment.getStatus())) {
                     int currentQty = medicine.getCurrentQuantity() != null ? medicine.getCurrentQuantity() : 0;
                     if (currentQty < dto.getQuantity()) {
-                        throw new RuntimeException("Thuốc " + medicine.getName() + " không đủ tồn kho!");
+                        throw new AppException(ErrorCode.OUT_OF_STOCK);
                     }
                     medicine.setCurrentQuantity(currentQty - dto.getQuantity());
                     medicineRepository.save(medicine);
