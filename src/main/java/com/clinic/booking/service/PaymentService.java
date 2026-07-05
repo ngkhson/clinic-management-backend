@@ -10,13 +10,18 @@ import java.util.*;
 
 @Service
 public class PaymentService {
+    private final VNPAYConfig vnpayConfig;
+
+    public PaymentService(VNPAYConfig vnpayConfig) {
+        this.vnpayConfig = vnpayConfig;
+    }
 
     public String createVnPayUrl(Long appointmentId, double amount, String ipAddress) {
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
         String vnp_TxnRef = VNPAYConfig.getRandomNumber(8) + "-" + appointmentId; // Nối mã random với ID lịch hẹn
         String vnp_IpAddr = ipAddress;
-        String vnp_TmnCode = VNPAYConfig.vnp_TmnCode;
+        String vnp_TmnCode = vnpayConfig.getVnp_TmnCode();
 
         // VNPAY tính tiền bằng VNĐ nhân 100 (VD: 100,000 VNĐ -> 10000000)
         long amountInVND = (long) (amount * 100);
@@ -31,7 +36,7 @@ public class PaymentService {
         vnp_Params.put("vnp_OrderInfo", "Thanh toan phi dat kham cho lich hen: " + appointmentId);
         vnp_Params.put("vnp_OrderType", "other");
         vnp_Params.put("vnp_Locale", "vn");
-        vnp_Params.put("vnp_ReturnUrl", VNPAYConfig.vnp_Returnurl);
+        vnp_Params.put("vnp_ReturnUrl", vnpayConfig.getVnp_Returnurl());
         vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
 
         Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
@@ -73,9 +78,9 @@ public class PaymentService {
         }
 
         String queryUrl = query.toString();
-        String vnp_SecureHash = VNPAYConfig.hmacSHA512(VNPAYConfig.vnp_HashSecret, hashData.toString());
+        String vnp_SecureHash = VNPAYConfig.hmacSHA512(vnpayConfig.getVnp_HashSecret(), hashData.toString());
         queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
 
-        return VNPAYConfig.vnp_PayUrl + "?" + queryUrl;
+        return vnpayConfig.getVnp_PayUrl() + "?" + queryUrl;
     }
 }

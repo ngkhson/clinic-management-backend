@@ -5,16 +5,45 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.Random;
+import org.springframework.beans.factory.annotation.Value;
 
 @Configuration
 public class VNPAYConfig {
 
-    // --- THÔNG SỐ SANDBOX TỪ VNPAY (Bạn có thể thay bằng key thật sau này) ---
-    public static final String vnp_PayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-    public static final String vnp_Returnurl = "http://localhost:5173/payment-result"; // Trang React sẽ hứng kết quả
-    public static final String vnp_TmnCode = "YBKGKPEP"; // Mã Website (Dummy)
-    public static final String vnp_HashSecret = "UXP9YCBV1PH80WTBGSKHXZ2EP9DONMXC"; // Chuỗi bí mật (Dummy)
-    public static final String vnp_apiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";
+    @Value("${vnpay.payUrl}")
+    private String vnp_PayUrl;
+
+    @Value("${vnpay.returnUrl}")
+    private String vnp_Returnurl;
+
+    @Value("${vnpay.tmnCode}")
+    private String vnp_TmnCode;
+
+    @Value("${vnpay.hashSecret}")
+    private String vnp_HashSecret;
+
+    @Value("${vnpay.apiUrl}")
+    private String vnp_apiUrl;
+
+    public String getVnp_PayUrl() {
+        return vnp_PayUrl;
+    }
+
+    public String getVnp_Returnurl() {
+        return vnp_Returnurl;
+    }
+
+    public String getVnp_TmnCode() {
+        return vnp_TmnCode;
+    }
+
+    public String getVnp_HashSecret() {
+        return vnp_HashSecret;
+    }
+
+    public String getVnp_apiUrl() {
+        return vnp_apiUrl;
+    }
 
     // Hàm tạo chuỗi hash bảo mật (HMAC SHA512) theo chuẩn của VNPAY
     public static String hmacSHA512(final String key, final String data) {
