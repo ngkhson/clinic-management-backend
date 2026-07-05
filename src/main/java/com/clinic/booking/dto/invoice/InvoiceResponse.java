@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class InvoiceDTO {
+public class InvoiceResponse {
     private Long id;
     private Long appointmentId;
     private String patientName;

@@ -1,6 +1,6 @@
 package com.clinic.booking.controller;
 
-import com.clinic.booking.dto.pharmacy.PharmacyReportDTO;
+import com.clinic.booking.dto.pharmacy.PharmacyReportResponse;
 import com.clinic.booking.service.PharmacyExtraService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,7 @@ public class PharmacyExtraController {
 
     // Lấy số liệu báo cáo
     @GetMapping("/report")
-    public ResponseEntity<PharmacyReportDTO> getReport() {
+    public ResponseEntity<PharmacyReportResponse> getReport() {
         return ResponseEntity.ok(pharmacyExtraService.getReportSummary());
     }
 

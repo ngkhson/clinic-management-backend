@@ -1,7 +1,7 @@
 package com.clinic.booking.controller;
 
 import com.clinic.booking.dto.auth.ChangePasswordRequest;
-import com.clinic.booking.dto.user.UserProfileDTO;
+import com.clinic.booking.dto.user.UserProfileResponse;
 import com.clinic.booking.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,12 +16,12 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/profile")
-    public ResponseEntity<UserProfileDTO> getProfile() {
+    public ResponseEntity<UserProfileResponse> getProfile() {
         return ResponseEntity.ok(userService.getMyProfile());
     }
 
     @PutMapping("/profile")
-    public ResponseEntity<UserProfileDTO> updateProfile(@RequestBody UserProfileDTO request) {
+    public ResponseEntity<UserProfileResponse> updateProfile(@RequestBody UserProfileResponse request) {
         return ResponseEntity.ok(userService.updateMyProfile(request));
     }
 

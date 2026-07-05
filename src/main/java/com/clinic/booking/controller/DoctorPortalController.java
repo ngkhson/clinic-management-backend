@@ -1,7 +1,7 @@
 package com.clinic.booking.controller;
 
 import com.clinic.booking.dto.appointment.AppointmentResponse;
-import com.clinic.booking.dto.record.MedicalRecordDTO;
+import com.clinic.booking.dto.record.MedicalRecordResponse;
 import com.clinic.booking.service.DoctorPortalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -32,8 +32,8 @@ public class DoctorPortalController {
 
     // THÊM: API Lấy bệnh án nháp nếu Bác sĩ mở lại ca khám
     @GetMapping("/medical-records/appointment/{appointmentId}")
-    public ResponseEntity<MedicalRecordDTO> getDraftRecord(@PathVariable Long appointmentId) {
-        MedicalRecordDTO record = doctorPortalService.getDraftRecord(appointmentId);
+    public ResponseEntity<MedicalRecordResponse> getDraftRecord(@PathVariable Long appointmentId) {
+        MedicalRecordResponse record = doctorPortalService.getDraftRecord(appointmentId);
         if (record == null) {
             return ResponseEntity.noContent().build();
         }
@@ -42,7 +42,7 @@ public class DoctorPortalController {
 
     // API Lưu Bệnh Án (Xử lý cả Lưu nháp và Hoàn tất dựa vào cờ isDraft)
     @PostMapping("/medical-records")
-    public ResponseEntity<?> saveMedicalRecord(@RequestBody MedicalRecordDTO request) {
+    public ResponseEntity<?> saveMedicalRecord(@RequestBody MedicalRecordResponse request) {
         try {
             return ResponseEntity.ok(doctorPortalService.saveMedicalRecord(request));
         } catch (RuntimeException e) {

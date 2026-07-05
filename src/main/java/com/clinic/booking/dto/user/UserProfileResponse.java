@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserProfileDTO {
+public class UserProfileResponse {
     private String fullName;
     private String email; // Sẽ disable ở Front-end không cho sửa
     private String phone;

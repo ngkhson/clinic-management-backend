@@ -1,7 +1,7 @@
 package com.clinic.booking.controller;
 
 import com.clinic.booking.dto.appointment.AppointmentResponse;
-import com.clinic.booking.dto.record.MedicalRecordDTO;
+import com.clinic.booking.dto.record.MedicalRecordResponse;
 import com.clinic.booking.service.PatientPortalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +23,7 @@ public class PatientPortalController {
     }
 
     @GetMapping("/appointments/{id}/record")
-    public ResponseEntity<MedicalRecordDTO> getMedicalRecord(@PathVariable Long id) {
+    public ResponseEntity<MedicalRecordResponse> getMedicalRecord(@PathVariable Long id) {
         return ResponseEntity.ok(patientPortalService.getMedicalRecord(id));
     }
 }

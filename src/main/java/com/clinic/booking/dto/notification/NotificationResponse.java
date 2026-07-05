@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class NotificationDTO {
+public class NotificationResponse {
     private Long id;
     private String message;
     private boolean isRead;

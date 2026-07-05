@@ -1,6 +1,6 @@
 package com.clinic.booking.controller;
 
-import com.clinic.booking.dto.pharmacy.RetailRequestDTO;
+import com.clinic.booking.dto.pharmacy.RetailMedicineRequest;
 import com.clinic.booking.service.RetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +15,7 @@ public class RetailController {
     private final RetailService retailService;
 
     @PostMapping
-    public ResponseEntity<?> createRetailInvoice(@RequestBody RetailRequestDTO request) {
+    public ResponseEntity<?> createRetailInvoice(@RequestBody RetailMedicineRequest request) {
         try {
             retailService.createRetailInvoice(request);
             return ResponseEntity.ok("Thanh toán thành công!");

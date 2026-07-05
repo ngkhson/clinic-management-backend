@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ScheduleDTO {
+public class ScheduleResponse {
     private Long id;
     private Long doctorId;
     private LocalDate workDate;

@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ChatHistoryDTO {
+public class ChatHistoryResponse {
     private String senderEmail;
     private String receiverEmail;
     private String content;

@@ -1,6 +1,6 @@
 package com.clinic.booking.service;
 
-import com.clinic.booking.dto.pharmacy.PharmacyReportDTO;
+import com.clinic.booking.dto.pharmacy.PharmacyReportResponse;
 import com.clinic.booking.entity.ImportInvoice;
 import com.clinic.booking.entity.PharmacyNote;
 import com.clinic.booking.entity.RetailInvoice;
@@ -25,7 +25,7 @@ public class PharmacyExtraService {
     private final PharmacyNoteRepository pharmacyNoteRepository;
 
     // --- LOGIC BÁO CÁO THỐNG KÊ ---
-    public PharmacyReportDTO getReportSummary() {
+    public PharmacyReportResponse getReportSummary() {
         long totalMedicineTypes = medicineRepository.count();
         long lowStockCount = medicineRepository.findLowStockMedicines().size();
 
@@ -37,7 +37,7 @@ public class PharmacyExtraService {
                 .mapToDouble(RetailInvoice::getTotalAmount)
                 .sum();
 
-        return PharmacyReportDTO.builder()
+        return PharmacyReportResponse.builder()
                 .totalMedicineTypes(totalMedicineTypes)
                 .lowStockCount(lowStockCount)
                 .totalImportCost(totalImportCost)

@@ -1,6 +1,6 @@
 package com.clinic.booking.service;
 
-import com.clinic.booking.dto.notification.NotificationDTO;
+import com.clinic.booking.dto.notification.NotificationResponse;
 import com.clinic.booking.entity.Notification;
 import com.clinic.booking.entity.User;
 import com.clinic.booking.repository.NotificationRepository;
@@ -38,7 +38,7 @@ public class NotificationService {
         messagingTemplate.convertAndSend("/queue/notifications/" + user.getEmail(), mapToDTO(notif));
     }
 
-    public List<NotificationDTO> getMyNotifications() {
+    public List<NotificationResponse> getMyNotifications() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(email).orElseThrow();
         return notificationRepository.findByUserIdOrderByCreatedAtDesc(user.getId())
@@ -61,8 +61,8 @@ public class NotificationService {
         notificationRepository.saveAll(notifs);
     }
 
-    private NotificationDTO mapToDTO(Notification n) {
-        return NotificationDTO.builder()
+    private NotificationResponse mapToDTO(Notification n) {
+        return NotificationResponse.builder()
                 .id(n.getId())
                 .message(n.getMessage())
                 .isRead(n.isRead())

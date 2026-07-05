@@ -1,6 +1,6 @@
 package com.clinic.booking.controller;
 
-import com.clinic.booking.dto.schedule.ScheduleDTO;
+import com.clinic.booking.dto.schedule.ScheduleResponse;
 import com.clinic.booking.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -20,7 +20,7 @@ public class ScheduleController {
 
     // API: GET http://localhost:8080/api/schedules/doctor/1?date=2026-06-18
     @GetMapping("/doctor/{doctorId}")
-    public ResponseEntity<List<ScheduleDTO>> getDoctorSchedules(
+    public ResponseEntity<List<ScheduleResponse>> getDoctorSchedules(
             @PathVariable Long doctorId,
             @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
 

@@ -4,7 +4,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class RetailRequestDTO {
+public class RetailMedicineRequest {
     private String customerName;
     private List<RetailDetailDTO> details;
 

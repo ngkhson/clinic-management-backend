@@ -1,6 +1,6 @@
 package com.clinic.booking.service;
 
-import com.clinic.booking.dto.doctor.DoctorDTO;
+import com.clinic.booking.dto.doctor.DoctorResponse;
 import com.clinic.booking.entity.Doctor;
 import com.clinic.booking.repository.DoctorRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,26 +16,26 @@ public class DoctorService {
     private final DoctorRepository doctorRepository;
 
     // THÊM HÀM NÀY: Lấy danh sách tất cả bác sĩ
-    public List<DoctorDTO> getAllDoctors() {
+    public List<DoctorResponse> getAllDoctors() {
         return doctorRepository.findAll().stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 
     // Lấy danh sách bác sĩ thuộc một chuyên khoa
-    public List<DoctorDTO> getDoctorsBySpecialtyId(Long specialtyId) {
+    public List<DoctorResponse> getDoctorsBySpecialtyId(Long specialtyId) {
         List<Doctor> doctors = doctorRepository.findBySpecialtyId(specialtyId);
         return doctors.stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 
     // Lấy chi tiết 1 bác sĩ theo ID
-    public DoctorDTO getDoctorById(Long id) {
+    public DoctorResponse getDoctorById(Long id) {
         Doctor doctor = doctorRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy Bác sĩ!"));
         return mapToDTO(doctor);
     }
 
     // Hàm phụ trợ: Chuyển đổi từ Entity sang DTO
-    private DoctorDTO mapToDTO(Doctor doctor) {
-        return DoctorDTO.builder()
+    private DoctorResponse mapToDTO(Doctor doctor) {
+        return DoctorResponse.builder()
                 .id(doctor.getId())
                 .userId(doctor.getUser().getId())
                 .fullName(doctor.getUser().getFullName())

@@ -1,6 +1,6 @@
 package com.clinic.booking.controller;
 
-import com.clinic.booking.dto.invoice.InvoiceDTO;
+import com.clinic.booking.dto.invoice.InvoiceResponse;
 import com.clinic.booking.service.InvoiceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,13 +18,13 @@ public class InvoiceController {
 
     // Lấy danh sách tất cả hóa đơn (Cho thu ngân)
     @GetMapping
-    public ResponseEntity<List<InvoiceDTO>> getAllInvoices() {
+    public ResponseEntity<List<InvoiceResponse>> getAllInvoices() {
         return ResponseEntity.ok(invoiceService.getAllInvoices());
     }
 
     // Tự động tính toán và tạo Hóa đơn từ ID Lịch hẹn
     @PostMapping("/generate/{appointmentId}")
-    public ResponseEntity<InvoiceDTO> generateInvoice(@PathVariable Long appointmentId) {
+    public ResponseEntity<InvoiceResponse> generateInvoice(@PathVariable Long appointmentId) {
         return ResponseEntity.ok(invoiceService.generateInvoice(appointmentId));
     }
 

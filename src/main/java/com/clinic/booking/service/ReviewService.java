@@ -1,6 +1,6 @@
 package com.clinic.booking.service;
 
-import com.clinic.booking.dto.review.ReviewDTO;
+import com.clinic.booking.dto.review.ReviewResponse;
 import com.clinic.booking.entity.Appointment;
 import com.clinic.booking.entity.Review;
 import com.clinic.booking.repository.AppointmentRepository;
@@ -18,7 +18,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final AppointmentRepository appointmentRepository;
 
-    public ReviewDTO createReview(ReviewDTO request) {
+    public ReviewResponse createReview(ReviewResponse request) {
         // Kiểm tra xem đã đánh giá chưa
         if (reviewRepository.findByAppointmentId(request.getAppointmentId()).isPresent()) {
             throw new RuntimeException("Bạn đã gửi đánh giá cho ca khám này rồi!");
@@ -39,13 +39,13 @@ public class ReviewService {
         return mapToDTO(review);
     }
 
-    public List<ReviewDTO> getDoctorReviews(Long doctorId) {
+    public List<ReviewResponse> getDoctorReviews(Long doctorId) {
         return reviewRepository.findByDoctorIdOrderByCreatedAtDesc(doctorId)
                 .stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 
-    private ReviewDTO mapToDTO(Review review) {
-        return ReviewDTO.builder()
+    private ReviewResponse mapToDTO(Review review) {
+        return ReviewResponse.builder()
                 .id(review.getId())
                 .appointmentId(review.getAppointment().getId())
                 .doctorId(review.getDoctor().getId())

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor // QUAN TRỌNG: Bắt buộc phải có để Spring Boot parse được JSON
 @AllArgsConstructor // Cần đi kèm khi đã dùng @NoArgsConstructor cùng với @Builder
-public class ReviewDTO {
+public class ReviewResponse {
     private Long id;
     private Long appointmentId;
     private Long doctorId;

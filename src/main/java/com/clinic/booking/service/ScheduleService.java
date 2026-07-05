@@ -1,6 +1,6 @@
 package com.clinic.booking.service;
 
-import com.clinic.booking.dto.schedule.ScheduleDTO;
+import com.clinic.booking.dto.schedule.ScheduleResponse;
 import com.clinic.booking.entity.Schedule;
 import com.clinic.booking.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,10 +17,10 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
 
     // Lấy danh sách khung giờ của bác sĩ trong 1 ngày cụ thể
-    public List<ScheduleDTO> getSchedulesByDoctorAndDate(Long doctorId, LocalDate workDate) {
+    public List<ScheduleResponse> getSchedulesByDoctorAndDate(Long doctorId, LocalDate workDate) {
         List<Schedule> schedules = scheduleRepository.findByDoctorIdAndWorkDate(doctorId, workDate);
 
-        return schedules.stream().map(schedule -> ScheduleDTO.builder()
+        return schedules.stream().map(schedule -> ScheduleResponse.builder()
                 .id(schedule.getId())
                 .doctorId(schedule.getDoctor().getId())
                 .workDate(schedule.getWorkDate())

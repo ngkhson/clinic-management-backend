@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class PharmacyReportDTO {
+public class PharmacyReportResponse {
     private long totalMedicineTypes;  // Tổng số loại thuốc trong kho
     private long lowStockCount;       // Số lượng thuốc sắp hết
     private double totalImportCost;   // Tổng chi phí nhập kho

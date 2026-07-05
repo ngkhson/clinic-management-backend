@@ -1,6 +1,6 @@
 package com.clinic.booking.service;
 
-import com.clinic.booking.dto.specialty.SpecialtyDTO;
+import com.clinic.booking.dto.specialty.SpecialtyResponse;
 import com.clinic.booking.entity.Specialty;
 import com.clinic.booking.repository.SpecialtyRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +16,8 @@ public class SpecialtyService {
     private final SpecialtyRepository specialtyRepository;
 
     // Hàm phụ trợ map Entity -> DTO
-    private SpecialtyDTO mapToDTO(Specialty specialty) {
-        return SpecialtyDTO.builder()
+    private SpecialtyResponse mapToDTO(Specialty specialty) {
+        return SpecialtyResponse.builder()
                 .id(specialty.getId())
                 .name(specialty.getName())
                 .description(specialty.getDescription())
@@ -26,7 +26,7 @@ public class SpecialtyService {
     }
 
     // Lấy tất cả (Dùng cho cả public và admin)
-    public List<SpecialtyDTO> getAllSpecialties() {
+    public List<SpecialtyResponse> getAllSpecialties() {
         return specialtyRepository.findAll()
                 .stream()
                 .map(this::mapToDTO)
@@ -34,7 +34,7 @@ public class SpecialtyService {
     }
 
     // THÊM CHUYÊN KHOA
-    public SpecialtyDTO createSpecialty(SpecialtyDTO dto) {
+    public SpecialtyResponse createSpecialty(SpecialtyResponse dto) {
         Specialty specialty = Specialty.builder()
                 .name(dto.getName())
                 .description(dto.getDescription())
@@ -45,7 +45,7 @@ public class SpecialtyService {
     }
 
     // CẬP NHẬT CHUYÊN KHOA
-    public SpecialtyDTO updateSpecialty(Long id, SpecialtyDTO dto) {
+    public SpecialtyResponse updateSpecialty(Long id, SpecialtyResponse dto) {
         Specialty specialty = specialtyRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy chuyên khoa!"));
 

@@ -1,6 +1,6 @@
 package com.clinic.booking.service;
 
-import com.clinic.booking.dto.invoice.InvoiceDTO;
+import com.clinic.booking.dto.invoice.InvoiceResponse;
 import com.clinic.booking.entity.*;
 import com.clinic.booking.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class InvoiceService {
     private final MedicalRecordRepository medicalRecordRepository;
 
     @Transactional
-    public InvoiceDTO generateInvoice(Long appointmentId) {
+    public InvoiceResponse generateInvoice(Long appointmentId) {
         // 1. Kiểm tra xem ca khám này đã tạo hóa đơn chưa. Nếu có rồi thì trả về luôn, không tính lại.
         if (invoiceRepository.findByAppointmentId(appointmentId).isPresent()) {
             return mapToDTO(invoiceRepository.findByAppointmentId(appointmentId).get());
@@ -74,7 +74,7 @@ public class InvoiceService {
     }
 
     @Transactional
-    public InvoiceDTO payInvoice(Long invoiceId, String paymentMethod) {
+    public InvoiceResponse payInvoice(Long invoiceId, String paymentMethod) {
         Invoice invoice = invoiceRepository.findById(invoiceId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy Hóa đơn!"));
 
@@ -90,13 +90,13 @@ public class InvoiceService {
         return mapToDTO(invoice);
     }
 
-    public List<InvoiceDTO> getAllInvoices() {
+    public List<InvoiceResponse> getAllInvoices() {
         return invoiceRepository.findAllByOrderByCreatedAtDesc()
                 .stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 
-    private InvoiceDTO mapToDTO(Invoice invoice) {
-        return InvoiceDTO.builder()
+    private InvoiceResponse mapToDTO(Invoice invoice) {
+        return InvoiceResponse.builder()
                 .id(invoice.getId())
                 .appointmentId(invoice.getAppointment().getId())
                 .patientName(invoice.getAppointment().getPatient().getFullName())

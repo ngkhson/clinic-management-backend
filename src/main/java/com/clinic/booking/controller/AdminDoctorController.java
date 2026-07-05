@@ -1,7 +1,7 @@
 package com.clinic.booking.controller;
 
-import com.clinic.booking.dto.doctor.DoctorCreationDTO;
-import com.clinic.booking.dto.doctor.DoctorDTO;
+import com.clinic.booking.dto.doctor.DoctorCreationRequest;
+import com.clinic.booking.dto.doctor.DoctorResponse;
 import com.clinic.booking.service.AdminDoctorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,14 +18,14 @@ public class AdminDoctorController {
     private final AdminDoctorService adminDoctorService;
 
     @GetMapping
-    public ResponseEntity<List<DoctorDTO>> getAllDoctors() {
+    public ResponseEntity<List<DoctorResponse>> getAllDoctors() {
         return ResponseEntity.ok(adminDoctorService.getAllDoctors());
     }
 
     @PostMapping
-    public ResponseEntity<?> createDoctor(@RequestBody DoctorCreationDTO request) {
+    public ResponseEntity<?> createDoctor(@RequestBody DoctorCreationRequest request) {
         try {
-            DoctorDTO newDoctor = adminDoctorService.createDoctor(request);
+            DoctorResponse newDoctor = adminDoctorService.createDoctor(request);
             return ResponseEntity.ok(newDoctor);
         } catch (RuntimeException e) {
             // Trả về lỗi 400 kèm câu thông báo (VD: Email đã tồn tại)
@@ -34,7 +34,7 @@ public class AdminDoctorController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateDoctor(@PathVariable Long id, @RequestBody DoctorCreationDTO request) {
+    public ResponseEntity<?> updateDoctor(@PathVariable Long id, @RequestBody DoctorCreationRequest request) {
         try {
             return ResponseEntity.ok(adminDoctorService.updateDoctor(id, request));
         } catch (RuntimeException e) {

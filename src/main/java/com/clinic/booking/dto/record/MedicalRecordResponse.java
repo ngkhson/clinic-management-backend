@@ -1,6 +1,6 @@
 package com.clinic.booking.dto.record;
 
-import com.clinic.booking.dto.pharmacy.PrescriptionDetailDTO;
+import com.clinic.booking.dto.pharmacy.PrescriptionDetailResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,7 +14,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MedicalRecordDTO {
+public class MedicalRecordResponse {
     private Long id;
     private Long appointmentId;
     private String patientName;
@@ -45,7 +45,7 @@ public class MedicalRecordDTO {
 
     private List<Long> serviceIds;
     private List<String> serviceNames;
-    private List<PrescriptionDetailDTO> prescriptionDetails;
+    private List<PrescriptionDetailResponse> prescriptionDetails;
 
     private LocalDateTime createdAt;
 }

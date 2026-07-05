@@ -1,6 +1,6 @@
 package com.clinic.booking.service;
 
-import com.clinic.booking.dto.user.UserDTO;
+import com.clinic.booking.dto.user.UserResponse;
 import com.clinic.booking.entity.User;
 import com.clinic.booking.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ public class AdminPatientService {
 
     private final UserRepository userRepository;
 
-    public List<UserDTO> getAllPatients() {
+    public List<UserResponse> getAllPatients() {
         return userRepository.findAll().stream()
                 .filter(u -> "PATIENT".equals(u.getRole()))
                 .map(this::mapToDTO)
@@ -34,8 +34,8 @@ public class AdminPatientService {
         userRepository.save(user);
     }
 
-    private UserDTO mapToDTO(User user) {
-        return UserDTO.builder()
+    private UserResponse mapToDTO(User user) {
+        return UserResponse.builder()
                 .id(user.getId())
                 .fullName(user.getFullName())
                 .email(user.getEmail())

@@ -1,6 +1,6 @@
 package com.clinic.booking.controller;
 
-import com.clinic.booking.dto.notification.NotificationDTO;
+import com.clinic.booking.dto.notification.NotificationResponse;
 import com.clinic.booking.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +17,7 @@ public class NotificationController {
     private final NotificationService notificationService;
 
     @GetMapping
-    public ResponseEntity<List<NotificationDTO>> getMyNotifications() {
+    public ResponseEntity<List<NotificationResponse>> getMyNotifications() {
         return ResponseEntity.ok(notificationService.getMyNotifications());
     }
 

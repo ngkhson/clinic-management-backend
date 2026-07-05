@@ -1,7 +1,7 @@
 package com.clinic.booking.service;
 
 import com.clinic.booking.dto.auth.ChangePasswordRequest;
-import com.clinic.booking.dto.user.UserProfileDTO;
+import com.clinic.booking.dto.user.UserProfileResponse;
 import com.clinic.booking.entity.User;
 import com.clinic.booking.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,12 +16,12 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder; // Thêm bộ mã hóa mật khẩu
 
-    public UserProfileDTO getMyProfile() {
+    public UserProfileResponse getMyProfile() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng!"));
 
-        return UserProfileDTO.builder()
+        return UserProfileResponse.builder()
                 .fullName(user.getFullName())
                 .email(user.getEmail())
                 .phone(user.getPhone())
@@ -31,7 +31,7 @@ public class UserService {
                 .build();
     }
 
-    public UserProfileDTO updateMyProfile(UserProfileDTO dto) {
+    public UserProfileResponse updateMyProfile(UserProfileResponse dto) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng!"));

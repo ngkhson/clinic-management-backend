@@ -1,6 +1,6 @@
 package com.clinic.booking.controller;
 
-import com.clinic.booking.dto.user.UserDTO;
+import com.clinic.booking.dto.user.UserResponse;
 import com.clinic.booking.service.AdminPatientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +17,7 @@ public class AdminPatientController {
     private final AdminPatientService adminPatientService;
 
     @GetMapping
-    public ResponseEntity<List<UserDTO>> getAllPatients() {
+    public ResponseEntity<List<UserResponse>> getAllPatients() {
         return ResponseEntity.ok(adminPatientService.getAllPatients());
     }
 

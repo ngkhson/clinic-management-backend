@@ -1,6 +1,6 @@
 package com.clinic.booking.controller;
 
-import com.clinic.booking.dto.specialty.SpecialtyDTO;
+import com.clinic.booking.dto.specialty.SpecialtyResponse;
 import com.clinic.booking.service.SpecialtyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,13 +16,13 @@ public class AdminSpecialtyController {
 
     // Đổi kiểu trả về thành SpecialtyDTO
     @PostMapping
-    public ResponseEntity<SpecialtyDTO> createSpecialty(@RequestBody SpecialtyDTO request) {
+    public ResponseEntity<SpecialtyResponse> createSpecialty(@RequestBody SpecialtyResponse request) {
         return ResponseEntity.ok(specialtyService.createSpecialty(request));
     }
 
     // Đổi kiểu trả về thành SpecialtyDTO
     @PutMapping("/{id}")
-    public ResponseEntity<SpecialtyDTO> updateSpecialty(@PathVariable Long id, @RequestBody SpecialtyDTO request) {
+    public ResponseEntity<SpecialtyResponse> updateSpecialty(@PathVariable Long id, @RequestBody SpecialtyResponse request) {
         return ResponseEntity.ok(specialtyService.updateSpecialty(id, request));
     }
 

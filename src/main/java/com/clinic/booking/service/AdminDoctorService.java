@@ -1,7 +1,7 @@
 package com.clinic.booking.service;
 
-import com.clinic.booking.dto.doctor.DoctorCreationDTO;
-import com.clinic.booking.dto.doctor.DoctorDTO;
+import com.clinic.booking.dto.doctor.DoctorCreationRequest;
+import com.clinic.booking.dto.doctor.DoctorResponse;
 import com.clinic.booking.entity.Doctor;
 import com.clinic.booking.entity.Specialty;
 import com.clinic.booking.entity.User;
@@ -26,13 +26,13 @@ public class AdminDoctorService {
     private final PasswordEncoder passwordEncoder;
 
     // Lấy danh sách tất cả bác sĩ cho màn hình Admin
-    public List<DoctorDTO> getAllDoctors() {
+    public List<DoctorResponse> getAllDoctors() {
         return doctorRepository.findAll().stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 
     // @Transactional đảm bảo nếu tạo Doctor bị lỗi thì User cũng sẽ bị hủy (Rollback)
     @Transactional
-    public DoctorDTO createDoctor(DoctorCreationDTO request) {
+    public DoctorResponse createDoctor(DoctorCreationRequest request) {
         // 1. Kiểm tra Email đã tồn tại chưa
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("Email này đã được sử dụng!");
@@ -65,8 +65,8 @@ public class AdminDoctorService {
         return mapToDTO(doctor);
     }
 
-    private DoctorDTO mapToDTO(Doctor doctor) {
-        return DoctorDTO.builder()
+    private DoctorResponse mapToDTO(Doctor doctor) {
+        return DoctorResponse.builder()
                 .id(doctor.getId())
                 .userId(doctor.getUser().getId())
                 .fullName(doctor.getUser().getFullName())
@@ -79,7 +79,7 @@ public class AdminDoctorService {
     }
 
     @Transactional
-    public DoctorDTO updateDoctor(Long id, DoctorCreationDTO request) {
+    public DoctorResponse updateDoctor(Long id, DoctorCreationRequest request) {
         Doctor doctor = doctorRepository.findById(id).orElseThrow(() -> new RuntimeException("Không tìm thấy bác sĩ"));
         User user = doctor.getUser();
 

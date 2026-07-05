@@ -1,7 +1,7 @@
 package com.clinic.booking.service;
 
-import com.clinic.booking.dto.chat.ChatHistoryDTO;
-import com.clinic.booking.dto.chat.ChatRoomDTO;
+import com.clinic.booking.dto.chat.ChatHistoryResponse;
+import com.clinic.booking.dto.chat.ChatRoomResponse;
 import com.clinic.booking.entity.ChatRoom;
 import com.clinic.booking.entity.Message;
 import com.clinic.booking.entity.User;
@@ -24,7 +24,7 @@ public class ChatService {
     private final UserRepository userRepository;
 
     @Transactional
-    public ChatHistoryDTO saveMessage(String senderEmail, String receiverEmail, String content) {
+    public ChatHistoryResponse saveMessage(String senderEmail, String receiverEmail, String content) {
         User sender = userRepository.findByEmail(senderEmail).orElseThrow(() -> new RuntimeException("Sender not found"));
 
         // Nếu receiver là "STAFF", người gửi chắc chắn là Bệnh nhân.
@@ -49,7 +49,7 @@ public class ChatService {
                 .build();
         message = messageRepository.save(message);
 
-        return ChatHistoryDTO.builder()
+        return ChatHistoryResponse.builder()
                 .senderEmail(senderEmail)
                 .receiverEmail(receiverEmail)
                 .content(content)
@@ -59,7 +59,7 @@ public class ChatService {
     }
 
     // ĐÃ SỬA: Bổ sung trường receiverEmail để React lọc đúng tin nhắn khi load lịch sử
-    public List<ChatHistoryDTO> getHistory(String patientEmail) {
+    public List<ChatHistoryResponse> getHistory(String patientEmail) {
         User patient = userRepository.findByEmail(patientEmail).orElseThrow();
         return chatRoomRepository.findByUserId(patient.getId())
                 .map(room -> messageRepository.findByChatRoomIdOrderByCreatedAtAsc(room.getId())
@@ -67,7 +67,7 @@ public class ChatService {
                         .map(msg -> {
                             // Kiểm tra xem ai là người gửi (Bệnh nhân hay là Nhân viên)
                             boolean isPatientSender = msg.getSender().getId().equals(room.getUser().getId());
-                            return ChatHistoryDTO.builder()
+                            return ChatHistoryResponse.builder()
                                     .senderEmail(msg.getSender().getEmail())
                                     // Nếu bệnh nhân gửi thì người nhận là STAFF, ngược lại người nhận là Bệnh nhân
                                     .receiverEmail(isPatientSender ? "STAFF" : room.getUser().getEmail())
@@ -81,12 +81,12 @@ public class ChatService {
     }
 
     // Lấy danh sách các phòng chat (Dành cho Admin)
-    public List<ChatRoomDTO> getActiveRooms() {
+    public List<ChatRoomResponse> getActiveRooms() {
         return chatRoomRepository.findAll().stream()
                 .map(room -> {
                     List<Message> msgs = messageRepository.findByChatRoomIdOrderByCreatedAtAsc(room.getId());
                     String lastMsg = msgs.isEmpty() ? "Chưa có tin nhắn" : msgs.get(msgs.size() - 1).getContent();
-                    return ChatRoomDTO.builder()
+                    return ChatRoomResponse.builder()
                             .patientEmail(room.getUser().getEmail())
                             .patientName(room.getUser().getFullName())
                             .lastMessage(lastMsg)

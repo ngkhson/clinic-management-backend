@@ -11,19 +11,15 @@ import java.math.BigDecimal;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DoctorDTO {
-    private Long id;
-
-    // Thông tin từ bảng User
-    private Long userId;
+public class DoctorCreationRequest {
+    // Thông tin tài khoản User
+    private String email;
+    private String password;
     private String fullName;
 
-    // Thông tin từ bảng Doctor
+    // Thông tin Bác sĩ
+    private Long specialtyId;
     private String degree;
     private String biography;
     private BigDecimal examinationPrice;
-
-    // Thông tin từ bảng Specialty
-    private Long specialtyId;
-    private String specialtyName;
 }

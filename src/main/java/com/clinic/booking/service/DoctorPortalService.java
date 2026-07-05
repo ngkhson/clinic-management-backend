@@ -1,8 +1,8 @@
 package com.clinic.booking.service;
 
 import com.clinic.booking.dto.appointment.AppointmentResponse;
-import com.clinic.booking.dto.record.MedicalRecordDTO;
-import com.clinic.booking.dto.pharmacy.PrescriptionDetailDTO;
+import com.clinic.booking.dto.record.MedicalRecordResponse;
+import com.clinic.booking.dto.pharmacy.PrescriptionDetailResponse;
 import com.clinic.booking.entity.*;
 import com.clinic.booking.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -69,14 +69,14 @@ public class DoctorPortalService {
         appointmentRepository.save(appointment);
     }
 
-    public MedicalRecordDTO getDraftRecord(Long appointmentId) {
+    public MedicalRecordResponse getDraftRecord(Long appointmentId) {
         return medicalRecordRepository.findByAppointmentId(appointmentId)
                 .map(this::mapToDTO)
                 .orElse(null);
     }
 
     @Transactional
-    public MedicalRecordDTO saveMedicalRecord(MedicalRecordDTO request) {
+    public MedicalRecordResponse saveMedicalRecord(MedicalRecordResponse request) {
         Doctor currentDoctor = getCurrentDoctor();
         Appointment appointment = appointmentRepository.findById(request.getAppointmentId()).orElseThrow();
 
@@ -164,8 +164,8 @@ public class DoctorPortalService {
         return mapToDTO(record);
     }
 
-    private MedicalRecordDTO mapToDTO(MedicalRecord record) {
-        return MedicalRecordDTO.builder()
+    private MedicalRecordResponse mapToDTO(MedicalRecord record) {
+        return MedicalRecordResponse.builder()
                 .id(record.getId())
                 .appointmentId(record.getAppointment().getId())
                 .patientName(record.getAppointment().getPatient().getFullName())
@@ -190,7 +190,7 @@ public class DoctorPortalService {
                 .notes(record.getNotes())
                 .followUpDate(record.getFollowUpDate())
                 .serviceIds(record.getServices() != null ? record.getServices().stream().map(MedicalService::getId).collect(Collectors.toList()) : List.of())
-                .prescriptionDetails(record.getPrescriptionDetails() != null ? record.getPrescriptionDetails().stream().map(d -> PrescriptionDetailDTO.builder()
+                .prescriptionDetails(record.getPrescriptionDetails() != null ? record.getPrescriptionDetails().stream().map(d -> PrescriptionDetailResponse.builder()
                         .medicineId(d.getMedicine().getId())
                         .medicineName(d.getMedicine().getName())
                         .unit(d.getMedicine().getUnit())

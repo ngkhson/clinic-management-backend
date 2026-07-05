@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SpecialtyDTO {
+public class SpecialtyResponse {
     private Long id;
     private String name;
     private String description;

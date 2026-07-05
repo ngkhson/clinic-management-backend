@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PrescriptionDetailDTO {
+public class PrescriptionDetailResponse {
     private Long id;
     private Long medicineId;
     private String medicineName;

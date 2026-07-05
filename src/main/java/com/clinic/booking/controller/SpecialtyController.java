@@ -1,6 +1,6 @@
 package com.clinic.booking.controller;
 
-import com.clinic.booking.dto.specialty.SpecialtyDTO;
+import com.clinic.booking.dto.specialty.SpecialtyResponse;
 import com.clinic.booking.service.SpecialtyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +17,7 @@ public class SpecialtyController {
     private final SpecialtyService specialtyService;
 
     @GetMapping
-    public ResponseEntity<List<SpecialtyDTO>> getAll() {
+    public ResponseEntity<List<SpecialtyResponse>> getAll() {
         return ResponseEntity.ok(specialtyService.getAllSpecialties());
     }
 

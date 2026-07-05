@@ -1,6 +1,6 @@
 package com.clinic.booking.service;
 
-import com.clinic.booking.dto.pharmacy.ImportRequestDTO;
+import com.clinic.booking.dto.pharmacy.ImportMedicineRequest;
 import com.clinic.booking.entity.ImportInvoice;
 import com.clinic.booking.entity.ImportInvoiceDetail;
 import com.clinic.booking.entity.Medicine;
@@ -24,7 +24,7 @@ public class ImportService {
     private final MedicineRepository medicineRepository;
 
     @Transactional
-    public void createImportInvoice(ImportRequestDTO request) {
+    public void createImportInvoice(ImportMedicineRequest request) {
         // 1. Kiểm tra nhà cung cấp
         Supplier supplier = supplierRepository.findById(request.getSupplierId())
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy Nhà cung cấp!"));
@@ -40,7 +40,7 @@ public class ImportService {
         double totalAmount = 0.0;
 
         // 3. Duyệt qua từng chi tiết thuốc nhập
-        for (ImportRequestDTO.ImportDetailDTO detailDTO : request.getDetails()) {
+        for (ImportMedicineRequest.ImportDetailDTO detailDTO : request.getDetails()) {
             Medicine medicine = medicineRepository.findById(detailDTO.getMedicineId())
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy Thuốc ID: " + detailDTO.getMedicineId()));
 

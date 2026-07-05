@@ -1,6 +1,6 @@
 package com.clinic.booking.service;
 
-import com.clinic.booking.dto.pharmacy.RetailRequestDTO;
+import com.clinic.booking.dto.pharmacy.RetailMedicineRequest;
 import com.clinic.booking.entity.Medicine;
 import com.clinic.booking.entity.RetailInvoice;
 import com.clinic.booking.entity.RetailInvoiceDetail;
@@ -20,7 +20,7 @@ public class RetailService {
     private final MedicineRepository medicineRepository;
 
     @Transactional
-    public void createRetailInvoice(RetailRequestDTO request) {
+    public void createRetailInvoice(RetailMedicineRequest request) {
         // 1. Tạo Hóa đơn bán lẻ
         RetailInvoice invoice = RetailInvoice.builder()
                 .customerName(request.getCustomerName() != null ? request.getCustomerName() : "Khách lẻ")
@@ -31,7 +31,7 @@ public class RetailService {
         double totalAmount = 0.0;
 
         // 2. Duyệt qua từng loại thuốc trong giỏ hàng
-        for (RetailRequestDTO.RetailDetailDTO detailDTO : request.getDetails()) {
+        for (RetailMedicineRequest.RetailDetailDTO detailDTO : request.getDetails()) {
             Medicine medicine = medicineRepository.findById(detailDTO.getMedicineId())
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy Thuốc ID: " + detailDTO.getMedicineId()));
 

@@ -4,7 +4,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class ImportRequestDTO {
+public class ImportMedicineRequest {
     private Long supplierId;
     private String notes;
     private List<ImportDetailDTO> details;

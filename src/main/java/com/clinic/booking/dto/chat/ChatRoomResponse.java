@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ChatRoomDTO {
+public class ChatRoomResponse {
     private String patientEmail;
     private String patientName;
     private String lastMessage;

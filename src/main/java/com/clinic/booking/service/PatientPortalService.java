@@ -1,8 +1,8 @@
 package com.clinic.booking.service;
 
 import com.clinic.booking.dto.appointment.AppointmentResponse;
-import com.clinic.booking.dto.record.MedicalRecordDTO;
-import com.clinic.booking.dto.pharmacy.PrescriptionDetailDTO;
+import com.clinic.booking.dto.record.MedicalRecordResponse;
+import com.clinic.booking.dto.pharmacy.PrescriptionDetailResponse;
 import com.clinic.booking.entity.Appointment;
 import com.clinic.booking.entity.MedicalRecord;
 import com.clinic.booking.entity.MedicalService;
@@ -49,7 +49,7 @@ public class PatientPortalService {
                 .collect(Collectors.toList());
     }
 
-    public MedicalRecordDTO getMedicalRecord(Long appointmentId) {
+    public MedicalRecordResponse getMedicalRecord(Long appointmentId) {
         User currentPatient = getCurrentPatient();
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy Lịch hẹn!"));
@@ -61,7 +61,7 @@ public class PatientPortalService {
         MedicalRecord record = medicalRecordRepository.findByAppointmentId(appointmentId)
                 .orElseThrow(() -> new RuntimeException("Lịch hẹn này chưa có hoặc chưa cập nhật hồ sơ bệnh án!"));
 
-        return MedicalRecordDTO.builder()
+        return MedicalRecordResponse.builder()
                 .id(record.getId())
                 .appointmentId(appointment.getId())
                 .patientName(appointment.getPatient().getFullName())
@@ -73,7 +73,7 @@ public class PatientPortalService {
                 .serviceNames(record.getServices() != null ? record.getServices().stream().map(MedicalService::getName).collect(Collectors.toList()) : List.of())
                 // LẤY CHI TIẾT TOA THUỐC VỀ CHO BỆNH NHÂN (MODULE 5)
                 .prescriptionDetails(record.getPrescriptionDetails() != null ?
-                        record.getPrescriptionDetails().stream().map(d -> PrescriptionDetailDTO.builder()
+                        record.getPrescriptionDetails().stream().map(d -> PrescriptionDetailResponse.builder()
                                 .id(d.getId())
                                 .medicineId(d.getMedicine().getId())
                                 .medicineName(d.getMedicine().getName())
