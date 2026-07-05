@@ -65,7 +65,10 @@ public class AppointmentService {
             double amount = doctor.getExaminationPrice() != null ? doctor.getExaminationPrice().doubleValue() : 0.0;
             // Gọi Service để sinh URL VNPAY
             String paymentUrl = paymentService.createVnPayUrl(appointment.getId(), amount, ipAddress);
+            responseDTO.setPaymentType("PAY_NOW");
             responseDTO.setPaymentUrl(paymentUrl);
+        } else {
+            responseDTO.setPaymentType("PAY_LATER");
         }
 
         return responseDTO;
@@ -76,6 +79,7 @@ public class AppointmentService {
                 .id(appointment.getId())
                 .doctorId(appointment.getDoctor().getId())
                 .doctorName(appointment.getDoctor().getUser().getFullName())
+                .patientName(appointment.getPatient().getFullName())
                 .scheduleId(appointment.getSchedule().getId())
                 .timeSlot(appointment.getSchedule().getTimeSlot())
                 .appointmentDate(appointment.getAppointmentDate())
