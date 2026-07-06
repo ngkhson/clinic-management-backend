@@ -45,9 +45,13 @@ public class AdminDoctorService {
 
         // 2. Tạo tài khoản User với quyền DOCTOR
         User user = User.builder()
+                .address(request.getAddress())
+                .dateOfBirth(request.getDateOfBirth())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .fullName(request.getFullName())
+                .gender(request.getGender())
+                .phone(request.getPhone())
                 .status("ACTIVE")
                 .build();
         

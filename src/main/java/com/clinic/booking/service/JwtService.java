@@ -18,10 +18,6 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    // CHÚ Ý: Key này phải là một chuỗi ngẫu nhiên dài ít nhất 256 bits (32 ký tự).
-    // Trong thực tế, KHÔNG bao giờ hardcode ở đây mà phải lấy từ application.properties
-//    private static final String SECRET_KEY = "YourSuperSecretKeyForClinicBookingSystemWhichMustBeVeryLongAndSecure";
-
     @Value("${jwt.signerKey}")
     private String signerKey;
 
