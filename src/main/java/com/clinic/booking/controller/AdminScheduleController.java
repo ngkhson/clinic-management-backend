@@ -31,10 +31,9 @@ public class AdminScheduleController {
         int count = 0;
         for (String timeSlot : request.getTimeSlots()) {
             // Khởi tạo lịch khám.
-            // LƯU Ý: Nếu trong Entity Schedule của bạn trường ngày tên là 'scheduleDate' thay vì 'date', hãy đổi lại cho khớp nhé!
             Schedule schedule = Schedule.builder()
                     .doctor(doctor)
-                    .workDate(request.getDate()) // Đảm bảo tên trường khớp với Entity Schedule của bạn
+                    .workDate(request.getDate())
                     .timeSlot(timeSlot)
                     .maxPatients(request.getMaxPatients() != null ? request.getMaxPatients() : 1)
                     .currentPatients(0)

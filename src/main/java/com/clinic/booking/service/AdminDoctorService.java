@@ -97,6 +97,10 @@ public class AdminDoctorService {
         User user = doctor.getUser();
 
         user.setFullName(request.getFullName());
+        user.setAddress(request.getAddress());
+        user.setDateOfBirth(request.getDateOfBirth());
+        user.setGender(request.getGender());
+        user.setPhone(request.getPhone());
         // Chỉ cập nhật mật khẩu nếu Admin có điền vào form Edit
         if (request.getPassword() != null && !request.getPassword().isEmpty()) {
             user.setPassword(passwordEncoder.encode(request.getPassword()));
