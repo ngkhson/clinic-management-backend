@@ -9,6 +9,7 @@ import com.clinic.booking.entity.Doctor;
 import com.clinic.booking.entity.Specialty;
 import com.clinic.booking.entity.User;
 import com.clinic.booking.repository.DoctorRepository;
+import com.clinic.booking.repository.RoleRepository;
 import com.clinic.booking.repository.SpecialtyRepository;
 import com.clinic.booking.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class AdminDoctorService {
 
     private final UserRepository userRepository;
     private final DoctorRepository doctorRepository;
+    private final RoleRepository roleRepository;
     private final SpecialtyRepository specialtyRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -46,9 +48,13 @@ public class AdminDoctorService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .fullName(request.getFullName())
-                .role("DOCTOR")
                 .status("ACTIVE")
                 .build();
+        
+        com.clinic.booking.entity.Role doctorRole = roleRepository.findByName("DOCTOR")
+                .orElseThrow(() -> new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION));
+        user.setRoles(java.util.Set.of(doctorRole));
+        
         user = userRepository.save(user);
 
         // 3. Tìm Chuyên khoa

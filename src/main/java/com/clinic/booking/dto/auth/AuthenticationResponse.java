@@ -13,6 +13,6 @@ public class AuthenticationResponse {
     // Chuỗi JWT Token trả về cho Front-end
     private String token;
 
-    // Thêm trường role để Front-end biết quyền của User
-    private String role;
+    // Thêm trường roles để Front-end biết danh sách quyền của User
+    private java.util.List<String> roles;
 }

@@ -31,7 +31,7 @@ public class AdminDashboardService {
         long totalDoctors = doctorRepository.count();
         // Lọc ra các user có role PATIENT
         long totalPatients = userRepository.findAll().stream()
-                .filter(u -> "PATIENT".equals(u.getRole()))
+                .filter(u -> u.getRoles() != null && u.getRoles().stream().anyMatch(r -> "PATIENT".equals(r.getName())))
                 .count();
         long totalAppointments = allAppointments.size();
 

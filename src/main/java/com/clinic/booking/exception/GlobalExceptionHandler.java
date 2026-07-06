@@ -2,6 +2,7 @@ package com.clinic.booking.exception;
 
 import com.clinic.booking.dto.common.ErrorResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -50,4 +51,18 @@ public class GlobalExceptionHandler {
                 .build();
         return ResponseEntity.status(ErrorCode.UNCATEGORIZED_EXCEPTION.getStatusCode()).body(errorResponse);
     }
+
+    @ExceptionHandler(value = AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handlingAccessDeniedException(AccessDeniedException exception){
+        log.error("Access Denied", exception);
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .code(ErrorCode.UNAUTHORIZED.getCode())
+                .message(ErrorCode.UNAUTHORIZED.getMessage())
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        return ResponseEntity.status(ErrorCode.UNAUTHORIZED.getStatusCode()).body(errorResponse);
+    }
+
 }

@@ -8,7 +8,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -41,8 +43,13 @@ public class User implements UserDetails {
 
     private String address;
 
-    @Column(nullable = false)
-    private String role; // Lấy role này làm quyền (ADMIN, DOCTOR, PATIENT)
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles;
 
     private String status;
 
@@ -50,8 +57,18 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Cấp quyền dựa trên cột role. Dùng 'ROLE_' làm prefix chuẩn của Spring Security.
-        return List.of(new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()));
+        Set<SimpleGrantedAuthority> authorities = new HashSet<>();
+        if (roles != null) {
+            for (Role r : roles) {
+                authorities.add(new SimpleGrantedAuthority("ROLE_" + r.getName().toUpperCase()));
+                if (r.getPermissions() != null) {
+                    for (Permission p : r.getPermissions()) {
+                        authorities.add(new SimpleGrantedAuthority(p.getName().toUpperCase()));
+                    }
+                }
+            }
+        }
+        return authorities;
     }
 
     @Override

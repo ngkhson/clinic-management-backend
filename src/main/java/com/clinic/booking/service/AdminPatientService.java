@@ -20,7 +20,7 @@ public class AdminPatientService {
 
     public List<UserResponse> getAllPatients() {
         return userRepository.findAll().stream()
-                .filter(u -> "PATIENT".equals(u.getRole()))
+                .filter(u -> u.getRoles() != null && u.getRoles().stream().anyMatch(r -> "PATIENT".equals(r.getName())))
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }

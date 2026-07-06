@@ -122,8 +122,8 @@ public class SecurityConfiguration {
                             System.err.println("❌ [SPRING SECURITY] LÝ DO: " + accessDeniedException.getMessage());
                             System.err.println("❌ [SPRING SECURITY] USER HIỆN TẠI CÓ QUYỀN: " + request.getUserPrincipal());
 
-                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                            response.getWriter().write("Bi chan boi Security: " + accessDeniedException.getMessage());
+                            // response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            // response.getWriter().write("Bi chan boi Security: " + accessDeniedException.getMessage());
                         })
                 )
 

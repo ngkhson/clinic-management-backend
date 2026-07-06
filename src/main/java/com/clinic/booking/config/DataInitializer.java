@@ -1,6 +1,7 @@
 package com.clinic.booking.config;
 
 import com.clinic.booking.entity.User;
+import com.clinic.booking.repository.RoleRepository;
 import com.clinic.booking.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
@@ -14,10 +15,18 @@ import java.time.LocalDate;
 public class DataInitializer implements CommandLineRunner {
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) throws Exception {
+        String[] roles = {"ADMIN", "DOCTOR", "PATIENT"};
+        for (String roleName : roles) {
+            if (roleRepository.findByName(roleName).isEmpty()) {
+                roleRepository.save(com.clinic.booking.entity.Role.builder().name(roleName).build());
+            }
+        }
+
         // Kiểm tra xem tài khoản admin đã tồn tại trong Database chưa
         String adminEmail = "mediproadmin@gmail.com";
 
@@ -30,15 +39,17 @@ public class DataInitializer implements CommandLineRunner {
                     .gender("MALE")
                     .dateOfBirth(LocalDate.of(1990, 1, 1))
                     .address("Trụ sở MediPro")
-                    .role("ADMIN")
                     .status("ACTIVE")
                     .build();
+
+            com.clinic.booking.entity.Role adminRole = roleRepository.findByName("ADMIN").orElseThrow();
+            admin.setRoles(java.util.Set.of(adminRole));
 
             userRepository.save(admin);
             System.out.println("=========================================================");
             System.out.println("ĐÃ TẠO TÀI KHOẢN ADMIN MẶC ĐỊNH:");
             System.out.println("Email: " + adminEmail);
-            System.out.println("Mật khẩu: admin123");
+            System.out.println("Mật khẩu: Admin123");
             System.out.println("=========================================================");
         }
     }

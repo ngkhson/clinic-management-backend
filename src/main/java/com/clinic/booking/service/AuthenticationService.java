@@ -8,6 +8,7 @@ import com.clinic.booking.dto.auth.AuthenticationResponse;
 import com.clinic.booking.dto.auth.RegisterRequest;
 import com.clinic.booking.dto.auth.ResetPasswordRequest;
 import com.clinic.booking.entity.User;
+import com.clinic.booking.repository.RoleRepository;
 import com.clinic.booking.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
@@ -26,6 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AuthenticationService {
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
@@ -45,12 +47,16 @@ public class AuthenticationService {
                 .gender(request.getGender())
                 .dateOfBirth(request.getDateOfBirth())
                 .address(request.getAddress())
-                .role("PATIENT")
                 .status("ACTIVE")
                 .build();
+        
+        com.clinic.booking.entity.Role patientRole = roleRepository.findByName("PATIENT")
+                .orElseThrow(() -> new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION)); // Handle gracefully in real app
+        user.setRoles(java.util.Set.of(patientRole));
         userRepository.save(user);
         var jwtToken = jwtService.generateToken(user);
-        return AuthenticationResponse.builder().token(jwtToken).role(user.getRole()).build();
+        java.util.List<String> roleNames = user.getRoles().stream().map(com.clinic.booking.entity.Role::getName).toList();
+        return AuthenticationResponse.builder().token(jwtToken).roles(roleNames).build();
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
@@ -59,7 +65,8 @@ public class AuthenticationService {
         );
         var user = userRepository.findByEmail(request.getEmail()).orElseThrow();
         var jwtToken = jwtService.generateToken(user);
-        return AuthenticationResponse.builder().token(jwtToken).role(user.getRole()).build();
+        java.util.List<String> roleNames = user.getRoles().stream().map(com.clinic.booking.entity.Role::getName).toList();
+        return AuthenticationResponse.builder().token(jwtToken).roles(roleNames).build();
     }
 
     // --- XỬ LÝ QUÊN MẬT KHẨU BẰNG EMAIL THẬT ---
