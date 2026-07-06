@@ -1,9 +1,10 @@
 package com.clinic.booking.controller;
 
 import com.clinic.booking.dto.pharmacy.ImportMedicineRequest;
+import org.springframework.http.ResponseEntity;
+import com.clinic.booking.dto.common.ApiResponse;
 import com.clinic.booking.service.ImportService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,12 +16,12 @@ public class ImportController {
     private final ImportService importService;
 
     @PostMapping
-    public ResponseEntity<String> createImport(@RequestBody ImportMedicineRequest request) {
+    public ApiResponse<String> createImport(@RequestBody ImportMedicineRequest request) {
         try {
             importService.createImportInvoice(request);
-            return ResponseEntity.ok("Nhập kho thành công!");
+            return ApiResponse.success("Nhập kho thành công!");
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ApiResponse.<String>builder().code(400).message(e.getMessage()).build();
         }
     }
 }

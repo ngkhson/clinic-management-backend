@@ -1,6 +1,7 @@
 package com.clinic.booking.controller;
 
 import com.clinic.booking.dto.chat.ChatHistoryResponse;
+import com.clinic.booking.dto.common.ApiResponse;
 import com.clinic.booking.dto.chat.ChatMessageRequest;
 import com.clinic.booking.service.ChatService;
 import lombok.RequiredArgsConstructor;

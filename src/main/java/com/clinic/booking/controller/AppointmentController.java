@@ -1,11 +1,12 @@
 package com.clinic.booking.controller;
 
 import com.clinic.booking.dto.appointment.AppointmentRequest;
+import org.springframework.http.ResponseEntity;
+import com.clinic.booking.dto.common.ApiResponse;
 import com.clinic.booking.dto.appointment.AppointmentResponse;
 import com.clinic.booking.service.AppointmentService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,7 +18,7 @@ public class AppointmentController {
     private final AppointmentService appointmentService;
 
     @PostMapping
-    public ResponseEntity<?> createAppointment(@RequestBody AppointmentRequest request, HttpServletRequest httpRequest) {
+    public ApiResponse<Object> createAppointment(@RequestBody AppointmentRequest request, HttpServletRequest httpRequest) {
         try {
             // VNPAY cần IP Address của client để tạo giao dịch
             String ipAddress = httpRequest.getHeader("X-Forwarded-For");
@@ -27,9 +28,9 @@ public class AppointmentController {
 
             // Chuyển IP vào service
             AppointmentResponse createdAppointment = appointmentService.createAppointment(request, ipAddress);
-            return ResponseEntity.ok(createdAppointment);
+            return ApiResponse.success(createdAppointment);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ApiResponse.builder().code(400).message(e.getMessage()).build();
         }
     }
 }

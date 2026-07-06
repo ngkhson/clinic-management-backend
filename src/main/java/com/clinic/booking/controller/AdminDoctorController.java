@@ -1,10 +1,11 @@
 package com.clinic.booking.controller;
 
 import com.clinic.booking.dto.doctor.DoctorCreationRequest;
+import org.springframework.http.ResponseEntity;
+import com.clinic.booking.dto.common.ApiResponse;
 import com.clinic.booking.dto.doctor.DoctorResponse;
 import com.clinic.booking.service.AdminDoctorService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,29 +19,29 @@ public class AdminDoctorController {
     private final AdminDoctorService adminDoctorService;
 
     @GetMapping
-    public ResponseEntity<List<DoctorResponse>> getAllDoctors() {
-        return ResponseEntity.ok(adminDoctorService.getAllDoctors());
+    public ApiResponse<List<DoctorResponse>> getAllDoctors() {
+        return ApiResponse.success(adminDoctorService.getAllDoctors());
     }
 
     @PostMapping
-    public ResponseEntity<?> createDoctor(@RequestBody DoctorCreationRequest request) {
+    public ApiResponse<Object> createDoctor(@RequestBody DoctorCreationRequest request) {
         try {
             DoctorResponse newDoctor = adminDoctorService.createDoctor(request);
-            return ResponseEntity.ok(newDoctor);
+            return ApiResponse.success(newDoctor);
         } catch (RuntimeException e) {
             // Trả về lỗi 400 kèm câu thông báo (VD: Email đã tồn tại)
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ApiResponse.builder().code(400).message(e.getMessage()).build();
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateDoctor(@PathVariable Long id, @RequestBody DoctorCreationRequest request) {
-        return ResponseEntity.ok(adminDoctorService.updateDoctor(id, request));
+    public ApiResponse<Object> updateDoctor(@PathVariable Long id, @RequestBody DoctorCreationRequest request) {
+        return ApiResponse.success(adminDoctorService.updateDoctor(id, request));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteDoctor(@PathVariable Long id) {
+    public ApiResponse<Object> deleteDoctor(@PathVariable Long id) {
         adminDoctorService.deleteDoctor(id);
-        return ResponseEntity.ok("Xóa thành công!");
+        return ApiResponse.success("Xóa thành công!");
     }
 }

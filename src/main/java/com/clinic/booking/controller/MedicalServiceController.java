@@ -1,9 +1,9 @@
 package com.clinic.booking.controller;
 
 import com.clinic.booking.entity.MedicalService;
+import com.clinic.booking.dto.common.ApiResponse;
 import com.clinic.booking.service.MedicalServiceService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,29 +17,29 @@ public class MedicalServiceController {
     private final MedicalServiceService medicalServiceService;
 
     @GetMapping
-    public ResponseEntity<List<MedicalService>> getAll() {
-        return ResponseEntity.ok(medicalServiceService.getAllActiveServices());
+    public ApiResponse<List<MedicalService>> getAll() {
+        return ApiResponse.success(medicalServiceService.getAllActiveServices());
     }
 
     // THÊM API NÀY: Dành cho Admin (lấy tất cả)
     @GetMapping("/all")
-    public ResponseEntity<List<MedicalService>> getAllForAdmin() {
-        return ResponseEntity.ok(medicalServiceService.getAllServices());
+    public ApiResponse<List<MedicalService>> getAllForAdmin() {
+        return ApiResponse.success(medicalServiceService.getAllServices());
     }
 
     @PostMapping
-    public ResponseEntity<MedicalService> create(@RequestBody MedicalService service) {
-        return ResponseEntity.ok(medicalServiceService.createService(service));
+    public ApiResponse<MedicalService> create(@RequestBody MedicalService service) {
+        return ApiResponse.success(medicalServiceService.createService(service));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<MedicalService> update(@PathVariable Long id, @RequestBody MedicalService service) {
-        return ResponseEntity.ok(medicalServiceService.updateService(id, service));
+    public ApiResponse<MedicalService> update(@PathVariable Long id, @RequestBody MedicalService service) {
+        return ApiResponse.success(medicalServiceService.updateService(id, service));
     }
 
     @PatchMapping("/{id}/toggle-status")
-    public ResponseEntity<Void> toggleStatus(@PathVariable Long id) {
+    public ApiResponse<Void> toggleStatus(@PathVariable Long id) {
         medicalServiceService.toggleStatus(id);
-        return ResponseEntity.ok().build();
+        return ApiResponse.success();
     }
 }

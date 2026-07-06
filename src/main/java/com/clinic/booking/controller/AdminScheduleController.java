@@ -1,6 +1,7 @@
 package com.clinic.booking.controller;
 
 import com.clinic.booking.exception.AppException;
+import com.clinic.booking.dto.common.ApiResponse;
 import com.clinic.booking.exception.ErrorCode;
 
 import com.clinic.booking.dto.schedule.ScheduleGenerateRequest;
@@ -9,7 +10,6 @@ import com.clinic.booking.entity.Schedule;
 import com.clinic.booking.repository.DoctorRepository;
 import com.clinic.booking.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +24,7 @@ public class AdminScheduleController {
 
     @PostMapping("/generate")
     @Transactional
-    public ResponseEntity<String> generateSchedules(@RequestBody ScheduleGenerateRequest request) {
+    public ApiResponse<String> generateSchedules(@RequestBody ScheduleGenerateRequest request) {
         Doctor doctor = doctorRepository.findById(request.getDoctorId())
                 .orElseThrow(() -> new AppException(ErrorCode.DOCTOR_NOT_FOUND));
 
@@ -44,6 +44,6 @@ public class AdminScheduleController {
             count++;
         }
 
-        return ResponseEntity.ok("Đã tạo thành công " + count + " ca khám!");
+        return ApiResponse.success("Đã tạo thành công " + count + " ca khám!");
     }
 }

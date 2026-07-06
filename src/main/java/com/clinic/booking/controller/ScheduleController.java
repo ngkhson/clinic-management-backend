@@ -1,10 +1,10 @@
 package com.clinic.booking.controller;
 
 import com.clinic.booking.dto.schedule.ScheduleResponse;
+import com.clinic.booking.dto.common.ApiResponse;
 import com.clinic.booking.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -20,10 +20,10 @@ public class ScheduleController {
 
     // API: GET http://localhost:8080/api/schedules/doctor/1?date=2026-06-18
     @GetMapping("/doctor/{doctorId}")
-    public ResponseEntity<List<ScheduleResponse>> getDoctorSchedules(
+    public ApiResponse<List<ScheduleResponse>> getDoctorSchedules(
             @PathVariable Long doctorId,
             @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
 
-        return ResponseEntity.ok(scheduleService.getSchedulesByDoctorAndDate(doctorId, date));
+        return ApiResponse.success(scheduleService.getSchedulesByDoctorAndDate(doctorId, date));
     }
 }

@@ -1,10 +1,10 @@
 package com.clinic.booking.controller;
 
 import com.clinic.booking.dto.review.ReviewRequest;
+import com.clinic.booking.dto.common.ApiResponse;
 import com.clinic.booking.dto.review.ReviewResponse;
 import com.clinic.booking.service.ReviewService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,13 +19,13 @@ public class ReviewController {
 
     // API: Gửi đánh giá mới
     @PostMapping
-    public ResponseEntity<?> createReview(@RequestBody ReviewRequest request) {
-        return ResponseEntity.ok(reviewService.createReview(request));
+    public ApiResponse<Object> createReview(@RequestBody ReviewRequest request) {
+        return ApiResponse.success(reviewService.createReview(request));
     }
 
     // API: Lấy danh sách đánh giá của Bác sĩ (Công khai)
     @GetMapping("/doctor/{doctorId}")
-    public ResponseEntity<List<ReviewResponse>> getDoctorReviews(@PathVariable Long doctorId) {
-        return ResponseEntity.ok(reviewService.getDoctorReviews(doctorId));
+    public ApiResponse<List<ReviewResponse>> getDoctorReviews(@PathVariable Long doctorId) {
+        return ApiResponse.success(reviewService.getDoctorReviews(doctorId));
     }
 }

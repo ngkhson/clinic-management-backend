@@ -1,9 +1,9 @@
 package com.clinic.booking.controller;
 
 import com.clinic.booking.dto.reception.AdminReceptionRequest;
+import com.clinic.booking.dto.common.ApiResponse;
 import com.clinic.booking.service.AdminReceptionService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,7 +15,7 @@ public class AdminReceptionController {
     private final AdminReceptionService receptionService;
 
     @PostMapping
-    public ResponseEntity<?> createReception(@RequestBody AdminReceptionRequest request) {
-        return ResponseEntity.ok(receptionService.createReceptionAndVitals(request));
+    public ApiResponse<Object> createReception(@RequestBody AdminReceptionRequest request) {
+        return ApiResponse.success(receptionService.createReceptionAndVitals(request));
     }
 }

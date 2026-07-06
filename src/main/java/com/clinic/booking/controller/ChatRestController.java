@@ -1,10 +1,10 @@
 package com.clinic.booking.controller;
 
 import com.clinic.booking.dto.chat.ChatHistoryResponse;
+import com.clinic.booking.dto.common.ApiResponse;
 import com.clinic.booking.dto.chat.ChatRoomResponse;
 import com.clinic.booking.service.ChatService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,13 +19,13 @@ public class ChatRestController {
 
     // API lấy lịch sử chat
     @GetMapping("/history")
-    public ResponseEntity<List<ChatHistoryResponse>> getHistory(@RequestParam String patientEmail) {
-        return ResponseEntity.ok(chatService.getHistory(patientEmail));
+    public ApiResponse<List<ChatHistoryResponse>> getHistory(@RequestParam String patientEmail) {
+        return ApiResponse.success(chatService.getHistory(patientEmail));
     }
 
     // API lấy danh sách người đã chat (dành cho Admin)
     @GetMapping("/rooms")
-    public ResponseEntity<List<ChatRoomResponse>> getActiveRooms() {
-        return ResponseEntity.ok(chatService.getActiveRooms());
+    public ApiResponse<List<ChatRoomResponse>> getActiveRooms() {
+        return ApiResponse.success(chatService.getActiveRooms());
     }
 }

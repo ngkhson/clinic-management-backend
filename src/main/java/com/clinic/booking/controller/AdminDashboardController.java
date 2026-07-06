@@ -1,9 +1,9 @@
 package com.clinic.booking.controller;
 
 import com.clinic.booking.dto.appointment.AppointmentResponse;
+import com.clinic.booking.dto.common.ApiResponse;
 import com.clinic.booking.service.AdminDashboardService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,19 +18,19 @@ public class AdminDashboardController {
     private final AdminDashboardService adminDashboardService;
 
     @GetMapping("/stats")
-    public ResponseEntity<Map<String, Object>> getDashboardStats() {
-        return ResponseEntity.ok(adminDashboardService.getDashboardStats());
+    public ApiResponse<Map<String, Object>> getDashboardStats() {
+        return ApiResponse.success(adminDashboardService.getDashboardStats());
     }
 
     @GetMapping("/all-appointments")
-    public ResponseEntity<List<AppointmentResponse>> getAllAppointments() {
-        return ResponseEntity.ok(adminDashboardService.getAllAppointments());
+    public ApiResponse<List<AppointmentResponse>> getAllAppointments() {
+        return ApiResponse.success(adminDashboardService.getAllAppointments());
     }
 
     // THÊM API NÀY
     @PutMapping("/appointments/{id}/status")
-    public ResponseEntity<String> updateAppointmentStatus(@PathVariable Long id, @RequestParam String status) {
+    public ApiResponse<String> updateAppointmentStatus(@PathVariable Long id, @RequestParam String status) {
         adminDashboardService.updateAppointmentStatus(id, status);
-        return ResponseEntity.ok("Cập nhật trạng thái thành công");
+        return ApiResponse.success("Cập nhật trạng thái thành công");
     }
 }

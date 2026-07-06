@@ -1,9 +1,9 @@
 package com.clinic.booking.controller;
 
 import com.clinic.booking.dto.specialty.SpecialtyResponse;
+import com.clinic.booking.dto.common.ApiResponse;
 import com.clinic.booking.service.SpecialtyService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,12 +17,12 @@ public class SpecialtyController {
     private final SpecialtyService specialtyService;
 
     @GetMapping
-    public ResponseEntity<List<SpecialtyResponse>> getAll() {
-        return ResponseEntity.ok(specialtyService.getAllSpecialties());
+    public ApiResponse<List<SpecialtyResponse>> getAll() {
+        return ApiResponse.success(specialtyService.getAllSpecialties());
     }
 
 //    @PostMapping
-//    public ResponseEntity<SpecialtyDTO> create(@RequestBody SpecialtyDTO dto) {
-//        return ResponseEntity.ok(specialtyService.createSpecialty(dto));
+//    public ApiResponse<SpecialtyDTO> create(@RequestBody SpecialtyDTO dto) {
+//        return ApiResponse.success(specialtyService.createSpecialty(dto));
 //    }
 }

@@ -1,9 +1,9 @@
 package com.clinic.booking.controller;
 
 import com.clinic.booking.dto.pharmacy.PharmacyReportResponse;
+import com.clinic.booking.dto.common.ApiResponse;
 import com.clinic.booking.service.PharmacyExtraService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -18,20 +18,20 @@ public class PharmacyExtraController {
 
     // Lấy số liệu báo cáo
     @GetMapping("/report")
-    public ResponseEntity<PharmacyReportResponse> getReport() {
-        return ResponseEntity.ok(pharmacyExtraService.getReportSummary());
+    public ApiResponse<PharmacyReportResponse> getReport() {
+        return ApiResponse.success(pharmacyExtraService.getReportSummary());
     }
 
     // Lấy nội dung ghi chú
     @GetMapping("/note")
-    public ResponseEntity<Map<String, String>> getNote() {
-        return ResponseEntity.ok(Map.of("content", pharmacyExtraService.getNote()));
+    public ApiResponse<Map<String, String>> getNote() {
+        return ApiResponse.success(Map.of("content", pharmacyExtraService.getNote()));
     }
 
     // Lưu nội dung ghi chú
     @PostMapping("/note")
-    public ResponseEntity<String> saveNote(@RequestBody Map<String, String> request) {
+    public ApiResponse<String> saveNote(@RequestBody Map<String, String> request) {
         pharmacyExtraService.saveNote(request.get("content"));
-        return ResponseEntity.ok("Đã lưu ghi chú!");
+        return ApiResponse.success("Đã lưu ghi chú!");
     }
 }

@@ -1,9 +1,9 @@
 package com.clinic.booking.controller;
 
 import com.clinic.booking.dto.doctor.DoctorResponse;
+import com.clinic.booking.dto.common.ApiResponse;
 import com.clinic.booking.service.DoctorService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,19 +18,19 @@ public class DoctorController {
 
     // THÊM API NÀY: Lấy tất cả bác sĩ
     @GetMapping
-    public ResponseEntity<List<DoctorResponse>> getAllDoctors() {
-        return ResponseEntity.ok(doctorService.getAllDoctors());
+    public ApiResponse<List<DoctorResponse>> getAllDoctors() {
+        return ApiResponse.success(doctorService.getAllDoctors());
     }
 
     // API: http://localhost:8080/api/doctors/specialty/1
     @GetMapping("/specialty/{specialtyId}")
-    public ResponseEntity<List<DoctorResponse>> getDoctorsBySpecialty(@PathVariable Long specialtyId) {
-        return ResponseEntity.ok(doctorService.getDoctorsBySpecialtyId(specialtyId));
+    public ApiResponse<List<DoctorResponse>> getDoctorsBySpecialty(@PathVariable Long specialtyId) {
+        return ApiResponse.success(doctorService.getDoctorsBySpecialtyId(specialtyId));
     }
 
     // API: http://localhost:8080/api/doctors/1
     @GetMapping("/{id}")
-    public ResponseEntity<DoctorResponse> getDoctorById(@PathVariable Long id) {
-        return ResponseEntity.ok(doctorService.getDoctorById(id));
+    public ApiResponse<DoctorResponse> getDoctorById(@PathVariable Long id) {
+        return ApiResponse.success(doctorService.getDoctorById(id));
     }
 }
