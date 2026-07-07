@@ -18,4 +18,10 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
     // Kiểm tra xem bác sĩ đã tạo lịch cho ca này trong ngày này chưa (tránh tạo trùng)
     boolean existsByDoctorIdAndWorkDateAndTimeSlot(Long doctorId, LocalDate workDate, String timeSlot);
+
+    @org.springframework.data.jpa.repository.Query("SELECT s FROM Schedule s JOIN s.doctor d WHERE d.specialty.id = :specialtyId " +
+           "AND s.workDate = :workDate AND s.timeSlot = :timeSlot AND s.currentPatients < s.maxPatients")
+    List<Schedule> findAvailableSchedules(@org.springframework.data.repository.query.Param("specialtyId") Long specialtyId, 
+                                          @org.springframework.data.repository.query.Param("workDate") LocalDate workDate, 
+                                          @org.springframework.data.repository.query.Param("timeSlot") String timeSlot);
 }

@@ -21,6 +21,7 @@ public enum ErrorCode {
     APPOINTMENT_NOT_FOUND(404, "Không tìm thấy lịch hẹn", HttpStatus.NOT_FOUND),
     SPECIALTY_NOT_FOUND(404, "Không tìm thấy chuyên khoa", HttpStatus.NOT_FOUND),
     SCHEDULE_NOT_FOUND(404, "Không tìm thấy lịch làm việc", HttpStatus.NOT_FOUND),
+    SCHEDULE_FULL(400, "Không còn lịch trống trong khung giờ này", HttpStatus.BAD_REQUEST),
     REVIEW_ALREADY_EXISTS(400, "Bạn đã gửi đánh giá cho ca khám này rồi", HttpStatus.BAD_REQUEST),
     MEDICINE_NOT_FOUND(404, "Không tìm thấy thuốc", HttpStatus.NOT_FOUND),
     OUT_OF_STOCK(400, "Số lượng thuốc trong kho không đủ", HttpStatus.BAD_REQUEST),

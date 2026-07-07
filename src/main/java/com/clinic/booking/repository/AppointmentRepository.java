@@ -17,4 +17,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 
     // Dành cho Bác sĩ: Lọc danh sách bệnh nhân theo trạng thái (VD: chỉ lấy các ca 'PENDING')
     List<Appointment> findByDoctorIdAndStatus(Long doctorId, String status);
+
+    // Lọc theo trạng thái cho toàn hệ thống
+    List<Appointment> findByStatus(String status);
 }
