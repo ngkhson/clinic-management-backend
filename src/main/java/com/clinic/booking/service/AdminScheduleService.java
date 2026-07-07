@@ -51,8 +51,6 @@ public class AdminScheduleService {
             throw new AppException(ErrorCode.INVALID_ACTION); // Không thể giảm maxPatients xuống dưới số lượng đã đặt
         }
 
-        if (request.getWorkDate() != null) schedule.setWorkDate(request.getWorkDate());
-        if (request.getTimeSlot() != null) schedule.setTimeSlot(request.getTimeSlot());
         if (request.getMaxPatients() != null) schedule.setMaxPatients(request.getMaxPatients());
 
         scheduleRepository.save(schedule);
