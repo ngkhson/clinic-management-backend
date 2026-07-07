@@ -39,11 +39,11 @@ public class UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
-        user.setFullName(dto.getFullName());
-        user.setPhone(dto.getPhone());
-        user.setGender(dto.getGender());
-        user.setDateOfBirth(dto.getDateOfBirth());
-        user.setAddress(dto.getAddress());
+        if (dto.getFullName() != null) user.setFullName(dto.getFullName());
+        if (dto.getPhone() != null) user.setPhone(dto.getPhone());
+        if (dto.getGender() != null) user.setGender(dto.getGender());
+        if (dto.getDateOfBirth() != null) user.setDateOfBirth(dto.getDateOfBirth());
+        if (dto.getAddress() != null) user.setAddress(dto.getAddress());
 
         userRepository.save(user);
         return getMyProfile();
