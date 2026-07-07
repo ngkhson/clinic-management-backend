@@ -34,10 +34,25 @@ public class AuthController {
         return ApiResponse.success("Mã OTP đã được gửi đến email của bạn.");
     }
 
-    // THÊM: Xác nhận OTP và thiết lập mật khẩu mới
     @PostMapping("/reset-password")
     public ApiResponse<Object> resetPassword(@RequestBody ResetPasswordRequest request) {
         authenticationService.resetPassword(request);
         return ApiResponse.success("Khôi phục mật khẩu thành công!");
+    }
+
+    @PatchMapping("/profile")
+    public ApiResponse<Object> updateProfile(@RequestBody com.clinic.booking.dto.auth.UpdateProfileRequest request) {
+        authenticationService.updateProfile(request);
+        return ApiResponse.success("Cập nhật thông tin cá nhân thành công");
+    }
+
+    @PatchMapping("/change-password")
+    public ApiResponse<Object> changePassword(@RequestBody com.clinic.booking.dto.auth.ChangePasswordRequest request) {
+        try {
+            authenticationService.changePassword(request);
+            return ApiResponse.success("Đổi mật khẩu thành công");
+        } catch (RuntimeException e) {
+            return ApiResponse.builder().code(400).message(e.getMessage()).build();
+        }
     }
 }
