@@ -19,7 +19,7 @@ public class Invoice {
     @JoinColumn(name = "appointment_id", nullable = false)
     private Appointment appointment;
 
-    private Double consultationFee; // Phí khám bệnh
+    // Tổng tiền dịch vụ và thuốc
     private Double serviceFee;      // Phí cận lâm sàng
     private Double medicineFee;     // Phí thuốc
     private Double totalAmount;     // Tổng cộng

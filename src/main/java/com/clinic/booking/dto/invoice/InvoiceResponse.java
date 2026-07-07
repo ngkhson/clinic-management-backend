@@ -11,7 +11,6 @@ public class InvoiceResponse {
     private String patientName;
     private String doctorName;
 
-    private Double consultationFee;
     private Double serviceFee;
     private Double medicineFee;
     private Double totalAmount;

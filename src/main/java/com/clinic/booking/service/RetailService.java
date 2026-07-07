@@ -63,4 +63,18 @@ public class RetailService {
         invoice.setTotalAmount(totalAmount);
         retailInvoiceRepository.save(invoice);
     }
+
+    @Transactional
+    public void payRetailInvoice(Long invoiceId, String paymentMethod) {
+        RetailInvoice invoice = retailInvoiceRepository.findById(invoiceId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy Hóa đơn bán lẻ ID: " + invoiceId));
+
+        if ("PAID".equals(invoice.getStatus())) {
+            throw new RuntimeException("Hóa đơn bán lẻ này đã được thanh toán.");
+        }
+
+        invoice.setStatus("PAID");
+        invoice.setPaymentMethod(paymentMethod);
+        retailInvoiceRepository.save(invoice);
+    }
 }

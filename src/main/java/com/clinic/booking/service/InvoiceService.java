@@ -32,8 +32,6 @@ public class InvoiceService {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new AppException(ErrorCode.APPOINTMENT_NOT_FOUND));
 
-        // 2. Tính Tiền Khám (Mặc định 0.0, có thể nâng cấp lấy từ bảng khác)
-        double consultationFee = 0.0;
 
         double serviceFee = 0.0;
         double medicineFee = 0.0;
@@ -59,12 +57,12 @@ public class InvoiceService {
             }
         }
 
-        double totalAmount = consultationFee + serviceFee + medicineFee;
+        double totalAmount = serviceFee + medicineFee;
 
         // 4. Lưu Hóa đơn vào DB
         Invoice invoice = Invoice.builder()
                 .appointment(appointment)
-                .consultationFee(consultationFee)
+
                 .serviceFee(serviceFee)
                 .medicineFee(medicineFee)
                 .totalAmount(totalAmount)
@@ -103,7 +101,7 @@ public class InvoiceService {
                 .appointmentId(invoice.getAppointment().getId())
                 .patientName(invoice.getAppointment().getPatient().getFullName())
                 .doctorName(invoice.getAppointment().getDoctor().getUser().getFullName())
-                .consultationFee(invoice.getConsultationFee())
+
                 .serviceFee(invoice.getServiceFee())
                 .medicineFee(invoice.getMedicineFee())
                 .totalAmount(invoice.getTotalAmount())

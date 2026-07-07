@@ -19,6 +19,10 @@ public class RetailInvoice {
 
     private Double totalAmount;  // Tổng tiền thanh toán
 
+    @Builder.Default
+    private String status = "UNPAID"; // Trạng thái: UNPAID, PAID
+    private String paymentMethod; // CASH, VNPAY
+
     private LocalDateTime saleDate;
     private LocalDateTime createdAt;
 

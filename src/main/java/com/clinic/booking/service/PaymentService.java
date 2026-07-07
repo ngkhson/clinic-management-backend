@@ -16,10 +16,14 @@ public class PaymentService {
         this.vnpayConfig = vnpayConfig;
     }
 
-    public String createVnPayUrl(Long appointmentId, double amount, String ipAddress) {
+    public String createPaymentUrl(String targetType, Long targetId, double amount, String ipAddress) {
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
-        String vnp_TxnRef = VNPAYConfig.getRandomNumber(8) + "-" + appointmentId; // Nối mã random với ID lịch hẹn
+        
+        // Tiền tố xác định loại hóa đơn: INV- (Khám bệnh) hoặc RET- (Bán lẻ)
+        String prefix = "INVOICE".equalsIgnoreCase(targetType) ? "INV" : "RET";
+        String vnp_TxnRef = prefix + "-" + targetId + "-" + VNPAYConfig.getRandomNumber(4); 
+        
         String vnp_IpAddr = ipAddress;
         String vnp_TmnCode = vnpayConfig.getVnp_TmnCode();
 
@@ -33,7 +37,10 @@ public class PaymentService {
         vnp_Params.put("vnp_Amount", String.valueOf(amountInVND));
         vnp_Params.put("vnp_CurrCode", "VND");
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
-        vnp_Params.put("vnp_OrderInfo", "Thanh toan phi dat kham cho lich hen: " + appointmentId);
+        String orderInfo = "INVOICE".equalsIgnoreCase(targetType) 
+                ? "Thanh toan hoa don kham benh: " + targetId 
+                : "Thanh toan hoa don mua thuoc: " + targetId;
+        vnp_Params.put("vnp_OrderInfo", orderInfo);
         vnp_Params.put("vnp_OrderType", "other");
         vnp_Params.put("vnp_Locale", "vn");
         vnp_Params.put("vnp_ReturnUrl", vnpayConfig.getVnp_Returnurl());
