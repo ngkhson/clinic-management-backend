@@ -26,4 +26,24 @@ public class AppointmentController {
             return ApiResponse.builder().code(400).message(e.getMessage()).build();
         }
     }
+
+    @PutMapping("/{id}")
+    public ApiResponse<Object> updateAppointment(@PathVariable Long id, @RequestBody com.clinic.booking.dto.appointment.AppointmentUpdateRequest request) {
+        try {
+            AppointmentResponse updatedAppointment = appointmentService.updateAppointment(id, request);
+            return ApiResponse.success(updatedAppointment);
+        } catch (RuntimeException e) {
+            return ApiResponse.builder().code(400).message(e.getMessage()).build();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ApiResponse<String> cancelAppointment(@PathVariable Long id) {
+        try {
+            appointmentService.cancelAppointment(id);
+            return ApiResponse.success("Huỷ lịch hẹn thành công");
+        } catch (RuntimeException e) {
+            return ApiResponse.<String>builder().code(400).message(e.getMessage()).build();
+        }
+    }
 }

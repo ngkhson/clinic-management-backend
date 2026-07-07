@@ -40,4 +40,32 @@ public class AdminScheduleService {
 
         return count;
     }
+
+    @Transactional
+    public void updateSchedule(Long id, com.clinic.booking.dto.schedule.ScheduleUpdateRequest request) {
+        Schedule schedule = scheduleRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.SCHEDULE_NOT_FOUND));
+
+        if (request.getMaxPatients() != null && request.getMaxPatients() < schedule.getCurrentPatients()) {
+            throw new AppException(ErrorCode.INVALID_ACTION); // Không thể giảm maxPatients xuống dưới số lượng đã đặt
+        }
+
+        if (request.getWorkDate() != null) schedule.setWorkDate(request.getWorkDate());
+        if (request.getTimeSlot() != null) schedule.setTimeSlot(request.getTimeSlot());
+        if (request.getMaxPatients() != null) schedule.setMaxPatients(request.getMaxPatients());
+
+        scheduleRepository.save(schedule);
+    }
+
+    @Transactional
+    public void deleteSchedule(Long id) {
+        Schedule schedule = scheduleRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.SCHEDULE_NOT_FOUND));
+
+        if (schedule.getCurrentPatients() > 0) {
+            throw new AppException(ErrorCode.INVALID_ACTION); // Đã có bệnh nhân đặt
+        }
+
+        scheduleRepository.delete(schedule);
+    }
 }

@@ -22,4 +22,16 @@ public class AdminScheduleController {
         int count = adminScheduleService.generateSchedules(request);
         return ApiResponse.success("Đã tạo thành công " + count + " ca khám!");
     }
+
+    @PutMapping("/{id}")
+    public ApiResponse<String> updateSchedule(@PathVariable Long id, @RequestBody com.clinic.booking.dto.schedule.ScheduleUpdateRequest request) {
+        adminScheduleService.updateSchedule(id, request);
+        return ApiResponse.success("Cập nhật ca khám thành công");
+    }
+
+    @DeleteMapping("/{id}")
+    public ApiResponse<String> deleteSchedule(@PathVariable Long id) {
+        adminScheduleService.deleteSchedule(id);
+        return ApiResponse.success("Xoá ca khám thành công");
+    }
 }

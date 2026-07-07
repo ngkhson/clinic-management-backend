@@ -41,6 +41,7 @@ public class Appointment {
     @Column(columnDefinition = "TEXT")
     private String symptoms;
 
-    @Column(name = "created_at", insertable = false, updatable = false)
+    @org.hibernate.annotations.CreationTimestamp
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 }

@@ -74,4 +74,51 @@ public class AppointmentService {
                 .createdAt(appointment.getCreatedAt())
                 .build();
     }
+
+    @Transactional
+    public AppointmentResponse updateAppointment(Long id, com.clinic.booking.dto.appointment.AppointmentUpdateRequest request) {
+        Appointment appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.APPOINTMENT_NOT_FOUND));
+
+        boolean wasCancelled = "CANCELLED".equals(appointment.getStatus()) || "NO_SHOW".equals(appointment.getStatus());
+        boolean isNowCancelled = "CANCELLED".equals(request.getStatus()) || "NO_SHOW".equals(request.getStatus());
+
+        if (request.getStatus() != null && !request.getStatus().equals(appointment.getStatus())) {
+            appointment.setStatus(request.getStatus());
+            
+            // Nếu chuyển từ trạng thái bình thường sang CANCELLED/NO_SHOW -> Giảm currentPatients
+            if (!wasCancelled && isNowCancelled) {
+                Schedule schedule = appointment.getSchedule();
+                if (schedule.getCurrentPatients() > 0) {
+                    schedule.setCurrentPatients(schedule.getCurrentPatients() - 1);
+                    scheduleRepository.save(schedule);
+                }
+            }
+            // (Tuỳ chọn: Nếu từ CANCELLED khôi phục lại thì có thể phải cộng lên lại, nhưng thường người ta sẽ tạo mới hẹn)
+        }
+
+        if (request.getSymptoms() != null) {
+            appointment.setSymptoms(request.getSymptoms());
+        }
+
+        appointmentRepository.save(appointment);
+        return mapToDTO(appointment);
+    }
+
+    @Transactional
+    public void cancelAppointment(Long id) {
+        Appointment appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.APPOINTMENT_NOT_FOUND));
+
+        if (!"CANCELLED".equals(appointment.getStatus()) && !"NO_SHOW".equals(appointment.getStatus())) {
+            appointment.setStatus("CANCELLED");
+            
+            Schedule schedule = appointment.getSchedule();
+            if (schedule.getCurrentPatients() > 0) {
+                schedule.setCurrentPatients(schedule.getCurrentPatients() - 1);
+                scheduleRepository.save(schedule);
+            }
+            appointmentRepository.save(appointment);
+        }
+    }
 }
