@@ -21,13 +21,13 @@ public class UserController {
         return ApiResponse.success(userService.getMyProfile());
     }
 
-    @PutMapping("/profile")
+    @PatchMapping("/profile")
     public ApiResponse<UserProfileResponse> updateProfile(@RequestBody UserProfileRequest request) {
         return ApiResponse.success(userService.updateMyProfile(request));
     }
 
     // THÊM: API Đổi mật khẩu
-    @PutMapping("/change-password")
+    @PatchMapping("/change-password")
     public ApiResponse<Object> changePassword(@RequestBody ChangePasswordRequest request) {
         userService.changePassword(request);
         return ApiResponse.success("Đổi mật khẩu thành công!");
