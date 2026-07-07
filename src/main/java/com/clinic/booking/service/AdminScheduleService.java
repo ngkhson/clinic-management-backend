@@ -18,6 +18,7 @@ public class AdminScheduleService {
 
     private final ScheduleRepository scheduleRepository;
     private final DoctorRepository doctorRepository;
+    private final com.clinic.booking.repository.AppointmentRepository appointmentRepository;
 
     @Transactional
     public int generateSchedules(ScheduleGenerateRequest request) {
@@ -65,6 +66,9 @@ public class AdminScheduleService {
         if (schedule.getCurrentPatients() > 0) {
             throw new AppException(ErrorCode.INVALID_ACTION); // Đã có bệnh nhân đặt
         }
+
+        // Xoá các lịch hẹn đã bị huỷ (CANCELLED, NO_SHOW) nằm trong ca khám này trước khi xoá ca khám
+        appointmentRepository.deleteByScheduleId(id);
 
         scheduleRepository.delete(schedule);
     }

@@ -20,4 +20,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 
     // Lọc theo trạng thái cho toàn hệ thống
     List<Appointment> findByStatus(String status);
+
+    // Xoá tất cả lịch hẹn theo scheduleId
+    void deleteByScheduleId(Long scheduleId);
 }
