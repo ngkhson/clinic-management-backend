@@ -35,11 +35,8 @@ public class AdminDashboardService {
                 .count();
         long totalAppointments = allAppointments.size();
 
-        // Tính doanh thu từ các lịch hẹn đã hoàn thành (COMPLETED)
-        BigDecimal totalRevenue = allAppointments.stream()
-                .filter(a -> "COMPLETED".equals(a.getStatus()))
-                .map(a -> a.getDoctor().getExaminationPrice())
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        // Tính doanh thu (Tạm thời gán bằng 0, sau này sẽ tính tổng từ bảng Invoice)
+        BigDecimal totalRevenue = BigDecimal.ZERO;
 
         long pendingAppointments = allAppointments.stream()
                 .filter(a -> "PENDING".equals(a.getStatus()))

@@ -18,20 +18,20 @@ public class DoctorService {
 
     private final DoctorRepository doctorRepository;
 
-    // THÊM HÀM NÀY: Lấy danh sách tất cả bác sĩ
+    // THÊM HÀM NÀY: Lấy danh sách tất cả bác sĩ (chỉ ACTIVE)
     public List<DoctorResponse> getAllDoctors() {
-        return doctorRepository.findAll().stream().map(this::mapToDTO).collect(Collectors.toList());
+        return doctorRepository.findByUserStatus("ACTIVE").stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 
-    // Lấy danh sách bác sĩ thuộc một chuyên khoa
+    // Lấy danh sách bác sĩ thuộc một chuyên khoa (chỉ ACTIVE)
     public List<DoctorResponse> getDoctorsBySpecialtyId(Long specialtyId) {
-        List<Doctor> doctors = doctorRepository.findBySpecialtyId(specialtyId);
+        List<Doctor> doctors = doctorRepository.findBySpecialtyIdAndUserStatus(specialtyId, "ACTIVE");
         return doctors.stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 
-    // Lấy chi tiết 1 bác sĩ theo ID
+    // Lấy chi tiết 1 bác sĩ theo ID (chỉ ACTIVE)
     public DoctorResponse getDoctorById(Long id) {
-        Doctor doctor = doctorRepository.findById(id)
+        Doctor doctor = doctorRepository.findByIdAndUserStatus(id, "ACTIVE")
                 .orElseThrow(() -> new AppException(ErrorCode.DOCTOR_NOT_FOUND));
         return mapToDTO(doctor);
     }
@@ -44,7 +44,6 @@ public class DoctorService {
                 .fullName(doctor.getUser().getFullName())
                 .degree(doctor.getDegree())
                 .biography(doctor.getBiography())
-                .examinationPrice(doctor.getExaminationPrice())
                 .specialtyId(doctor.getSpecialty() != null ? doctor.getSpecialty().getId() : null)
                 .specialtyName(doctor.getSpecialty() != null ? doctor.getSpecialty().getName() : null)
                 .build();

@@ -2,7 +2,7 @@ package com.clinic.booking.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.math.BigDecimal;
+
 
 @Entity
 @Table(name = "doctors")
@@ -31,6 +31,4 @@ public class Doctor {
     @Column(columnDefinition = "TEXT")
     private String biography;
 
-    @Column(name = "examination_price", nullable = false)
-    private BigDecimal examinationPrice;
 }

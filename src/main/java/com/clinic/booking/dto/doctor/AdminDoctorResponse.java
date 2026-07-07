@@ -5,22 +5,27 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
+import java.time.LocalDate;
+
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DoctorResponse {
+public class AdminDoctorResponse {
     private Long id;
-
-    // Thông tin từ bảng User
     private Long userId;
     private String fullName;
-
-    // Thông tin từ bảng Doctor
     private String degree;
     private String biography;
     private Long specialtyId;
     private String specialtyName;
+    
+    // Additional sensitive/Admin-only fields
+    private String email;
+    private String phone;
+    private String gender;
+    private LocalDate dateOfBirth;
+    private String address;
+    private String status;
 }

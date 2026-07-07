@@ -3,7 +3,7 @@ package com.clinic.booking.controller;
 import com.clinic.booking.dto.doctor.DoctorCreationRequest;
 import org.springframework.http.ResponseEntity;
 import com.clinic.booking.dto.common.ApiResponse;
-import com.clinic.booking.dto.doctor.DoctorResponse;
+import com.clinic.booking.dto.doctor.AdminDoctorResponse;
 import com.clinic.booking.service.AdminDoctorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -19,14 +19,14 @@ public class AdminDoctorController {
     private final AdminDoctorService adminDoctorService;
 
     @GetMapping
-    public ApiResponse<List<DoctorResponse>> getAllDoctors() {
+    public ApiResponse<List<AdminDoctorResponse>> getAllDoctors() {
         return ApiResponse.success(adminDoctorService.getAllDoctors());
     }
 
     @PostMapping
     public ApiResponse<Object> createDoctor(@RequestBody DoctorCreationRequest request) {
         try {
-            DoctorResponse newDoctor = adminDoctorService.createDoctor(request);
+            AdminDoctorResponse newDoctor = adminDoctorService.createDoctor(request);
             return ApiResponse.success(newDoctor);
         } catch (RuntimeException e) {
             // Trả về lỗi 400 kèm câu thông báo (VD: Email đã tồn tại)

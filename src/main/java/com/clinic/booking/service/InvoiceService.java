@@ -32,9 +32,8 @@ public class InvoiceService {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new AppException(ErrorCode.APPOINTMENT_NOT_FOUND));
 
-        // 2. Tính Tiền Khám (Lấy từ bảng Doctor)
-        double consultationFee = appointment.getDoctor().getExaminationPrice() != null
-                ? appointment.getDoctor().getExaminationPrice().doubleValue() : 0.0;
+        // 2. Tính Tiền Khám (Mặc định 0.0, có thể nâng cấp lấy từ bảng khác)
+        double consultationFee = 0.0;
 
         double serviceFee = 0.0;
         double medicineFee = 0.0;

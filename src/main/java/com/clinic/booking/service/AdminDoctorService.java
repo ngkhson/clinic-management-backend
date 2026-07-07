@@ -4,7 +4,7 @@ import com.clinic.booking.exception.AppException;
 import com.clinic.booking.exception.ErrorCode;
 
 import com.clinic.booking.dto.doctor.DoctorCreationRequest;
-import com.clinic.booking.dto.doctor.DoctorResponse;
+import com.clinic.booking.dto.doctor.AdminDoctorResponse;
 import com.clinic.booking.entity.Doctor;
 import com.clinic.booking.entity.Specialty;
 import com.clinic.booking.entity.User;
@@ -31,13 +31,14 @@ public class AdminDoctorService {
     private final PasswordEncoder passwordEncoder;
 
     // Lấy danh sách tất cả bác sĩ cho màn hình Admin
-    public List<DoctorResponse> getAllDoctors() {
-        return doctorRepository.findAll().stream().map(this::mapToDTO).collect(Collectors.toList());
+    // Lấy danh sách tất cả bác sĩ cho màn hình Admin
+    public List<AdminDoctorResponse> getAllDoctors() {
+        return doctorRepository.findAll().stream().map(this::mapToAdminDTO).collect(Collectors.toList());
     }
 
     // @Transactional đảm bảo nếu tạo Doctor bị lỗi thì User cũng sẽ bị hủy (Rollback)
     @Transactional
-    public DoctorResponse createDoctor(DoctorCreationRequest request) {
+    public AdminDoctorResponse createDoctor(DoctorCreationRequest request) {
         // 1. Kiểm tra Email đã tồn tại chưa
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new AppException(ErrorCode.USER_EXISTED);
@@ -71,28 +72,33 @@ public class AdminDoctorService {
                 .specialty(specialty)
                 .degree(request.getDegree())
                 .biography(request.getBiography())
-                .examinationPrice(request.getExaminationPrice())
                 .build();
         doctor = doctorRepository.save(doctor);
 
-        return mapToDTO(doctor);
+        return mapToAdminDTO(doctor);
     }
 
-    private DoctorResponse mapToDTO(Doctor doctor) {
-        return DoctorResponse.builder()
+    private AdminDoctorResponse mapToAdminDTO(Doctor doctor) {
+        User user = doctor.getUser();
+        return AdminDoctorResponse.builder()
                 .id(doctor.getId())
-                .userId(doctor.getUser().getId())
-                .fullName(doctor.getUser().getFullName())
+                .userId(user.getId())
+                .fullName(user.getFullName())
                 .degree(doctor.getDegree())
                 .biography(doctor.getBiography())
-                .examinationPrice(doctor.getExaminationPrice())
                 .specialtyId(doctor.getSpecialty() != null ? doctor.getSpecialty().getId() : null)
                 .specialtyName(doctor.getSpecialty() != null ? doctor.getSpecialty().getName() : null)
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .gender(user.getGender())
+                .dateOfBirth(user.getDateOfBirth())
+                .address(user.getAddress())
+                .status(user.getStatus())
                 .build();
     }
 
     @Transactional
-    public DoctorResponse updateDoctor(Long id, DoctorCreationRequest request) {
+    public AdminDoctorResponse updateDoctor(Long id, DoctorCreationRequest request) {
         Doctor doctor = doctorRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.DOCTOR_NOT_FOUND));
         User user = doctor.getUser();
 
@@ -112,11 +118,10 @@ public class AdminDoctorService {
         doctor.setSpecialty(specialty);
         doctor.setDegree(request.getDegree());
         doctor.setBiography(request.getBiography());
-        doctor.setExaminationPrice(request.getExaminationPrice());
 
         userRepository.save(user);
         doctor = doctorRepository.save(doctor);
-        return mapToDTO(doctor);
+        return mapToAdminDTO(doctor);
     }
 
     @Transactional
