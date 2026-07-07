@@ -28,7 +28,7 @@ public class AppointmentService {
     private final UserRepository userRepository;
 
     @Transactional
-    public AppointmentResponse createAppointment(AppointmentRequest request, String ipAddress) {
+    public AppointmentResponse createAppointment(AppointmentRequest request) {
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         User patient = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
