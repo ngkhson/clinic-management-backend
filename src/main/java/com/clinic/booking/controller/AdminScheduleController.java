@@ -1,5 +1,6 @@
 package com.clinic.booking.controller;
 
+import com.clinic.booking.dto.schedule.ScheduleUpdateRequest;
 import com.clinic.booking.exception.AppException;
 import com.clinic.booking.dto.common.ApiResponse;
 import com.clinic.booking.exception.ErrorCode;
@@ -24,7 +25,7 @@ public class AdminScheduleController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<String> updateSchedule(@PathVariable Long id, @RequestBody com.clinic.booking.dto.schedule.ScheduleUpdateRequest request) {
+    public ApiResponse<String> updateSchedule(@PathVariable Long id, @RequestBody ScheduleUpdateRequest request) {
         adminScheduleService.updateSchedule(id, request);
         return ApiResponse.success("Cập nhật ca khám thành công");
     }

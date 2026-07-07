@@ -18,6 +18,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class AppointmentService {
@@ -33,7 +35,7 @@ public class AppointmentService {
         User patient = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
-        java.util.List<Schedule> availableSchedules = scheduleRepository.findAvailableSchedules(
+        List<Schedule> availableSchedules = scheduleRepository.findAvailableSchedules(
                 request.getSpecialtyId(), request.getAppointmentDate(), request.getTimeSlot());
 
         if (availableSchedules.isEmpty()) {

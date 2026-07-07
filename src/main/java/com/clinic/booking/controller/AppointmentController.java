@@ -1,6 +1,7 @@
 package com.clinic.booking.controller;
 
 import com.clinic.booking.dto.appointment.AppointmentRequest;
+import com.clinic.booking.dto.appointment.AppointmentUpdateRequest;
 import org.springframework.http.ResponseEntity;
 import com.clinic.booking.dto.common.ApiResponse;
 import com.clinic.booking.dto.appointment.AppointmentResponse;
@@ -28,7 +29,7 @@ public class AppointmentController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<Object> updateAppointment(@PathVariable Long id, @RequestBody com.clinic.booking.dto.appointment.AppointmentUpdateRequest request) {
+    public ApiResponse<Object> updateAppointment(@PathVariable Long id, @RequestBody AppointmentUpdateRequest request) {
         try {
             AppointmentResponse updatedAppointment = appointmentService.updateAppointment(id, request);
             return ApiResponse.success(updatedAppointment);

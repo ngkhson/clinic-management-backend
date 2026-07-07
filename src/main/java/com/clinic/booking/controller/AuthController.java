@@ -1,10 +1,7 @@
 package com.clinic.booking.controller;
 
-import com.clinic.booking.dto.auth.AuthenticationRequest;
+import com.clinic.booking.dto.auth.*;
 import com.clinic.booking.dto.common.ApiResponse;
-import com.clinic.booking.dto.auth.AuthenticationResponse;
-import com.clinic.booking.dto.auth.RegisterRequest;
-import com.clinic.booking.dto.auth.ResetPasswordRequest;
 import com.clinic.booking.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -41,13 +38,13 @@ public class AuthController {
     }
 
     @PatchMapping("/profile")
-    public ApiResponse<Object> updateProfile(@RequestBody com.clinic.booking.dto.auth.UpdateProfileRequest request) {
+    public ApiResponse<Object> updateProfile(@RequestBody UpdateProfileRequest request) {
         authenticationService.updateProfile(request);
         return ApiResponse.success("Cập nhật thông tin cá nhân thành công");
     }
 
     @PatchMapping("/change-password")
-    public ApiResponse<Object> changePassword(@RequestBody com.clinic.booking.dto.auth.ChangePasswordRequest request) {
+    public ApiResponse<Object> changePassword(@RequestBody ChangePasswordRequest request) {
         try {
             authenticationService.changePassword(request);
             return ApiResponse.success("Đổi mật khẩu thành công");

@@ -18,8 +18,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -52,10 +54,10 @@ public class AuthenticationService {
         
         com.clinic.booking.entity.Role patientRole = roleRepository.findByName("PATIENT")
                 .orElseThrow(() -> new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION)); // Handle gracefully in real app
-        user.setRoles(java.util.Set.of(patientRole));
+        user.setRoles(Set.of(patientRole));
         userRepository.save(user);
         var jwtToken = jwtService.generateToken(user);
-        java.util.List<String> roleNames = user.getRoles().stream().map(com.clinic.booking.entity.Role::getName).toList();
+        List<String> roleNames = user.getRoles().stream().map(com.clinic.booking.entity.Role::getName).toList();
         return AuthenticationResponse.builder().token(jwtToken).roles(roleNames).build();
     }
 
@@ -65,7 +67,7 @@ public class AuthenticationService {
         );
         var user = userRepository.findByEmail(request.getEmail()).orElseThrow();
         var jwtToken = jwtService.generateToken(user);
-        java.util.List<String> roleNames = user.getRoles().stream().map(com.clinic.booking.entity.Role::getName).toList();
+        List<String> roleNames = user.getRoles().stream().map(com.clinic.booking.entity.Role::getName).toList();
         return AuthenticationResponse.builder().token(jwtToken).roles(roleNames).build();
     }
 
