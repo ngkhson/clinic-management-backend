@@ -95,6 +95,12 @@ public class InvoiceService {
                 .stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 
+    public InvoiceResponse getInvoiceByAppointmentId(Long appointmentId) {
+        return invoiceRepository.findByAppointmentId(appointmentId)
+                .map(this::mapToDTO)
+                .orElse(null);
+    }
+
     private InvoiceResponse mapToDTO(Invoice invoice) {
         return InvoiceResponse.builder()
                 .id(invoice.getId())

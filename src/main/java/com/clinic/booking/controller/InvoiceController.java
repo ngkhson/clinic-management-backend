@@ -28,6 +28,12 @@ public class InvoiceController {
         return ApiResponse.success(invoiceService.generateInvoice(appointmentId));
     }
 
+    // Lấy hóa đơn theo ID Lịch hẹn
+    @GetMapping("/appointment/{appointmentId}")
+    public ApiResponse<InvoiceResponse> getInvoiceByAppointmentId(@PathVariable Long appointmentId) {
+        return ApiResponse.success(invoiceService.getInvoiceByAppointmentId(appointmentId));
+    }
+
     // Xác nhận thu tiền
     @PutMapping("/{id}/pay")
     public ApiResponse<Object> payInvoice(
