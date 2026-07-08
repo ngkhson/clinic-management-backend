@@ -22,14 +22,6 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        try {
-            jdbcTemplate.execute("DROP TABLE IF EXISTS retail_invoice_details CASCADE");
-            jdbcTemplate.execute("DROP TABLE IF EXISTS retail_invoices CASCADE");
-            jdbcTemplate.execute("DROP TABLE IF EXISTS invoices CASCADE");
-            System.out.println("Dropped old invoice tables successfully.");
-        } catch (Exception e) {
-            System.out.println("Failed to drop tables: " + e.getMessage());
-        }
 
         String[] roles = {"ADMIN", "DOCTOR", "PATIENT", "RECEPTIONIST", "PHARMACIST"};
         for (String roleName : roles) {
