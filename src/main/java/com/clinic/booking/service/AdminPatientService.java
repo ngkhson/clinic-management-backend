@@ -18,11 +18,11 @@ public class AdminPatientService {
 
     private final UserRepository userRepository;
 
-    public List<UserResponse> getAllPatients() {
-        return userRepository.findAll().stream()
-                .filter(u -> u.getRoles() != null && u.getRoles().stream().anyMatch(r -> "PATIENT".equals(r.getName())))
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+    public org.springframework.data.domain.Page<UserResponse> getAllPatients(int page, int size, String search) {
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size, org.springframework.data.domain.Sort.by("id").descending());
+        String searchTerm = (search == null || search.trim().isEmpty()) ? null : search.trim();
+        return userRepository.findPatients(searchTerm, pageable)
+                .map(this::mapToDTO);
     }
 
     public void togglePatientStatus(Long id) {

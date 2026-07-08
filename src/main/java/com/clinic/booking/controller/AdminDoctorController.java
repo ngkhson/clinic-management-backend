@@ -19,8 +19,11 @@ public class AdminDoctorController {
     private final AdminDoctorService adminDoctorService;
 
     @GetMapping
-    public ApiResponse<List<AdminDoctorResponse>> getAllDoctors() {
-        return ApiResponse.success(adminDoctorService.getAllDoctors());
+    public ApiResponse<org.springframework.data.domain.Page<AdminDoctorResponse>> getAllDoctors(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String search) {
+        return ApiResponse.success(adminDoctorService.getAllDoctors(page, size, search));
     }
 
     @PostMapping

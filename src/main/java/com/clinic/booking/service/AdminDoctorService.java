@@ -31,9 +31,11 @@ public class AdminDoctorService {
     private final PasswordEncoder passwordEncoder;
 
     // Lấy danh sách tất cả bác sĩ cho màn hình Admin
-    // Lấy danh sách tất cả bác sĩ cho màn hình Admin
-    public List<AdminDoctorResponse> getAllDoctors() {
-        return doctorRepository.findAll().stream().map(this::mapToAdminDTO).collect(Collectors.toList());
+    public org.springframework.data.domain.Page<AdminDoctorResponse> getAllDoctors(int page, int size, String search) {
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size, org.springframework.data.domain.Sort.by("id").descending());
+        String searchTerm = (search == null || search.trim().isEmpty()) ? null : search.trim();
+        return doctorRepository.findDoctors(searchTerm, pageable)
+                .map(this::mapToAdminDTO);
     }
 
     // @Transactional đảm bảo nếu tạo Doctor bị lỗi thì User cũng sẽ bị hủy (Rollback)

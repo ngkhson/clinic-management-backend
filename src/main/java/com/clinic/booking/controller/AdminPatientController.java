@@ -17,8 +17,11 @@ public class AdminPatientController {
     private final AdminPatientService adminPatientService;
 
     @GetMapping
-    public ApiResponse<List<UserResponse>> getAllPatients() {
-        return ApiResponse.success(adminPatientService.getAllPatients());
+    public ApiResponse<org.springframework.data.domain.Page<UserResponse>> getAllPatients(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String search) {
+        return ApiResponse.success(adminPatientService.getAllPatients(page, size, search));
     }
 
     @PutMapping("/{id}/toggle-status")

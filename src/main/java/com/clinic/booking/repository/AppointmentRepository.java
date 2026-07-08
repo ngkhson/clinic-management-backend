@@ -23,4 +23,18 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 
     // Xoá tất cả lịch hẹn theo scheduleId
     void deleteByScheduleId(Long scheduleId);
+
+    @org.springframework.data.jpa.repository.Query("SELECT a FROM Appointment a " +
+           "JOIN a.patient p " +
+           "JOIN a.doctor d " +
+           "JOIN d.user du " +
+           "WHERE (:searchTerm IS NULL OR " +
+           "  LOWER(p.fullName) LIKE LOWER(CONCAT('%', CAST(:searchTerm AS string), '%')) " +
+           "  OR LOWER(du.fullName) LIKE LOWER(CONCAT('%', CAST(:searchTerm AS string), '%')) " +
+           "  OR str(a.id) LIKE CONCAT('%', CAST(:searchTerm AS string), '%')) " +
+           "AND (:status IS NULL OR a.status = :status)")
+    org.springframework.data.domain.Page<Appointment> findAppointments(
+            @org.springframework.data.repository.query.Param("searchTerm") String searchTerm,
+            @org.springframework.data.repository.query.Param("status") String status,
+            org.springframework.data.domain.Pageable pageable);
 }

@@ -27,7 +27,7 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
            "AND (:searchTerm IS NULL OR " +
            "  LOWER(COALESCE(p.fullName, '')) LIKE LOWER(CONCAT('%', CAST(:searchTerm AS string), '%')) " +
            "  OR LOWER(COALESCE(i.customerName, '')) LIKE LOWER(CONCAT('%', CAST(:searchTerm AS string), '%')) " +
-           "  OR CAST(i.id AS string) LIKE CONCAT('%', CAST(:searchTerm AS string), '%')" +
+           "  OR str(i.id) LIKE CONCAT('%', CAST(:searchTerm AS string), '%')" +
            ")")
     Page<Invoice> findInvoiceHistory(
             @Param("status") String status,

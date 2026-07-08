@@ -22,4 +22,9 @@ public interface MedicineRepository extends JpaRepository<Medicine, Long> {
 
     // Tìm kiếm thuốc theo tên (Dùng cho thanh Search)
     List<Medicine> findByNameContainingIgnoreCaseAndIsActiveTrue(String name);
+
+    @Query("SELECT m FROM Medicine m WHERE " +
+           "(:searchTerm IS NULL OR " +
+           "LOWER(m.name) LIKE LOWER(CONCAT('%', CAST(:searchTerm AS string), '%')))")
+    org.springframework.data.domain.Page<Medicine> findMedicines(@org.springframework.data.repository.query.Param("searchTerm") String searchTerm, org.springframework.data.domain.Pageable pageable);
 }

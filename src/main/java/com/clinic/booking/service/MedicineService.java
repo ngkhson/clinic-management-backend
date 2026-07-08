@@ -22,6 +22,12 @@ public class MedicineService {
         return medicineRepository.findAllByOrderByNameAsc();
     }
 
+    public org.springframework.data.domain.Page<Medicine> getMedicines(int page, int size, String search) {
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size, org.springframework.data.domain.Sort.by("id").descending());
+        String searchTerm = (search == null || search.trim().isEmpty()) ? null : search.trim();
+        return medicineRepository.findMedicines(searchTerm, pageable);
+    }
+
     // Lấy danh sách thuốc đang hoạt động
     public List<Medicine> getAllActiveMedicines() {
         return medicineRepository.findByIsActiveTrueOrderByNameAsc();

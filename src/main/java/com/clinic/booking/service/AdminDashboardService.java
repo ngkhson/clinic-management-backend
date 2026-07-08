@@ -60,8 +60,12 @@ public class AdminDashboardService {
         appointmentRepository.save(appointment);
     }
 
-    public List<AppointmentResponse> getAllAppointments() {
-        return appointmentRepository.findAll().stream().map(app -> AppointmentResponse.builder()
+    public org.springframework.data.domain.Page<AppointmentResponse> getAppointments(int page, int size, String search, String status) {
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size, org.springframework.data.domain.Sort.by("id").descending());
+        String searchTerm = (search == null || search.trim().isEmpty()) ? null : search.trim();
+        String statusTerm = (status == null || status.trim().isEmpty() || "ALL".equalsIgnoreCase(status)) ? null : status.trim();
+
+        return appointmentRepository.findAppointments(searchTerm, statusTerm, pageable).map(app -> AppointmentResponse.builder()
                 .id(app.getId())
                 .doctorId(app.getDoctor().getId())
                 .doctorName(app.getDoctor().getUser().getFullName())
@@ -72,6 +76,6 @@ public class AdminDashboardService {
                 .status(app.getStatus())
                 .symptoms(app.getSymptoms())
                 .createdAt(app.getCreatedAt())
-                .build()).collect(Collectors.toList());
+                .build());
     }
 }

@@ -17,6 +17,14 @@ public class MedicineController {
     private final MedicineService medicineService;
 
     @GetMapping
+    public ApiResponse<org.springframework.data.domain.Page<Medicine>> getMedicines(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String search) {
+        return ApiResponse.success(medicineService.getMedicines(page, size, search));
+    }
+
+    @GetMapping("/all")
     public ApiResponse<List<Medicine>> getAllMedicines() {
         return ApiResponse.success(medicineService.getAllMedicines());
     }

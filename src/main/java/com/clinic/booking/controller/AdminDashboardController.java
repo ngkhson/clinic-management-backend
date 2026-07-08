@@ -23,8 +23,12 @@ public class AdminDashboardController {
     }
 
     @GetMapping("/all-appointments")
-    public ApiResponse<List<AppointmentResponse>> getAllAppointments() {
-        return ApiResponse.success(adminDashboardService.getAllAppointments());
+    public ApiResponse<org.springframework.data.domain.Page<AppointmentResponse>> getAppointments(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String status) {
+        return ApiResponse.success(adminDashboardService.getAppointments(page, size, search, status));
     }
 
     // THÊM API NÀY
