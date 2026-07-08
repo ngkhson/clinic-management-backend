@@ -18,8 +18,8 @@ public class RetailController {
     @PostMapping
     public ApiResponse<Object> createRetailInvoice(@RequestBody RetailMedicineRequest request) {
         try {
-            retailService.createRetailInvoice(request);
-            return ApiResponse.success("Thanh toán thành công!");
+            com.clinic.booking.entity.RetailInvoice invoice = retailService.createRetailInvoice(request);
+            return ApiResponse.success(invoice);
         } catch (RuntimeException e) {
             // Sẽ trả về lỗi nếu không đủ số lượng thuốc
             return ApiResponse.builder().code(400).message(e.getMessage()).build();

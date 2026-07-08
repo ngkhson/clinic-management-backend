@@ -20,10 +20,13 @@ public class RetailService {
     private final MedicineRepository medicineRepository;
 
     @Transactional
-    public void createRetailInvoice(RetailMedicineRequest request) {
+    public RetailInvoice createRetailInvoice(RetailMedicineRequest request) {
+        String paymentMethod = request.getPaymentMethod() != null ? request.getPaymentMethod() : "CASH";
         // 1. Tạo Hóa đơn bán lẻ
         RetailInvoice invoice = RetailInvoice.builder()
-                .customerName(request.getCustomerName() != null ? request.getCustomerName() : "Khách lẻ")
+                .customerName(request.getCustomerName() != null && !request.getCustomerName().isEmpty() ? request.getCustomerName() : "Khách lẻ")
+                .paymentMethod(paymentMethod)
+                .status("CASH".equalsIgnoreCase(paymentMethod) ? "PAID" : "UNPAID")
                 .totalAmount(0.0)
                 .build();
         invoice = retailInvoiceRepository.save(invoice);
@@ -61,7 +64,7 @@ public class RetailService {
 
         // 6. Cập nhật tổng tiền
         invoice.setTotalAmount(totalAmount);
-        retailInvoiceRepository.save(invoice);
+        return retailInvoiceRepository.save(invoice);
     }
 
     @Transactional

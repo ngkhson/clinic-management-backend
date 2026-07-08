@@ -6,6 +6,7 @@ import java.util.List;
 @Data
 public class RetailMedicineRequest {
     private String customerName;
+    private String paymentMethod;
     private List<RetailDetailDTO> details;
 
     @Data
