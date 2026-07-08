@@ -58,7 +58,7 @@ public class PaymentController {
                     Long targetId = Long.parseLong(parts[1]);
 
                     if ("INV".equals(type) || "RET".equals(type)) {
-                        invoiceService.payInvoice(targetId, "VNPAY");
+                        invoiceService.payInvoice(targetId, "TRANSFER");
                         return ApiResponse.success("Thanh toán thành công.");
                     } else {
                         return ApiResponse.builder().code(400).message("Mã giao dịch không hợp lệ.").build();

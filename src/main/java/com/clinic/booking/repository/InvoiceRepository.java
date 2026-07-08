@@ -23,7 +23,7 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
            "LEFT JOIN a.patient p " +
            "WHERE i.status = :status " +
            "AND (:type IS NULL OR i.type = :type) " +
-           "AND (:paymentMethod IS NULL OR i.paymentMethod = :paymentMethod) " +
+           "AND (:paymentMethod IS NULL OR i.paymentMethod = :paymentMethod OR (:paymentMethod = 'TRANSFER' AND i.paymentMethod = 'VNPAY')) " +
            "AND (:searchTerm IS NULL OR " +
            "  LOWER(COALESCE(p.fullName, '')) LIKE LOWER(CONCAT('%', CAST(:searchTerm AS string), '%')) " +
            "  OR LOWER(COALESCE(i.customerName, '')) LIKE LOWER(CONCAT('%', CAST(:searchTerm AS string), '%')) " +
