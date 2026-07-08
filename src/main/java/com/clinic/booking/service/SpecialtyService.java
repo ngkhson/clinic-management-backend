@@ -37,6 +37,12 @@ public class SpecialtyService {
                 .collect(Collectors.toList());
     }
 
+    public SpecialtyResponse getSpecialtyById(Long id) {
+        Specialty specialty = specialtyRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.SPECIALTY_NOT_FOUND));
+        return mapToDTO(specialty);
+    }
+
     // THÊM CHUYÊN KHOA
     public SpecialtyResponse createSpecialty(SpecialtyRequest dto) {
         Specialty specialty = Specialty.builder()

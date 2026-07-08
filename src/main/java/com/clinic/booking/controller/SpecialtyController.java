@@ -21,6 +21,11 @@ public class SpecialtyController {
         return ApiResponse.success(specialtyService.getAllSpecialties());
     }
 
+    @GetMapping("/{id}")
+    public ApiResponse<SpecialtyResponse> getById(@PathVariable Long id) {
+        return ApiResponse.success(specialtyService.getSpecialtyById(id));
+    }
+
 //    @PostMapping
 //    public ApiResponse<SpecialtyDTO> create(@RequestBody SpecialtyDTO dto) {
 //        return ApiResponse.success(specialtyService.createSpecialty(dto));

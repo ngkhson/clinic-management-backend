@@ -24,4 +24,9 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     List<Schedule> findAvailableSchedules(@org.springframework.data.repository.query.Param("specialtyId") Long specialtyId, 
                                           @org.springframework.data.repository.query.Param("workDate") LocalDate workDate, 
                                           @org.springframework.data.repository.query.Param("timeSlot") String timeSlot);
+
+    @org.springframework.data.jpa.repository.Query("SELECT DISTINCT s.timeSlot FROM Schedule s JOIN s.doctor d WHERE d.specialty.id = :specialtyId " +
+           "AND s.workDate = :workDate AND s.currentPatients < s.maxPatients ORDER BY s.timeSlot ASC")
+    List<String> findAvailableTimeSlotsBySpecialty(@org.springframework.data.repository.query.Param("specialtyId") Long specialtyId, 
+                                                   @org.springframework.data.repository.query.Param("workDate") LocalDate workDate);
 }

@@ -31,4 +31,8 @@ public class ScheduleService {
                 .isAvailable(schedule.getCurrentPatients() < schedule.getMaxPatients())
                 .build()).collect(Collectors.toList());
     }
+
+    public List<String> getAvailableTimeSlotsBySpecialty(Long specialtyId, LocalDate workDate) {
+        return scheduleRepository.findAvailableTimeSlotsBySpecialty(specialtyId, workDate);
+    }
 }

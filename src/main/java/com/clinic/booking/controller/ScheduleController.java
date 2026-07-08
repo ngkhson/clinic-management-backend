@@ -26,4 +26,13 @@ public class ScheduleController {
 
         return ApiResponse.success(scheduleService.getSchedulesByDoctorAndDate(doctorId, date));
     }
+
+    // API: GET http://localhost:8080/api/schedules/specialty/1?date=2026-06-18
+    @GetMapping("/specialty/{specialtyId}")
+    public ApiResponse<List<String>> getSpecialtySchedules(
+            @PathVariable Long specialtyId,
+            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+
+        return ApiResponse.success(scheduleService.getAvailableTimeSlotsBySpecialty(specialtyId, date));
+    }
 }
