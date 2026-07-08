@@ -15,6 +15,11 @@ public class RetailController {
 
     private final RetailService retailService;
 
+    @GetMapping
+    public ApiResponse<Object> getAllRetailInvoices() {
+        return ApiResponse.success(retailService.getAllRetailInvoices());
+    }
+
     @PostMapping
     public ApiResponse<Object> createRetailInvoice(@RequestBody RetailMedicineRequest request) {
         try {

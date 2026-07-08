@@ -19,6 +19,10 @@ public class RetailService {
     private final RetailInvoiceDetailRepository retailInvoiceDetailRepository;
     private final MedicineRepository medicineRepository;
 
+    public java.util.List<RetailInvoice> getAllRetailInvoices() {
+        return retailInvoiceRepository.findAll();
+    }
+
     @Transactional
     public RetailInvoice createRetailInvoice(RetailMedicineRequest request) {
         String paymentMethod = request.getPaymentMethod() != null ? request.getPaymentMethod() : "CASH";
