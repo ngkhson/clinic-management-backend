@@ -31,6 +31,11 @@ public class AdminDashboardController {
         return ApiResponse.success(adminDashboardService.getAppointments(page, size, search, status));
     }
 
+    @GetMapping("/all-appointments/all")
+    public ApiResponse<List<AppointmentResponse>> getAllAppointmentsList() {
+        return ApiResponse.success(adminDashboardService.getAllAppointmentsList());
+    }
+
     // THÊM API NÀY
     @PutMapping("/appointments/{id}/status")
     public ApiResponse<String> updateAppointmentStatus(@PathVariable Long id, @RequestParam String status) {

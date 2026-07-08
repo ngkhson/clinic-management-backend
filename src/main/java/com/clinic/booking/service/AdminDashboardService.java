@@ -78,4 +78,19 @@ public class AdminDashboardService {
                 .createdAt(app.getCreatedAt())
                 .build());
     }
+
+    public List<AppointmentResponse> getAllAppointmentsList() {
+        return appointmentRepository.findAll().stream().map(app -> AppointmentResponse.builder()
+                .id(app.getId())
+                .doctorId(app.getDoctor().getId())
+                .doctorName(app.getDoctor().getUser().getFullName())
+                .patientName(app.getPatient().getFullName())
+                .scheduleId(app.getSchedule().getId())
+                .timeSlot(app.getSchedule().getTimeSlot())
+                .appointmentDate(app.getAppointmentDate())
+                .status(app.getStatus())
+                .symptoms(app.getSymptoms())
+                .createdAt(app.getCreatedAt())
+                .build()).collect(java.util.stream.Collectors.toList());
+    }
 }
