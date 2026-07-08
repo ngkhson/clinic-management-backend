@@ -18,11 +18,14 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
     List<Invoice> findAllByOrderByCreatedAtDesc();
     List<Invoice> findByType(String type);
 
-    @Query("SELECT i FROM Invoice i WHERE i.status = :status " +
+    @Query("SELECT i FROM Invoice i " +
+           "LEFT JOIN i.appointment a " +
+           "LEFT JOIN a.patient p " +
+           "WHERE i.status = :status " +
            "AND (:type IS NULL OR i.type = :type) " +
            "AND (:paymentMethod IS NULL OR i.paymentMethod = :paymentMethod) " +
            "AND (:searchTerm IS NULL OR " +
-           "  LOWER(COALESCE(i.appointment.patient.fullName, '')) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
+           "  LOWER(COALESCE(p.fullName, '')) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
            "  OR LOWER(COALESCE(i.customerName, '')) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
            "  OR CAST(i.id AS string) LIKE CONCAT('%', :searchTerm, '%')" +
            ")")
