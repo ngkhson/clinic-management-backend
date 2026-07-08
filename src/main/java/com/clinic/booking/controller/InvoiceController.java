@@ -22,6 +22,17 @@ public class InvoiceController {
         return ApiResponse.success(invoiceService.getAllInvoices());
     }
 
+    // Lịch sử thu ngân có phân trang
+    @GetMapping("/history")
+    public ApiResponse<org.springframework.data.domain.Page<InvoiceResponse>> getInvoiceHistory(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String type,
+            @RequestParam(required = false) String method) {
+        return ApiResponse.success(invoiceService.getInvoiceHistory(page, size, search, type, method));
+    }
+
     // Tự động tính toán và tạo Hóa đơn từ ID Lịch hẹn
     @PostMapping("/generate/{appointmentId}")
     public ApiResponse<InvoiceResponse> generateInvoice(@PathVariable Long appointmentId) {

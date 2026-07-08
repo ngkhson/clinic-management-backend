@@ -2,11 +2,11 @@ package com.clinic.booking.service;
 
 import com.clinic.booking.dto.pharmacy.RetailMedicineRequest;
 import com.clinic.booking.entity.Medicine;
-import com.clinic.booking.entity.RetailInvoice;
+import com.clinic.booking.entity.Invoice;
 import com.clinic.booking.entity.RetailInvoiceDetail;
 import com.clinic.booking.repository.MedicineRepository;
 import com.clinic.booking.repository.RetailInvoiceDetailRepository;
-import com.clinic.booking.repository.RetailInvoiceRepository;
+import com.clinic.booking.repository.InvoiceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,34 +15,36 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class RetailService {
 
-    private final RetailInvoiceRepository retailInvoiceRepository;
+    private final InvoiceRepository invoiceRepository;
     private final RetailInvoiceDetailRepository retailInvoiceDetailRepository;
     private final MedicineRepository medicineRepository;
+    private final InvoiceService invoiceService; // Inject to use payInvoice
 
-    public java.util.List<RetailInvoice> getAllRetailInvoices() {
-        return retailInvoiceRepository.findAll();
+    public java.util.List<Invoice> getAllRetailInvoices() {
+        return invoiceRepository.findByType("RETAIL");
     }
 
     @Transactional
-    public RetailInvoice createRetailInvoice(RetailMedicineRequest request) {
+    public Invoice createRetailInvoice(RetailMedicineRequest request) {
         String paymentMethod = request.getPaymentMethod() != null ? request.getPaymentMethod() : "CASH";
-        // 1. Tạo Hóa đơn bán lẻ
-        RetailInvoice invoice = RetailInvoice.builder()
+        
+        Invoice invoice = Invoice.builder()
                 .customerName(request.getCustomerName() != null && !request.getCustomerName().isEmpty() ? request.getCustomerName() : "Khách lẻ")
                 .paymentMethod(paymentMethod)
                 .status("CASH".equalsIgnoreCase(paymentMethod) ? "PAID" : "UNPAID")
+                .type("RETAIL")
+                .serviceFee(0.0)
+                .medicineFee(0.0)
                 .totalAmount(0.0)
                 .build();
-        invoice = retailInvoiceRepository.save(invoice);
+        invoice = invoiceRepository.save(invoice);
 
         double totalAmount = 0.0;
 
-        // 2. Duyệt qua từng loại thuốc trong giỏ hàng
         for (RetailMedicineRequest.RetailDetailDTO detailDTO : request.getDetails()) {
             Medicine medicine = medicineRepository.findById(detailDTO.getMedicineId())
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy Thuốc ID: " + detailDTO.getMedicineId()));
 
-            // 3. KIỂM TRA TỒN KHO: Cực kỳ quan trọng
             int currentQty = medicine.getCurrentQuantity() != null ? medicine.getCurrentQuantity() : 0;
             if (currentQty < detailDTO.getQuantity()) {
                 throw new RuntimeException("Thuốc '" + medicine.getName() + "' không đủ số lượng trong kho! Hiện chỉ còn: " + currentQty);
@@ -51,9 +53,8 @@ public class RetailService {
             double detailTotal = detailDTO.getQuantity() * detailDTO.getUnitPrice();
             totalAmount += detailTotal;
 
-            // 4. Lưu chi tiết hóa đơn
             RetailInvoiceDetail detail = RetailInvoiceDetail.builder()
-                    .retailInvoice(invoice)
+                    .invoice(invoice)
                     .medicine(medicine)
                     .quantity(detailDTO.getQuantity())
                     .unitPrice(detailDTO.getUnitPrice())
@@ -61,27 +62,17 @@ public class RetailService {
                     .build();
             retailInvoiceDetailRepository.save(detail);
 
-            // 5. TRỪ SỐ LƯỢNG TRONG KHO
             medicine.setCurrentQuantity(currentQty - detailDTO.getQuantity());
             medicineRepository.save(medicine);
         }
 
-        // 6. Cập nhật tổng tiền
+        invoice.setMedicineFee(totalAmount);
         invoice.setTotalAmount(totalAmount);
-        return retailInvoiceRepository.save(invoice);
-    }
-
-    @Transactional
-    public void payRetailInvoice(Long invoiceId, String paymentMethod) {
-        RetailInvoice invoice = retailInvoiceRepository.findById(invoiceId)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy Hóa đơn bán lẻ ID: " + invoiceId));
-
+        
         if ("PAID".equals(invoice.getStatus())) {
-            throw new RuntimeException("Hóa đơn bán lẻ này đã được thanh toán.");
+            invoice.setPaidAt(java.time.LocalDateTime.now());
         }
-
-        invoice.setStatus("PAID");
-        invoice.setPaymentMethod(paymentMethod);
-        retailInvoiceRepository.save(invoice);
+        
+        return invoiceRepository.save(invoice);
     }
 }

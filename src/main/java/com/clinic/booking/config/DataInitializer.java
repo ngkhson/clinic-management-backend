@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.time.LocalDate;
 
@@ -17,24 +18,33 @@ public class DataInitializer implements CommandLineRunner {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JdbcTemplate jdbcTemplate;
 
     @Override
     public void run(String... args) throws Exception {
-        String[] roles = {"ADMIN", "DOCTOR", "PATIENT"};
+        try {
+            jdbcTemplate.execute("DROP TABLE IF EXISTS retail_invoice_details CASCADE");
+            jdbcTemplate.execute("DROP TABLE IF EXISTS retail_invoices CASCADE");
+            jdbcTemplate.execute("DROP TABLE IF EXISTS invoices CASCADE");
+            System.out.println("Dropped old invoice tables successfully.");
+        } catch (Exception e) {
+            System.out.println("Failed to drop tables: " + e.getMessage());
+        }
+
+        String[] roles = {"ADMIN", "DOCTOR", "PATIENT", "RECEPTIONIST", "PHARMACIST"};
         for (String roleName : roles) {
             if (roleRepository.findByName(roleName).isEmpty()) {
                 roleRepository.save(com.clinic.booking.entity.Role.builder().name(roleName).build());
             }
         }
 
-        // Kiểm tra xem tài khoản admin đã tồn tại trong Database chưa
         String adminEmail = "mediproadmin@gmail.com";
 
         if (userRepository.findByEmail(adminEmail).isEmpty()) {
             User admin = User.builder()
                     .fullName("Quản Trị Viên Hệ Thống")
                     .email(adminEmail)
-                    .password(passwordEncoder.encode("Admin123")) // Mật khẩu mặc định
+                    .password(passwordEncoder.encode("Admin123")) 
                     .phone("0999999999")
                     .gender("MALE")
                     .dateOfBirth(LocalDate.of(1990, 1, 1))

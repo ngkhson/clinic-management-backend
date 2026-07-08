@@ -16,8 +16,11 @@ public class Invoice {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "appointment_id", nullable = false)
+    @JoinColumn(name = "appointment_id", nullable = true) // Cho phép null vì bán lẻ không có lịch hẹn
     private Appointment appointment;
+
+    private String type; // "MEDICAL" hoặc "RETAIL"
+    private String customerName; // Tên khách hàng (áp dụng cho hoá đơn bán lẻ)
 
     // Tổng tiền dịch vụ và thuốc
     private Double serviceFee;      // Phí cận lâm sàng

@@ -10,6 +10,7 @@ public class InvoiceResponse {
     private Long appointmentId;
     private String patientName;
     private String doctorName;
+    private String type;
 
     private Double serviceFee;
     private Double medicineFee;

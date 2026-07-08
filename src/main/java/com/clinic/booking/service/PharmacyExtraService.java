@@ -3,11 +3,11 @@ package com.clinic.booking.service;
 import com.clinic.booking.dto.pharmacy.PharmacyReportResponse;
 import com.clinic.booking.entity.ImportInvoice;
 import com.clinic.booking.entity.PharmacyNote;
-import com.clinic.booking.entity.RetailInvoice;
+import com.clinic.booking.entity.Invoice;
 import com.clinic.booking.repository.ImportInvoiceRepository;
 import com.clinic.booking.repository.MedicineRepository;
 import com.clinic.booking.repository.PharmacyNoteRepository;
-import com.clinic.booking.repository.RetailInvoiceRepository;
+import com.clinic.booking.repository.InvoiceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,10 +21,9 @@ public class PharmacyExtraService {
 
     private final MedicineRepository medicineRepository;
     private final ImportInvoiceRepository importInvoiceRepository;
-    private final RetailInvoiceRepository retailInvoiceRepository;
+    private final InvoiceRepository invoiceRepository;
     private final PharmacyNoteRepository pharmacyNoteRepository;
 
-    // --- LOGIC BÁO CÁO THỐNG KÊ ---
     public PharmacyReportResponse getReportSummary() {
         long totalMedicineTypes = medicineRepository.count();
         long lowStockCount = medicineRepository.findLowStockMedicines().size();
@@ -33,8 +32,9 @@ public class PharmacyExtraService {
                 .mapToDouble(ImportInvoice::getTotalAmount)
                 .sum();
 
-        double totalRetailRevenue = retailInvoiceRepository.findAll().stream()
-                .mapToDouble(RetailInvoice::getTotalAmount)
+        double totalRetailRevenue = invoiceRepository.findByType("RETAIL").stream()
+                .filter(i -> "PAID".equals(i.getStatus()))
+                .mapToDouble(Invoice::getTotalAmount)
                 .sum();
 
         return PharmacyReportResponse.builder()
@@ -45,7 +45,6 @@ public class PharmacyExtraService {
                 .build();
     }
 
-    // --- LOGIC SỔ GHI CHÚ ---
     public String getNote() {
         List<PharmacyNote> notes = pharmacyNoteRepository.findAll();
         return notes.isEmpty() ? "" : notes.get(0).getContent();
@@ -54,7 +53,6 @@ public class PharmacyExtraService {
     @Transactional
     public void saveNote(String content) {
         List<PharmacyNote> notes = pharmacyNoteRepository.findAll();
-        // Luôn chỉ dùng 1 bản ghi duy nhất (dòng đầu tiên) để làm sổ tay dùng chung
         PharmacyNote note = notes.isEmpty() ? new PharmacyNote() : notes.get(0);
 
         note.setContent(content);

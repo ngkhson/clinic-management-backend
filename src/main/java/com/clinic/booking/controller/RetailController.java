@@ -23,7 +23,7 @@ public class RetailController {
     @PostMapping
     public ApiResponse<Object> createRetailInvoice(@RequestBody RetailMedicineRequest request) {
         try {
-            com.clinic.booking.entity.RetailInvoice invoice = retailService.createRetailInvoice(request);
+            com.clinic.booking.entity.Invoice invoice = retailService.createRetailInvoice(request);
             return ApiResponse.success(invoice);
         } catch (RuntimeException e) {
             // Sẽ trả về lỗi nếu không đủ số lượng thuốc

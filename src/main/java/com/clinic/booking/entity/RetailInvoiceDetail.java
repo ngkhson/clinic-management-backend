@@ -15,8 +15,8 @@ public class RetailInvoiceDetail {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "retail_invoice_id", nullable = false)
-    private RetailInvoice retailInvoice;
+    @JoinColumn(name = "invoice_id", nullable = false)
+    private Invoice invoice;
 
     @ManyToOne
     @JoinColumn(name = "medicine_id", nullable = false)
