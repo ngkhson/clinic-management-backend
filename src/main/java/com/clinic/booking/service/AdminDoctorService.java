@@ -38,6 +38,12 @@ public class AdminDoctorService {
                 .map(this::mapToAdminDTO);
     }
 
+    public List<AdminDoctorResponse> getDoctors() {
+        return doctorRepository.findAll().stream()
+                .map(this::mapToAdminDTO)
+                .collect(Collectors.toList());
+    }
+
     // @Transactional đảm bảo nếu tạo Doctor bị lỗi thì User cũng sẽ bị hủy (Rollback)
     @Transactional
     public AdminDoctorResponse createDoctor(DoctorCreationRequest request) {

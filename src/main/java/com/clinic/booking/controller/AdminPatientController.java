@@ -24,6 +24,11 @@ public class AdminPatientController {
         return ApiResponse.success(adminPatientService.getAllPatients(page, size, search));
     }
 
+    @GetMapping("/all")
+    public ApiResponse<List<UserResponse>> getPatients() {
+        return ApiResponse.success(adminPatientService.getPatients());
+    }
+
     @PutMapping("/{id}/toggle-status")
     public ApiResponse<String> toggleStatus(@PathVariable Long id) {
         adminPatientService.togglePatientStatus(id);

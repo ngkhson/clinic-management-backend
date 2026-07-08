@@ -26,6 +26,11 @@ public class AdminDoctorController {
         return ApiResponse.success(adminDoctorService.getAllDoctors(page, size, search));
     }
 
+    @GetMapping("/all")
+    public ApiResponse<List<AdminDoctorResponse>> getDoctors() {
+        return ApiResponse.success(adminDoctorService.getDoctors());
+    }
+
     @PostMapping
     public ApiResponse<Object> createDoctor(@RequestBody DoctorCreationRequest request) {
         try {

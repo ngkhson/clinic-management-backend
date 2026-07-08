@@ -25,6 +25,12 @@ public class AdminPatientService {
                 .map(this::mapToDTO);
     }
 
+    public List<UserResponse> getPatients() {
+        return userRepository.findPatientsList().stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
     public void togglePatientStatus(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));

@@ -18,4 +18,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "  OR LOWER(u.email) LIKE LOWER(CONCAT('%', CAST(:searchTerm AS string), '%')) " +
             "  OR u.phone LIKE CONCAT('%', CAST(:searchTerm AS string), '%'))")
     org.springframework.data.domain.Page<User> findPatients(@org.springframework.data.repository.query.Param("searchTerm") String searchTerm, org.springframework.data.domain.Pageable pageable);
+
+    @org.springframework.data.jpa.repository.Query("SELECT u FROM User u JOIN u.roles r WHERE r.name = 'PATIENT'")
+    java.util.List<User> findPatientsList();
 }
