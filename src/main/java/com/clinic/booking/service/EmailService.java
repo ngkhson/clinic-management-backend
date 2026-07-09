@@ -31,7 +31,7 @@ public class EmailService {
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
             helper.setTo(toEmail);
-            helper.setSubject("Hồ sơ bệnh án & Kết quả khám bệnh - Hệ thống Y tế MediCare");
+            helper.setSubject("Hồ sơ bệnh án & Kết quả khám bệnh - Hệ thống Y tế MediPro");
             helper.setFrom("mediproadmin@gmail.com");
 
             String htmlContent = buildHtmlContent(record, patientName);
@@ -46,9 +46,9 @@ public class EmailService {
     private String buildHtmlContent(MedicalRecord record, String patientName) {
         StringBuilder html = new StringBuilder();
         html.append("<html><body style='font-family: Arial, sans-serif; line-height: 1.6; color: #333;'>");
-        html.append("<h2 style='color: #1e3a8a;'>Hệ thống Y tế MediCare</h2>");
+        html.append("<h2 style='color: #1e3a8a;'>Hệ thống Y tế MediPro</h2>");
         html.append("<h3>Xin chào ").append(patientName).append(",</h3>");
-        html.append("<p>Cảm ơn bạn đã tin tưởng và sử dụng dịch vụ khám chữa bệnh tại MediCare.</p>");
+        html.append("<p>Cảm ơn bạn đã tin tưởng và sử dụng dịch vụ khám chữa bệnh tại MediPro.</p>");
         html.append("<p>Đây là kết quả khám bệnh của bạn vào ngày <b>")
             .append(record.getAppointment().getAppointmentDate().toString()).append("</b>:</p>");
 
@@ -112,7 +112,7 @@ public class EmailService {
         }
 
         html.append("<br><p>Bạn có thể đăng nhập vào hệ thống để xem chi tiết hoặc tải xuống hóa đơn và kết quả hình ảnh cận lâm sàng.</p>");
-        html.append("<p>Trân trọng,<br>Hệ thống Y tế MediCare</p>");
+        html.append("<p>Trân trọng,<br>Hệ thống Y tế MediPro</p>");
         html.append("</body></html>");
         
         return html.toString();
