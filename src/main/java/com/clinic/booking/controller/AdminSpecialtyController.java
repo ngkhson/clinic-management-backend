@@ -15,10 +15,16 @@ public class AdminSpecialtyController {
 
     private final SpecialtyService specialtyService;
 
-    // Đổi kiểu trả về thành SpecialtyDTO
     @PostMapping
-    public ApiResponse<SpecialtyResponse> createSpecialty(@RequestBody SpecialtyRequest request) {
-        return ApiResponse.success(specialtyService.createSpecialty(request));
+    public ApiResponse<?> createSpecialty(@RequestBody com.fasterxml.jackson.databind.JsonNode requestNode) {
+        com.fasterxml.jackson.databind.ObjectMapper objectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
+        if (requestNode.isArray()) {
+            java.util.List<SpecialtyRequest> requests = objectMapper.convertValue(requestNode, new com.fasterxml.jackson.core.type.TypeReference<java.util.List<SpecialtyRequest>>() {});
+            return ApiResponse.success(specialtyService.createSpecialties(requests));
+        } else {
+            SpecialtyRequest request = objectMapper.convertValue(requestNode, SpecialtyRequest.class);
+            return ApiResponse.success(specialtyService.createSpecialty(request));
+        }
     }
 
     // Đổi kiểu trả về thành SpecialtyDTO

@@ -54,6 +54,17 @@ public class SpecialtyService {
         return mapToDTO(savedSpecialty);
     }
 
+    // THÊM NHIỀU CHUYÊN KHOA
+    public List<SpecialtyResponse> createSpecialties(List<SpecialtyRequest> dtos) {
+        List<Specialty> specialties = dtos.stream().map(dto -> Specialty.builder()
+                .name(dto.getName())
+                .description(dto.getDescription())
+                .imageUrl(dto.getImageUrl())
+                .build()).collect(java.util.stream.Collectors.toList());
+        List<Specialty> savedSpecialties = specialtyRepository.saveAll(specialties);
+        return savedSpecialties.stream().map(this::mapToDTO).collect(java.util.stream.Collectors.toList());
+    }
+
     // CẬP NHẬT CHUYÊN KHOA
     public SpecialtyResponse updateSpecialty(Long id, SpecialtyRequest dto) {
         Specialty specialty = specialtyRepository.findById(id)
