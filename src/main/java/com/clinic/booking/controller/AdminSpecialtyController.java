@@ -16,13 +16,13 @@ public class AdminSpecialtyController {
     private final SpecialtyService specialtyService;
 
     @PostMapping
-    public ApiResponse<?> createSpecialty(@RequestBody com.fasterxml.jackson.databind.JsonNode requestNode) {
+    public ApiResponse<?> createSpecialty(@RequestBody Object requestObj) {
         com.fasterxml.jackson.databind.ObjectMapper objectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
-        if (requestNode.isArray()) {
-            java.util.List<SpecialtyRequest> requests = objectMapper.convertValue(requestNode, new com.fasterxml.jackson.core.type.TypeReference<java.util.List<SpecialtyRequest>>() {});
+        if (requestObj instanceof java.util.List) {
+            java.util.List<SpecialtyRequest> requests = objectMapper.convertValue(requestObj, new com.fasterxml.jackson.core.type.TypeReference<java.util.List<SpecialtyRequest>>() {});
             return ApiResponse.success(specialtyService.createSpecialties(requests));
         } else {
-            SpecialtyRequest request = objectMapper.convertValue(requestNode, SpecialtyRequest.class);
+            SpecialtyRequest request = objectMapper.convertValue(requestObj, SpecialtyRequest.class);
             return ApiResponse.success(specialtyService.createSpecialty(request));
         }
     }
