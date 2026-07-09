@@ -3,7 +3,10 @@ package com.clinic.booking.controller;
 import com.clinic.booking.entity.MedicalService;
 import com.clinic.booking.dto.common.ApiResponse;
 import com.clinic.booking.service.MedicalServiceService;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,7 +31,7 @@ public class MedicalServiceController {
     }
 
     @GetMapping("/page")
-    public ApiResponse<org.springframework.data.domain.Page<MedicalService>> getServicesPage(
+    public ApiResponse<Page<MedicalService>> getServicesPage(
             @RequestParam(required = false) String search,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -37,9 +40,9 @@ public class MedicalServiceController {
 
     @PostMapping
     public ApiResponse<?> create(@RequestBody Object requestObj) {
-        com.fasterxml.jackson.databind.ObjectMapper objectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
-        if (requestObj instanceof java.util.List) {
-            java.util.List<MedicalService> services = objectMapper.convertValue(requestObj, new com.fasterxml.jackson.core.type.TypeReference<java.util.List<MedicalService>>() {});
+        ObjectMapper objectMapper = new ObjectMapper();
+        if (requestObj instanceof List) {
+            List<MedicalService> services = objectMapper.convertValue(requestObj, new TypeReference<List<MedicalService>>() {});
             return ApiResponse.success(medicalServiceService.createServices(services));
         } else {
             MedicalService service = objectMapper.convertValue(requestObj, MedicalService.class);

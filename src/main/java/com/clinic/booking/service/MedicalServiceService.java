@@ -6,6 +6,10 @@ import com.clinic.booking.exception.ErrorCode;
 import com.clinic.booking.entity.MedicalService;
 import com.clinic.booking.repository.MedicalServiceRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,8 +30,8 @@ public class MedicalServiceService {
         return medicalServiceRepository.findAllByOrderByNameAsc();
     }
 
-    public org.springframework.data.domain.Page<MedicalService> getServicesPage(String search, int page, int size) {
-        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size, org.springframework.data.domain.Sort.by("name").ascending());
+    public Page<MedicalService> getServicesPage(String search, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("name").ascending());
         return medicalServiceRepository.searchServices(search == null || search.trim().isEmpty() ? null : search.trim(), pageable);
     }
 

@@ -61,9 +61,9 @@ public class SpecialtyService {
                 .name(dto.getName())
                 .description(dto.getDescription())
                 .imageUrl(dto.getImageUrl())
-                .build()).collect(java.util.stream.Collectors.toList());
+                .build()).collect(Collectors.toList());
         List<Specialty> savedSpecialties = specialtyRepository.saveAll(specialties);
-        return savedSpecialties.stream().map(this::mapToDTO).collect(java.util.stream.Collectors.toList());
+        return savedSpecialties.stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 
     // CẬP NHẬT CHUYÊN KHOA
