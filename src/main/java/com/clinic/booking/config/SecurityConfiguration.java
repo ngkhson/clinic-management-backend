@@ -138,6 +138,8 @@ public class SecurityConfiguration {
 
                         // MỞ TẠM THỜI ĐỂ DỄ TEST
                         .requestMatchers("/api/specialties/**").permitAll()
+                        .requestMatchers("/api/files/**").permitAll()
+                        .requestMatchers("/uploads/**").permitAll()
                         .requestMatchers("/api/doctors/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/admin/doctors").permitAll()
                         .requestMatchers("/api/admin/doctors").permitAll()

@@ -24,6 +24,7 @@ public class AdminDashboardService {
     private final AppointmentRepository appointmentRepository;
     private final UserRepository userRepository;
     private final DoctorRepository doctorRepository;
+    private final com.clinic.booking.repository.InvoiceRepository invoiceRepository;
 
     public Map<String, Object> getDashboardStats() {
         List<Appointment> allAppointments = appointmentRepository.findAll();
@@ -35,8 +36,12 @@ public class AdminDashboardService {
                 .count();
         long totalAppointments = allAppointments.size();
 
-        // Tính doanh thu (Tạm thời gán bằng 0, sau này sẽ tính tổng từ bảng Invoice)
-        BigDecimal totalRevenue = BigDecimal.ZERO;
+        // Tính doanh thu từ bảng Invoice
+        double totalRev = invoiceRepository.findAll().stream()
+                .filter(i -> "PAID".equals(i.getStatus()))
+                .mapToDouble(i -> i.getTotalAmount() != null ? i.getTotalAmount() : 0.0)
+                .sum();
+        BigDecimal totalRevenue = BigDecimal.valueOf(totalRev);
 
         long pendingAppointments = allAppointments.stream()
                 .filter(a -> "PENDING".equals(a.getStatus()))

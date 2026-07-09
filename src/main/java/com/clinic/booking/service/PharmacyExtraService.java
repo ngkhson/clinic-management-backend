@@ -32,9 +32,9 @@ public class PharmacyExtraService {
                 .mapToDouble(ImportInvoice::getTotalAmount)
                 .sum();
 
-        double totalRetailRevenue = invoiceRepository.findByType("RETAIL").stream()
+        double totalRetailRevenue = invoiceRepository.findAll().stream()
                 .filter(i -> "PAID".equals(i.getStatus()))
-                .mapToDouble(Invoice::getTotalAmount)
+                .mapToDouble(i -> i.getMedicineFee() != null ? i.getMedicineFee() : 0.0)
                 .sum();
 
         return PharmacyReportResponse.builder()

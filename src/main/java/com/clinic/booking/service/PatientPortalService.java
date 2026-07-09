@@ -72,6 +72,7 @@ public class PatientPortalService {
                 .treatmentPlan(record.getTreatmentPlan())
                 .prescription(record.getPrescription())
                 .notes(record.getNotes())
+                .paraclinicalResults(record.getParaclinicalResults())
                 // LẤY TÊN CÁC DỊCH VỤ ĐÃ CHỈ ĐỊNH (MODULE 3)
                 .serviceNames(record.getServices() != null ? record.getServices().stream().map(MedicalService::getName).collect(Collectors.toList()) : List.of())
                 // LẤY CHI TIẾT TOA THUỐC VỀ CHO BỆNH NHÂN (MODULE 5)

@@ -4,6 +4,7 @@ import com.clinic.booking.exception.AppException;
 import com.clinic.booking.exception.ErrorCode;
 
 import com.clinic.booking.dto.invoice.InvoiceResponse;
+import com.clinic.booking.dto.invoice.InvoiceDetailResponse;
 import com.clinic.booking.entity.*;
 import com.clinic.booking.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ public class InvoiceService {
     private final InvoiceRepository invoiceRepository;
     private final AppointmentRepository appointmentRepository;
     private final MedicalRecordRepository medicalRecordRepository;
+    private final RetailInvoiceDetailRepository retailInvoiceDetailRepository;
 
     @Transactional
     public InvoiceResponse generateInvoice(Long appointmentId) {
@@ -114,6 +116,56 @@ public class InvoiceService {
         
         return invoiceRepository.findInvoiceHistory("PAID", typeParam, methodParam, searchParam, pageable)
                 .map(this::mapToDTO);
+    }
+
+    public InvoiceDetailResponse getInvoiceDetails(Long invoiceId) {
+        Invoice invoice = invoiceRepository.findById(invoiceId)
+                .orElseThrow(() -> new AppException(ErrorCode.INVALID_ACTION));
+        
+        InvoiceDetailResponse response = InvoiceDetailResponse.builder()
+                .invoice(mapToDTO(invoice))
+                .services(new java.util.ArrayList<>())
+                .medicines(new java.util.ArrayList<>())
+                .build();
+                
+        if ("RETAIL".equals(invoice.getType())) {
+            List<RetailInvoiceDetail> retailDetails = retailInvoiceDetailRepository.findByInvoiceId(invoiceId);
+            for (RetailInvoiceDetail rd : retailDetails) {
+                response.getMedicines().add(InvoiceDetailResponse.MedicineItem.builder()
+                        .name(rd.getMedicine().getName())
+                        .quantity(rd.getQuantity())
+                        .unit(rd.getMedicine().getUnit())
+                        .price(rd.getUnitPrice())
+                        .total(rd.getTotalPrice())
+                        .build());
+            }
+        } else {
+            // MEDICAL
+            medicalRecordRepository.findByAppointmentId(invoice.getAppointment().getId()).ifPresent(record -> {
+                if (record.getServices() != null) {
+                    for (MedicalService s : record.getServices()) {
+                        response.getServices().add(InvoiceDetailResponse.ServiceItem.builder()
+                                .name(s.getName())
+                                .price(s.getPrice())
+                                .build());
+                    }
+                }
+                if (record.getPrescriptionDetails() != null) {
+                    for (PrescriptionDetail pd : record.getPrescriptionDetails()) {
+                        double price = pd.getMedicine().getSellingPrice() != null ? pd.getMedicine().getSellingPrice() : 0.0;
+                        response.getMedicines().add(InvoiceDetailResponse.MedicineItem.builder()
+                                .name(pd.getMedicine().getName())
+                                .quantity(pd.getQuantity())
+                                .unit(pd.getMedicine().getUnit())
+                                .price(price)
+                                .total(price * pd.getQuantity())
+                                .build());
+                    }
+                }
+            });
+        }
+        
+        return response;
     }
 
     private InvoiceResponse mapToDTO(Invoice invoice) {

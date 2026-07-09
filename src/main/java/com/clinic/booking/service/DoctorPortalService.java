@@ -29,6 +29,7 @@ public class DoctorPortalService {
     private final MedicalServiceRepository medicalServiceRepository;
     private final MedicineRepository medicineRepository;
     private final NotificationService notificationService;
+    private final VitalSignRepository vitalSignRepository;
 
     private Doctor getCurrentDoctor() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -74,9 +75,37 @@ public class DoctorPortalService {
     }
 
     public MedicalRecordResponse getDraftRecord(Long appointmentId) {
-        return medicalRecordRepository.findByAppointmentId(appointmentId)
+        MedicalRecordResponse response = medicalRecordRepository.findByAppointmentId(appointmentId)
                 .map(this::mapToDTO)
                 .orElse(null);
+
+        VitalSign vitals = vitalSignRepository.findByAppointmentId(appointmentId).orElse(null);
+
+        if (vitals != null) {
+            if (response == null) {
+                response = MedicalRecordResponse.builder()
+                        .appointmentId(appointmentId)
+                        .pulse(vitals.getPulse())
+                        .temp(vitals.getTemperature())
+                        .bp(vitals.getBloodPressure())
+                        .resp(vitals.getRespiratoryRate())
+                        .height(vitals.getHeight())
+                        .weight(vitals.getWeight())
+                        .medicalHistory(vitals.getNotes())
+                        .build();
+            } else {
+                if (response.getPulse() == null) response.setPulse(vitals.getPulse());
+                if (response.getTemp() == null) response.setTemp(vitals.getTemperature());
+                if (response.getBp() == null || response.getBp().isEmpty()) response.setBp(vitals.getBloodPressure());
+                if (response.getResp() == null) response.setResp(vitals.getRespiratoryRate());
+                if (response.getHeight() == null) response.setHeight(vitals.getHeight());
+                if (response.getWeight() == null) response.setWeight(vitals.getWeight());
+                if (response.getMedicalHistory() == null || response.getMedicalHistory().isEmpty()) {
+                    response.setMedicalHistory(vitals.getNotes());
+                }
+            }
+        }
+        return response;
     }
 
     @Transactional

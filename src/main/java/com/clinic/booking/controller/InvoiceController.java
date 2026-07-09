@@ -45,6 +45,12 @@ public class InvoiceController {
         return ApiResponse.success(invoiceService.getInvoiceByAppointmentId(appointmentId));
     }
 
+    // Lấy chi tiết dịch vụ & thuốc của hóa đơn
+    @GetMapping("/{id}/details")
+    public ApiResponse<com.clinic.booking.dto.invoice.InvoiceDetailResponse> getInvoiceDetails(@PathVariable Long id) {
+        return ApiResponse.success(invoiceService.getInvoiceDetails(id));
+    }
+
     // Xác nhận thu tiền
     @PutMapping("/{id}/pay")
     public ApiResponse<Object> payInvoice(

@@ -35,16 +35,23 @@ public class DoctorPortalController {
     // THÊM: API Lấy bệnh án nháp nếu Bác sĩ mở lại ca khám
     @GetMapping("/medical-records/appointment/{appointmentId}")
     public ApiResponse<MedicalRecordResponse> getDraftRecord(@PathVariable Long appointmentId) {
+        System.out.println("--- GET DRAFT RECORD --- Appt ID: " + appointmentId);
         MedicalRecordResponse record = doctorPortalService.getDraftRecord(appointmentId);
         if (record == null) {
+            System.out.println("Record is NULL");
             return ApiResponse.success(null);
         }
+        System.out.println("Returning Record - Pulse: " + record.getPulse() + ", Temp: " + record.getTemp() + ", BP: " + record.getBp());
         return ApiResponse.success(record);
     }
 
     // API Lưu Bệnh Án (Xử lý cả Lưu nháp và Hoàn tất dựa vào cờ isDraft)
     @PostMapping("/medical-records")
     public ApiResponse<Object> saveMedicalRecord(@RequestBody MedicalRecordRequest request) {
+        System.out.println("--- SAVE MEDICAL RECORD REQUEST ---");
+        System.out.println("Pulse: " + request.getPulse());
+        System.out.println("Temp: " + request.getTemp());
+        System.out.println("BP: " + request.getBp());
         return ApiResponse.success(doctorPortalService.saveMedicalRecord(request));
     }
 }
