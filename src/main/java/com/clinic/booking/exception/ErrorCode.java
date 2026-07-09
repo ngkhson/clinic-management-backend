@@ -20,6 +20,7 @@ public enum ErrorCode {
     DOCTOR_NOT_FOUND(404, "Không tìm thấy bác sĩ", HttpStatus.NOT_FOUND),
     APPOINTMENT_NOT_FOUND(404, "Không tìm thấy lịch hẹn", HttpStatus.NOT_FOUND),
     SPECIALTY_NOT_FOUND(404, "Không tìm thấy chuyên khoa", HttpStatus.NOT_FOUND),
+    SPECIALTY_HAS_DOCTORS(400, "Không thể xóa bởi vì có bác sĩ thuộc chuyên khoa đó", HttpStatus.BAD_REQUEST),
     SCHEDULE_NOT_FOUND(404, "Không tìm thấy lịch làm việc", HttpStatus.NOT_FOUND),
     SCHEDULE_FULL(400, "Không còn lịch trống trong khung giờ này", HttpStatus.BAD_REQUEST),
     REVIEW_ALREADY_EXISTS(400, "Bạn đã gửi đánh giá cho ca khám này rồi", HttpStatus.BAD_REQUEST),

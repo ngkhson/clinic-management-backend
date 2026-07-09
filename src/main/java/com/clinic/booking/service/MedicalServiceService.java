@@ -26,9 +26,19 @@ public class MedicalServiceService {
         return medicalServiceRepository.findAllByOrderByNameAsc();
     }
 
+    public org.springframework.data.domain.Page<MedicalService> getServicesPage(String search, int page, int size) {
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size, org.springframework.data.domain.Sort.by("name").ascending());
+        return medicalServiceRepository.searchServices(search == null || search.trim().isEmpty() ? null : search.trim(), pageable);
+    }
+
     @Transactional
     public MedicalService createService(MedicalService service) {
         return medicalServiceRepository.save(service);
+    }
+
+    @Transactional
+    public List<MedicalService> createServices(List<MedicalService> services) {
+        return medicalServiceRepository.saveAll(services);
     }
 
     @Transactional

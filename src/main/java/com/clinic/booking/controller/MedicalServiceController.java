@@ -27,9 +27,24 @@ public class MedicalServiceController {
         return ApiResponse.success(medicalServiceService.getAllServices());
     }
 
+    @GetMapping("/page")
+    public ApiResponse<org.springframework.data.domain.Page<MedicalService>> getServicesPage(
+            @RequestParam(required = false) String search,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ApiResponse.success(medicalServiceService.getServicesPage(search, page, size));
+    }
+
     @PostMapping
-    public ApiResponse<MedicalService> create(@RequestBody MedicalService service) {
-        return ApiResponse.success(medicalServiceService.createService(service));
+    public ApiResponse<?> create(@RequestBody Object requestObj) {
+        com.fasterxml.jackson.databind.ObjectMapper objectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
+        if (requestObj instanceof java.util.List) {
+            java.util.List<MedicalService> services = objectMapper.convertValue(requestObj, new com.fasterxml.jackson.core.type.TypeReference<java.util.List<MedicalService>>() {});
+            return ApiResponse.success(medicalServiceService.createServices(services));
+        } else {
+            MedicalService service = objectMapper.convertValue(requestObj, MedicalService.class);
+            return ApiResponse.success(medicalServiceService.createService(service));
+        }
     }
 
     @PutMapping("/{id}")

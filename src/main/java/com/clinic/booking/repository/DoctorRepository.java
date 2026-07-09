@@ -16,6 +16,8 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
     // Lấy danh sách bác sĩ thuộc về một chuyên khoa cụ thể
     List<Doctor> findBySpecialtyId(Long specialtyId);
 
+    boolean existsBySpecialtyId(Long specialtyId);
+
     // Lọc theo trạng thái của user (VD: ACTIVE)
     List<Doctor> findByUserStatus(String status);
 

@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 public class SpecialtyService {
 
     private final SpecialtyRepository specialtyRepository;
+    private final com.clinic.booking.repository.DoctorRepository doctorRepository;
 
     // Hàm phụ trợ map Entity -> DTO
     private SpecialtyResponse mapToDTO(Specialty specialty) {
@@ -82,6 +83,9 @@ public class SpecialtyService {
     public void deleteSpecialty(Long id) {
         if (!specialtyRepository.existsById(id)) {
             throw new AppException(ErrorCode.SPECIALTY_NOT_FOUND);
+        }
+        if (doctorRepository.existsBySpecialtyId(id)) {
+            throw new AppException(ErrorCode.SPECIALTY_HAS_DOCTORS);
         }
         specialtyRepository.deleteById(id);
     }

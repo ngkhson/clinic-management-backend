@@ -12,4 +12,8 @@ public interface MedicalServiceRepository extends JpaRepository<MedicalService, 
     List<MedicalService> findByCategoryAndIsActiveTrueOrderByNameAsc(String category);
     // THÊM HÀM NÀY: Lấy tất cả dịch vụ (kể cả đã tắt)
     List<MedicalService> findAllByOrderByNameAsc();
+
+    @org.springframework.data.jpa.repository.Query("SELECT s FROM MedicalService s WHERE " +
+            "(:searchTerm IS NULL OR LOWER(s.name) LIKE LOWER(CONCAT('%', CAST(:searchTerm AS string), '%')))")
+    org.springframework.data.domain.Page<MedicalService> searchServices(@org.springframework.data.repository.query.Param("searchTerm") String searchTerm, org.springframework.data.domain.Pageable pageable);
 }
