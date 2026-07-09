@@ -29,6 +29,7 @@ public class DoctorPortalService {
     private final MedicalServiceRepository medicalServiceRepository;
     private final MedicineRepository medicineRepository;
     private final NotificationService notificationService;
+    private final EmailService emailService;
     private final VitalSignRepository vitalSignRepository;
 
     private Doctor getCurrentDoctor() {
@@ -191,6 +192,16 @@ public class DoctorPortalService {
                     appointment.getPatient(),
                     "Bác sĩ " + currentDoctor.getUser().getFullName() + " đã cập nhật Hồ sơ bệnh án của bạn. Vui lòng xem chi tiết trong phần Hồ sơ của tôi."
             );
+            
+            // Gửi email bệnh án bất đồng bộ
+            String patientEmail = appointment.getPatient().getEmail();
+            String patientName = appointment.getPatient().getFullName();
+            if (patientEmail != null && !patientEmail.isEmpty()) {
+                final MedicalRecord finalRecord = record; // for lambda
+                java.util.concurrent.CompletableFuture.runAsync(() -> {
+                    emailService.sendMedicalRecordEmail(patientEmail, finalRecord, patientName);
+                });
+            }
         }
         appointmentRepository.save(appointment);
 
