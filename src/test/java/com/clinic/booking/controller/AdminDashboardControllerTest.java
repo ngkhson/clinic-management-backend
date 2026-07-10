@@ -47,6 +47,11 @@ public class AdminDashboardControllerTest {
     void initData() {
         appointmentResponse = AppointmentResponse.builder()
                 .id(1L)
+                .doctorId(2L)
+                .scheduleId(3L)
+                .doctorName("Dr. John")
+                .patientName("Nguyen Son")
+                .timeSlot("08:00 - 09:00")
                 .status("PENDING")
                 .build();
 
