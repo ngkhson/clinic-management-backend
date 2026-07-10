@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -14,5 +16,5 @@ public class AuthenticationResponse {
     private String token;
 
     // Thêm trường roles để Front-end biết danh sách quyền của User
-    private java.util.List<String> roles;
+    private List<String> roles;
 }
