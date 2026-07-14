@@ -1,6 +1,7 @@
 package com.clinic.booking.controller;
 
 import com.clinic.booking.dto.doctor.DoctorCreationRequest;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import com.clinic.booking.dto.common.ApiResponse;
 import com.clinic.booking.dto.doctor.AdminDoctorResponse;
@@ -19,7 +20,7 @@ public class AdminDoctorController {
     private final AdminDoctorService adminDoctorService;
 
     @GetMapping
-    public ApiResponse<org.springframework.data.domain.Page<AdminDoctorResponse>> getAllDoctors(
+    public ApiResponse<Page<AdminDoctorResponse>> getAllDoctors(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String search) {

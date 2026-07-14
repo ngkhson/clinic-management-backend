@@ -4,6 +4,7 @@ import com.clinic.booking.dto.user.UserResponse;
 import com.clinic.booking.dto.common.ApiResponse;
 import com.clinic.booking.service.AdminPatientService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public class AdminPatientController {
     private final AdminPatientService adminPatientService;
 
     @GetMapping
-    public ApiResponse<org.springframework.data.domain.Page<UserResponse>> getAllPatients(
+    public ApiResponse<Page<UserResponse>> getAllPatients(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String search) {

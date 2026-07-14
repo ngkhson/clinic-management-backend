@@ -26,7 +26,6 @@ public class UserController {
         return ApiResponse.success(userService.updateMyProfile(request));
     }
 
-    // THÊM: API Đổi mật khẩu
     @PatchMapping("/change-password")
     public ApiResponse<Object> changePassword(@RequestBody ChangePasswordRequest request) {
         userService.changePassword(request);

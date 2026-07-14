@@ -1,6 +1,7 @@
 package com.clinic.booking.controller;
 
 import com.clinic.booking.dto.pharmacy.RetailMedicineRequest;
+import com.clinic.booking.entity.Invoice;
 import org.springframework.http.ResponseEntity;
 import com.clinic.booking.dto.common.ApiResponse;
 import com.clinic.booking.service.RetailService;
@@ -23,7 +24,7 @@ public class RetailController {
     @PostMapping
     public ApiResponse<Object> createRetailInvoice(@RequestBody RetailMedicineRequest request) {
         try {
-            com.clinic.booking.entity.Invoice invoice = retailService.createRetailInvoice(request);
+            Invoice invoice = retailService.createRetailInvoice(request);
             return ApiResponse.success(invoice);
         } catch (RuntimeException e) {
             // Sẽ trả về lỗi nếu không đủ số lượng thuốc

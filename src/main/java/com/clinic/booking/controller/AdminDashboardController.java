@@ -4,6 +4,7 @@ import com.clinic.booking.dto.appointment.AppointmentResponse;
 import com.clinic.booking.dto.common.ApiResponse;
 import com.clinic.booking.service.AdminDashboardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,7 +24,7 @@ public class AdminDashboardController {
     }
 
     @GetMapping("/all-appointments")
-    public ApiResponse<org.springframework.data.domain.Page<AppointmentResponse>> getAppointments(
+    public ApiResponse<Page<AppointmentResponse>> getAppointments(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String search,

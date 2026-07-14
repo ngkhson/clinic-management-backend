@@ -4,8 +4,12 @@ import com.clinic.booking.dto.specialty.SpecialtyRequest;
 import com.clinic.booking.dto.common.ApiResponse;
 import com.clinic.booking.dto.specialty.SpecialtyResponse;
 import com.clinic.booking.service.SpecialtyService;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin/specialties")
@@ -17,9 +21,9 @@ public class AdminSpecialtyController {
 
     @PostMapping
     public ApiResponse<?> createSpecialty(@RequestBody Object requestObj) {
-        com.fasterxml.jackson.databind.ObjectMapper objectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
+        ObjectMapper objectMapper = new ObjectMapper();
         if (requestObj instanceof java.util.List) {
-            java.util.List<SpecialtyRequest> requests = objectMapper.convertValue(requestObj, new com.fasterxml.jackson.core.type.TypeReference<java.util.List<SpecialtyRequest>>() {});
+            java.util.List<SpecialtyRequest> requests = objectMapper.convertValue(requestObj, new TypeReference<List<SpecialtyRequest>>() {});
             return ApiResponse.success(specialtyService.createSpecialties(requests));
         } else {
             SpecialtyRequest request = objectMapper.convertValue(requestObj, SpecialtyRequest.class);

@@ -1,9 +1,11 @@
 package com.clinic.booking.controller;
 
+import com.clinic.booking.dto.invoice.InvoiceDetailResponse;
 import com.clinic.booking.dto.invoice.InvoiceResponse;
 import com.clinic.booking.dto.common.ApiResponse;
 import com.clinic.booking.service.InvoiceService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,7 +26,7 @@ public class InvoiceController {
 
     // Lịch sử thu ngân có phân trang
     @GetMapping("/history")
-    public ApiResponse<org.springframework.data.domain.Page<InvoiceResponse>> getInvoiceHistory(
+    public ApiResponse<Page<InvoiceResponse>> getInvoiceHistory(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String search,
@@ -47,7 +49,7 @@ public class InvoiceController {
 
     // Lấy chi tiết dịch vụ & thuốc của hóa đơn
     @GetMapping("/{id}/details")
-    public ApiResponse<com.clinic.booking.dto.invoice.InvoiceDetailResponse> getInvoiceDetails(@PathVariable Long id) {
+    public ApiResponse<InvoiceDetailResponse> getInvoiceDetails(@PathVariable Long id) {
         return ApiResponse.success(invoiceService.getInvoiceDetails(id));
     }
 
