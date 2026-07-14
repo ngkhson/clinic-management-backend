@@ -15,7 +15,6 @@ import java.util.Map;
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class AdminDashboardController {
-
     private final AdminDashboardService adminDashboardService;
 
     @GetMapping("/stats")
