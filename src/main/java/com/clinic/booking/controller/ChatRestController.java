@@ -19,13 +19,21 @@ public class ChatRestController {
 
     // API lấy lịch sử chat
     @GetMapping("/history")
-    public ApiResponse<List<ChatHistoryResponse>> getHistory(@RequestParam String patientEmail) {
-        return ApiResponse.success(chatService.getHistory(patientEmail));
+    public ApiResponse<List<ChatHistoryResponse>> getHistory(@RequestParam String patientEmail, org.springframework.security.core.Authentication authentication) {
+        String currentUserEmail = authentication.getName();
+        return ApiResponse.success(chatService.getHistory(patientEmail, currentUserEmail));
     }
 
     // API lấy danh sách người đã chat (dành cho Admin)
     @GetMapping("/rooms")
     public ApiResponse<List<ChatRoomResponse>> getActiveRooms() {
         return ApiResponse.success(chatService.getActiveRooms());
+    }
+
+    // API lấy số lượng tin nhắn chưa đọc
+    @GetMapping("/unread")
+    public ApiResponse<Integer> getUnreadCount(org.springframework.security.core.Authentication authentication) {
+        String currentUserEmail = authentication.getName();
+        return ApiResponse.success(chatService.getUnreadCount(currentUserEmail));
     }
 }

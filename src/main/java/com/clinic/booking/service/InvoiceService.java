@@ -64,6 +64,7 @@ public class InvoiceService {
         // 4. Lưu Hóa đơn vào DB
         Invoice invoice = Invoice.builder()
                 .appointment(appointment)
+                .customerName(appointment.getPatient().getFullName()) // Lưu tên khách hàng (bệnh nhân)
                 .type("MEDICAL")
                 .serviceFee(serviceFee)
                 .medicineFee(medicineFee)

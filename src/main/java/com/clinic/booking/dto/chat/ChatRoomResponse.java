@@ -9,4 +9,5 @@ public class ChatRoomResponse {
     private String patientEmail;
     private String patientName;
     private String lastMessage;
+    private int unreadCount;
 }

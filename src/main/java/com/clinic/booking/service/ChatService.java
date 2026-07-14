@@ -62,24 +62,38 @@ public class ChatService {
     }
 
     // ĐÃ SỬA: Bổ sung trường receiverEmail để React lọc đúng tin nhắn khi load lịch sử
-    public List<ChatHistoryResponse> getHistory(String patientEmail) {
+    public List<ChatHistoryResponse> getHistory(String patientEmail, String currentUserEmail) {
         User patient = userRepository.findByEmail(patientEmail).orElseThrow();
         return chatRoomRepository.findByUserId(patient.getId())
-                .map(room -> messageRepository.findByChatRoomIdOrderByCreatedAtAsc(room.getId())
-                        .stream()
+                .map(room -> {
+                    List<Message> messages = messageRepository.findByChatRoomIdOrderByCreatedAtAsc(room.getId());
+                    boolean isStaff = !currentUserEmail.equals(patientEmail);
+                    
+                    List<ChatHistoryResponse> responses = messages.stream()
                         .map(msg -> {
-                            // Kiểm tra xem ai là người gửi (Bệnh nhân hay là Nhân viên)
                             boolean isPatientSender = msg.getSender().getId().equals(room.getUser().getId());
+                            
+                            // Tự động đánh dấu đã đọc nếu người đang xem không phải là người gửi
+                            if (isStaff && isPatientSender && !msg.getIsRead()) {
+                                msg.setIsRead(true);
+                                messageRepository.save(msg);
+                            } else if (!isStaff && !isPatientSender && !msg.getIsRead()) {
+                                msg.setIsRead(true);
+                                messageRepository.save(msg);
+                            }
+                            
                             return ChatHistoryResponse.builder()
                                     .senderEmail(msg.getSender().getEmail())
-                                    // Nếu bệnh nhân gửi thì người nhận là STAFF, ngược lại người nhận là Bệnh nhân
                                     .receiverEmail(isPatientSender ? "STAFF" : room.getUser().getEmail())
                                     .content(msg.getContent())
                                     .timestamp(msg.getCreatedAt() != null ? msg.getCreatedAt().toString() : "")
                                     .type("CHAT")
                                     .build();
                         })
-                        .collect(Collectors.toList()))
+                        .collect(Collectors.toList());
+                    
+                    return responses;
+                })
                 .orElse(List.of());
     }
 
@@ -89,12 +103,42 @@ public class ChatService {
                 .map(room -> {
                     List<Message> msgs = messageRepository.findByChatRoomIdOrderByCreatedAtAsc(room.getId());
                     String lastMsg = msgs.isEmpty() ? "Chưa có tin nhắn" : msgs.get(msgs.size() - 1).getContent();
+                    
+                    // Admin/Doctor xem danh sách phòng thì chỉ đếm những tin nhắn do bệnh nhân gửi mà chưa đọc
+                    long unreadCount = msgs.stream()
+                        .filter(msg -> msg.getSender().getId().equals(room.getUser().getId()) && !msg.getIsRead())
+                        .count();
+                        
                     return ChatRoomResponse.builder()
                             .patientEmail(room.getUser().getEmail())
                             .patientName(room.getUser().getFullName())
                             .lastMessage(lastMsg)
+                            .unreadCount((int) unreadCount)
                             .build();
                 })
                 .collect(Collectors.toList());
+    }
+
+    public int getUnreadCount(String currentUserEmail) {
+        User user = userRepository.findByEmail(currentUserEmail).orElseThrow();
+        
+        boolean isStaff = user.getRoles().stream()
+                .anyMatch(role -> role.getName().equals("ADMIN") || role.getName().equals("DOCTOR"));
+
+        if (isStaff) {
+            // Staff unread count is calculated across all rooms
+            return chatRoomRepository.findAll().stream()
+                .mapToInt(room -> (int) messageRepository.findByChatRoomIdOrderByCreatedAtAsc(room.getId()).stream()
+                    .filter(msg -> msg.getSender().getId().equals(room.getUser().getId()) && !msg.getIsRead())
+                    .count())
+                .sum();
+        } else {
+            // Patient unread count is calculated from their single room
+            return chatRoomRepository.findByUserId(user.getId())
+                .map(room -> (int) messageRepository.findByChatRoomIdOrderByCreatedAtAsc(room.getId()).stream()
+                    .filter(msg -> !msg.getSender().getId().equals(room.getUser().getId()) && !msg.getIsRead())
+                    .count())
+                .orElse(0);
+        }
     }
 }

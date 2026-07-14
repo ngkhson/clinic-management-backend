@@ -25,6 +25,11 @@ public class ChatRoom {
     @Builder.Default
     private String status = "OPEN";
 
-    @Column(name = "created_at", insertable = false, updatable = false)
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
 }
