@@ -6,6 +6,7 @@ import com.clinic.booking.dto.common.ApiResponse;
 import com.clinic.booking.service.ImportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/imports")
@@ -16,7 +17,7 @@ public class ImportController {
     private final ImportService importService;
 
     @PostMapping
-    public ApiResponse<String> createImport(@RequestBody ImportMedicineRequest request) {
+    public ApiResponse<String> createImport(@Valid @RequestBody ImportMedicineRequest request) {
         try {
             importService.createImportInvoice(request);
             return ApiResponse.success("Nhập kho thành công!");

@@ -8,6 +8,7 @@ import com.clinic.booking.dto.doctor.AdminDoctorResponse;
 import com.clinic.booking.service.AdminDoctorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class AdminDoctorController {
     }
 
     @PostMapping
-    public ApiResponse<Object> createDoctor(@RequestBody DoctorCreationRequest request) {
+    public ApiResponse<Object> createDoctor(@Valid @RequestBody DoctorCreationRequest request) {
         try {
             AdminDoctorResponse newDoctor = adminDoctorService.createDoctor(request);
             return ApiResponse.success(newDoctor);
@@ -44,7 +45,7 @@ public class AdminDoctorController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<Object> updateDoctor(@PathVariable Long id, @RequestBody DoctorCreationRequest request) {
+    public ApiResponse<Object> updateDoctor(@PathVariable Long id, @Valid @RequestBody DoctorCreationRequest request) {
         return ApiResponse.success(adminDoctorService.updateDoctor(id, request));
     }
 

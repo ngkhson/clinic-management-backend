@@ -28,6 +28,7 @@ public class AdminReceptionService {
     private final ScheduleRepository scheduleRepository;
     private final AppointmentRepository appointmentRepository;
     private final VitalSignRepository vitalSignRepository;
+    private final NotificationService notificationService;
 
     @Transactional
     public AppointmentResponse createReceptionAndVitals(AdminReceptionRequest request) {
@@ -82,6 +83,11 @@ public class AdminReceptionService {
 
             timeSlotStr = schedule.getTimeSlot();
         }
+
+        notificationService.sendNotification(
+                patient,
+                "Lễ tân đã tiếp nhận bạn. Lịch hẹn lúc " + timeSlotStr + " ngày " + appointment.getAppointmentDate() + " đã chuyển sang trạng thái CONFIRMED."
+        );
 
         // 3. LƯU CHỈ SỐ SINH TỒN (Chung cho cả 2 trường hợp)
         if (request.getHeight() != null || request.getWeight() != null || request.getBloodPressure() != null) {

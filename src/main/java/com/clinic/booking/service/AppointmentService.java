@@ -18,6 +18,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -28,12 +30,22 @@ public class AppointmentService {
     private final ScheduleRepository scheduleRepository;
     private final DoctorRepository doctorRepository;
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
     @Transactional
     public AppointmentResponse createAppointment(AppointmentRequest request) {
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         User patient = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        // Kiểm tra không cho đặt lịch trước giờ hiện tại trừ đi 15 phút
+        String startTimeStr = request.getTimeSlot().split(" - ")[0].trim();
+        LocalTime startTime = LocalTime.parse(startTimeStr);
+        LocalDateTime appointmentDateTime = LocalDateTime.of(request.getAppointmentDate(), startTime);
+        
+        if (appointmentDateTime.isBefore(LocalDateTime.now().minusMinutes(15))) {
+            throw new AppException(ErrorCode.INVALID_APPOINTMENT_TIME);
+        }
 
         List<Schedule> availableSchedules = scheduleRepository.findAvailableSchedules(
                 request.getSpecialtyId(), request.getAppointmentDate(), request.getTimeSlot());
@@ -58,6 +70,8 @@ public class AppointmentService {
 
         schedule.setCurrentPatients(schedule.getCurrentPatients() + 1);
         scheduleRepository.save(schedule);
+
+        notificationService.sendNotification(patient, "Đặt lịch khám thành công. Lịch hẹn của bạn đang chờ xác nhận từ Lễ tân.");
 
         return mapToDTO(appointment);
     }
@@ -121,6 +135,11 @@ public class AppointmentService {
                 scheduleRepository.save(schedule);
             }
             appointmentRepository.save(appointment);
+
+            notificationService.sendNotification(
+                    appointment.getPatient(),
+                    "Bạn đã huỷ thành công lịch hẹn ngày " + appointment.getAppointmentDate().toString() + "."
+            );
         }
     }
 }

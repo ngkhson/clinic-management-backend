@@ -28,11 +28,13 @@ public class GlobalExceptionHandler {
     // 2. Xử lý lỗi Validate dữ liệu (Ví dụ: @NotBlank, @Size...)
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Void>> handlingValidationException(MethodArgumentNotValidException exception) {
-        String errorMessage = exception.getFieldError() != null ? exception.getFieldError().getDefaultMessage() : "Dữ liệu không hợp lệ";
+        String errorMessage = exception.getBindingResult().getFieldErrors().stream()
+                .map(f -> f.getField() + ": " + f.getDefaultMessage())
+                .collect(java.util.stream.Collectors.joining(", "));
         
         ApiResponse<Void> apiResponse = ApiResponse.<Void>builder()
                 .code(ErrorCode.INVALID_KEY.getCode())
-                .message(errorMessage)
+                .message("Dữ liệu không hợp lệ: " + errorMessage)
                 .build();
         return ResponseEntity.status(ErrorCode.INVALID_KEY.getStatusCode()).body(apiResponse);
     }

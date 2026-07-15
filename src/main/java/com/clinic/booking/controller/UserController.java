@@ -7,6 +7,7 @@ import com.clinic.booking.dto.user.UserProfileResponse;
 import com.clinic.booking.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/users")
@@ -22,12 +23,12 @@ public class UserController {
     }
 
     @PatchMapping("/profile")
-    public ApiResponse<UserProfileResponse> updateProfile(@RequestBody UserProfileRequest request) {
+    public ApiResponse<UserProfileResponse> updateProfile(@Valid @RequestBody UserProfileRequest request) {
         return ApiResponse.success(userService.updateMyProfile(request));
     }
 
     @PatchMapping("/change-password")
-    public ApiResponse<Object> changePassword(@RequestBody ChangePasswordRequest request) {
+    public ApiResponse<Object> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
         userService.changePassword(request);
         return ApiResponse.success("Đổi mật khẩu thành công!");
     }

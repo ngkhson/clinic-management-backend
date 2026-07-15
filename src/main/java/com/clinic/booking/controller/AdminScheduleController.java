@@ -9,6 +9,7 @@ import com.clinic.booking.dto.schedule.ScheduleGenerateRequest;
 import com.clinic.booking.service.AdminScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/admin/schedules")
@@ -19,13 +20,13 @@ public class AdminScheduleController {
     private final AdminScheduleService adminScheduleService;
 
     @PostMapping("/generate")
-    public ApiResponse<String> generateSchedules(@RequestBody ScheduleGenerateRequest request) {
+    public ApiResponse<String> generateSchedules(@Valid @RequestBody ScheduleGenerateRequest request) {
         int count = adminScheduleService.generateSchedules(request);
         return ApiResponse.success("Đã tạo thành công " + count + " ca khám!");
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<String> updateSchedule(@PathVariable Long id, @RequestBody ScheduleUpdateRequest request) {
+    public ApiResponse<String> updateSchedule(@PathVariable Long id, @Valid @RequestBody ScheduleUpdateRequest request) {
         adminScheduleService.updateSchedule(id, request);
         return ApiResponse.success("Cập nhật ca khám thành công");
     }

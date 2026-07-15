@@ -8,6 +8,7 @@ import com.clinic.booking.dto.record.MedicalRecordResponse;
 import com.clinic.booking.service.DoctorPortalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -47,7 +48,7 @@ public class DoctorPortalController {
 
     // API Lưu Bệnh Án (Xử lý cả Lưu nháp và Hoàn tất dựa vào cờ isDraft)
     @PostMapping("/medical-records")
-    public ApiResponse<Object> saveMedicalRecord(@RequestBody MedicalRecordRequest request) {
+    public ApiResponse<Object> saveMedicalRecord(@Valid @RequestBody MedicalRecordRequest request) {
         System.out.println("--- SAVE MEDICAL RECORD REQUEST ---");
         System.out.println("Pulse: " + request.getPulse());
         System.out.println("Temp: " + request.getTemp());

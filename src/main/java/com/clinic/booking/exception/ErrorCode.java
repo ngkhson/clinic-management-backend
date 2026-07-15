@@ -23,6 +23,7 @@ public enum ErrorCode {
     SPECIALTY_HAS_DOCTORS(400, "Không thể xóa bởi vì có bác sĩ thuộc chuyên khoa đó", HttpStatus.BAD_REQUEST),
     SCHEDULE_NOT_FOUND(404, "Không tìm thấy lịch làm việc", HttpStatus.NOT_FOUND),
     SCHEDULE_FULL(400, "Không còn lịch trống trong khung giờ này", HttpStatus.BAD_REQUEST),
+    INVALID_APPOINTMENT_TIME(400, "Không thể đặt lịch trong quá khứ", HttpStatus.BAD_REQUEST),
     REVIEW_ALREADY_EXISTS(400, "Bạn đã gửi đánh giá cho ca khám này rồi", HttpStatus.BAD_REQUEST),
     MEDICINE_NOT_FOUND(404, "Không tìm thấy thuốc", HttpStatus.NOT_FOUND),
     OUT_OF_STOCK(400, "Số lượng thuốc trong kho không đủ", HttpStatus.BAD_REQUEST),

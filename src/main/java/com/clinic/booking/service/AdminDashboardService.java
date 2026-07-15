@@ -25,6 +25,7 @@ public class AdminDashboardService {
     private final UserRepository userRepository;
     private final DoctorRepository doctorRepository;
     private final com.clinic.booking.repository.InvoiceRepository invoiceRepository;
+    private final NotificationService notificationService;
 
     public Map<String, Object> getDashboardStats() {
         List<Appointment> allAppointments = appointmentRepository.findAll();
@@ -63,6 +64,23 @@ public class AdminDashboardService {
                 .orElseThrow(() -> new AppException(ErrorCode.APPOINTMENT_NOT_FOUND));
         appointment.setStatus(status);
         appointmentRepository.save(appointment);
+
+        if ("CONFIRMED".equals(status)) {
+            notificationService.sendNotification(
+                    appointment.getPatient(),
+                    "Lịch hẹn của bạn vào ngày " + appointment.getAppointmentDate() + " lúc " + appointment.getSchedule().getTimeSlot() + " đã được xác nhận. Vui lòng đến đúng giờ!"
+            );
+        } else if ("CANCELLED".equals(status)) {
+            notificationService.sendNotification(
+                    appointment.getPatient(),
+                    "Lịch hẹn của bạn vào ngày " + appointment.getAppointmentDate() + " đã bị huỷ bởi Quản trị viên."
+            );
+        } else if ("NO_SHOW".equals(status)) {
+            notificationService.sendNotification(
+                    appointment.getPatient(),
+                    "Bạn đã không đến khám theo lịch hẹn ngày " + appointment.getAppointmentDate() + ". Lịch hẹn đã bị huỷ."
+            );
+        }
     }
 
     public org.springframework.data.domain.Page<AppointmentResponse> getAppointments(int page, int size, String search, String status) {

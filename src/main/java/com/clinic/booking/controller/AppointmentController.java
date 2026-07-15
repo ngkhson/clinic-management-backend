@@ -9,6 +9,7 @@ import com.clinic.booking.service.AppointmentService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/appointments")
@@ -19,7 +20,7 @@ public class AppointmentController {
     private final AppointmentService appointmentService;
 
     @PostMapping
-    public ApiResponse<Object> createAppointment(@RequestBody AppointmentRequest request) {
+    public ApiResponse<Object> createAppointment(@Valid @RequestBody AppointmentRequest request) {
         try {
             AppointmentResponse createdAppointment = appointmentService.createAppointment(request);
             return ApiResponse.success(createdAppointment);
@@ -29,7 +30,7 @@ public class AppointmentController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<Object> updateAppointment(@PathVariable Long id, @RequestBody AppointmentUpdateRequest request) {
+    public ApiResponse<Object> updateAppointment(@PathVariable Long id, @Valid @RequestBody AppointmentUpdateRequest request) {
         try {
             AppointmentResponse updatedAppointment = appointmentService.updateAppointment(id, request);
             return ApiResponse.success(updatedAppointment);

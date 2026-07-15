@@ -7,6 +7,7 @@ import com.clinic.booking.dto.common.ApiResponse;
 import com.clinic.booking.service.RetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/retail")
@@ -22,7 +23,7 @@ public class RetailController {
     }
 
     @PostMapping
-    public ApiResponse<Object> createRetailInvoice(@RequestBody RetailMedicineRequest request) {
+    public ApiResponse<Object> createRetailInvoice(@Valid @RequestBody RetailMedicineRequest request) {
         try {
             Invoice invoice = retailService.createRetailInvoice(request);
             return ApiResponse.success(invoice);

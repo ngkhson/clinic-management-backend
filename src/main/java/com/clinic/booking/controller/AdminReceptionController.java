@@ -5,6 +5,7 @@ import com.clinic.booking.dto.common.ApiResponse;
 import com.clinic.booking.service.AdminReceptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/admin/reception")
@@ -15,7 +16,7 @@ public class AdminReceptionController {
     private final AdminReceptionService receptionService;
 
     @PostMapping
-    public ApiResponse<Object> createReception(@RequestBody AdminReceptionRequest request) {
+    public ApiResponse<Object> createReception(@Valid @RequestBody AdminReceptionRequest request) {
         return ApiResponse.success(receptionService.createReceptionAndVitals(request));
     }
 }

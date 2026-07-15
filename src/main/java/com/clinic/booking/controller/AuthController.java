@@ -5,6 +5,7 @@ import com.clinic.booking.dto.common.ApiResponse;
 import com.clinic.booking.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -15,12 +16,12 @@ public class AuthController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/register")
-    public ApiResponse<AuthenticationResponse> register(@RequestBody RegisterRequest request) {
+    public ApiResponse<AuthenticationResponse> register(@Valid @RequestBody RegisterRequest request) {
         return ApiResponse.success(authenticationService.register(request));
     }
 
     @PostMapping("/authenticate")
-    public ApiResponse<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
+    public ApiResponse<AuthenticationResponse> authenticate(@Valid @RequestBody AuthenticationRequest request) {
         return ApiResponse.success(authenticationService.authenticate(request));
     }
 
@@ -33,7 +34,7 @@ public class AuthController {
 
     // THÊM: Xác nhận OTP và thiết lập mật khẩu mới
     @PostMapping("/reset-password")
-    public ApiResponse<Object> resetPassword(@RequestBody ResetPasswordRequest request) {
+    public ApiResponse<Object> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
         authenticationService.resetPassword(request);
         return ApiResponse.success("Khôi phục mật khẩu thành công!");
     }
