@@ -31,7 +31,6 @@ public class AdminSpecialtyController {
         }
     }
 
-    // Đổi kiểu trả về thành SpecialtyDTO
     @PutMapping("/{id}")
     public ApiResponse<SpecialtyResponse> updateSpecialty(@PathVariable Long id, @RequestBody SpecialtyRequest request) {
         return ApiResponse.success(specialtyService.updateSpecialty(id, request));

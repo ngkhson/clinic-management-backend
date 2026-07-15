@@ -2,6 +2,7 @@ package com.clinic.booking.service;
 
 import com.clinic.booking.dto.schedule.ScheduleGenerateRequest;
 import com.clinic.booking.dto.schedule.ScheduleSlotRequest;
+import com.clinic.booking.dto.schedule.ScheduleUpdateRequest;
 import com.clinic.booking.entity.Doctor;
 import com.clinic.booking.entity.Schedule;
 import com.clinic.booking.exception.AppException;
@@ -43,7 +44,7 @@ public class AdminScheduleService {
     }
 
     @Transactional
-    public void updateSchedule(Long id, com.clinic.booking.dto.schedule.ScheduleUpdateRequest request) {
+    public void updateSchedule(Long id, ScheduleUpdateRequest request) {
         Schedule schedule = scheduleRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.SCHEDULE_NOT_FOUND));
 
