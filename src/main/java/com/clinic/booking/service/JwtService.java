@@ -24,6 +24,9 @@ public class JwtService {
     @Value("${jwt.signerKey}")
     private String signerKey;
 
+    @Value("${application.security.jwt.expiration:3600000}") // Default 1 hour
+    private long jwtExpiration;
+
     // Trích xuất Username (Email) từ Token
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -42,7 +45,7 @@ public class JwtService {
                 .setIssuer("clinic-management")
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // Token sống 24 giờ
+                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
                 .setId(UUID.randomUUID().toString())
                 .claim("scope", buildScope(userDetails))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)

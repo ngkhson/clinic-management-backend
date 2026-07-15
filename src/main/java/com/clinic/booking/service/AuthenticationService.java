@@ -33,6 +33,7 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final RefreshTokenService refreshTokenService;
 
     // THÊM: Công cụ gửi Mail của Spring Boot
     private final JavaMailSender mailSender;
@@ -57,8 +58,13 @@ public class AuthenticationService {
         user.setRoles(Set.of(patientRole));
         userRepository.save(user);
         var jwtToken = jwtService.generateToken(user);
+        var refreshToken = refreshTokenService.createRefreshToken(user.getId());
         List<String> roleNames = user.getRoles().stream().map(com.clinic.booking.entity.Role::getName).toList();
-        return AuthenticationResponse.builder().token(jwtToken).roles(roleNames).build();
+        return AuthenticationResponse.builder()
+                .token(jwtToken)
+                .refreshToken(refreshToken.getToken())
+                .roles(roleNames)
+                .build();
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
@@ -67,8 +73,13 @@ public class AuthenticationService {
         );
         var user = userRepository.findByEmail(request.getEmail()).orElseThrow();
         var jwtToken = jwtService.generateToken(user);
+        var refreshToken = refreshTokenService.createRefreshToken(user.getId());
         List<String> roleNames = user.getRoles().stream().map(com.clinic.booking.entity.Role::getName).toList();
-        return AuthenticationResponse.builder().token(jwtToken).roles(roleNames).build();
+        return AuthenticationResponse.builder()
+                .token(jwtToken)
+                .refreshToken(refreshToken.getToken())
+                .roles(roleNames)
+                .build();
     }
 
     // --- XỬ LÝ QUÊN MẬT KHẨU BẰNG EMAIL THẬT ---

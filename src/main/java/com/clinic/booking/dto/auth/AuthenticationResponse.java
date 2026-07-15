@@ -14,6 +14,7 @@ import java.util.List;
 public class AuthenticationResponse {
     // Chuỗi JWT Token trả về cho Front-end
     private String token;
+    private String refreshToken;
 
     // Thêm trường roles để Front-end biết danh sách quyền của User
     private List<String> roles;
