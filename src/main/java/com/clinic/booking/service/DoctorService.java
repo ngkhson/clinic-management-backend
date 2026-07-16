@@ -6,6 +6,7 @@ import com.clinic.booking.exception.ErrorCode;
 import com.clinic.booking.dto.doctor.DoctorResponse;
 import com.clinic.booking.entity.Doctor;
 import com.clinic.booking.repository.DoctorRepository;
+import com.clinic.booking.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 public class DoctorService {
 
     private final DoctorRepository doctorRepository;
+    private final ReviewRepository reviewRepository;
 
     // THÊM HÀM NÀY: Lấy danh sách tất cả bác sĩ (chỉ ACTIVE)
     public List<DoctorResponse> getAllDoctors() {
@@ -38,12 +40,19 @@ public class DoctorService {
 
     // Hàm phụ trợ: Chuyển đổi từ Entity sang DTO
     private DoctorResponse mapToDTO(Doctor doctor) {
+        Double avgRating = reviewRepository.getAverageRatingByDoctorId(doctor.getId());
+        Long reviewCount = reviewRepository.countReviewsByDoctorId(doctor.getId());
+        
         return DoctorResponse.builder()
                 .id(doctor.getId())
                 .userId(doctor.getUser().getId())
                 .fullName(doctor.getUser().getFullName())
                 .degree(doctor.getDegree())
                 .biography(doctor.getBiography())
+                .imageUrl(doctor.getImageUrl())
+                .averageRating(avgRating != null ? Math.round(avgRating * 10.0) / 10.0 : 0.0)
+                .reviewCount(reviewCount != null ? reviewCount : 0L)
+                .clinicAddress(doctor.getUser() != null && doctor.getUser().getAddress() != null && !doctor.getUser().getAddress().isEmpty() ? doctor.getUser().getAddress() : "Cơ sở chính")
                 .specialtyId(doctor.getSpecialty() != null ? doctor.getSpecialty().getId() : null)
                 .specialtyName(doctor.getSpecialty() != null ? doctor.getSpecialty().getName() : null)
                 .build();

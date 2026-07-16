@@ -2,6 +2,7 @@ package com.clinic.booking.controller;
 
 import com.clinic.booking.dto.doctor.AdminDoctorResponse;
 import com.clinic.booking.dto.doctor.DoctorCreationRequest;
+import com.clinic.booking.dto.doctor.DoctorUpdateRequest;
 import com.clinic.booking.service.AdminDoctorService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,6 +43,7 @@ public class AdminDoctorControllerTest {
 
     private AdminDoctorResponse adminDoctorResponse;
     private DoctorCreationRequest doctorCreationRequest;
+    private DoctorUpdateRequest doctorUpdateRequest;
     
     @Autowired
     private ObjectMapper objectMapper;
@@ -77,6 +79,16 @@ public class AdminDoctorControllerTest {
                 .degree("MD")
                 .biography("New Neurologist")
                 .build();
+
+        doctorUpdateRequest = new DoctorUpdateRequest();
+        doctorUpdateRequest.setFullName("Dr. New");
+        doctorUpdateRequest.setAddress("456 New St");
+        doctorUpdateRequest.setGender("FEMALE");
+        doctorUpdateRequest.setDateOfBirth(LocalDate.of(1985, 5, 5));
+        doctorUpdateRequest.setPhone("0987654321");
+        doctorUpdateRequest.setSpecialtyId(2L);
+        doctorUpdateRequest.setDegree("MD");
+        doctorUpdateRequest.setBiography("New Neurologist");
     }
 
     @Test
@@ -141,12 +153,12 @@ public class AdminDoctorControllerTest {
     @Test
     void updateDoctor_success() throws Exception {
         // GIVEN
-        when(adminDoctorService.updateDoctor(eq(1L), any(DoctorCreationRequest.class))).thenReturn(adminDoctorResponse);
+        when(adminDoctorService.updateDoctor(eq(1L), any(DoctorUpdateRequest.class))).thenReturn(adminDoctorResponse);
 
         // WHEN & THEN
         mockMvc.perform(MockMvcRequestBuilders.put("/api/admin/doctors/1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(doctorCreationRequest)))
+                .content(objectMapper.writeValueAsString(doctorUpdateRequest)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(1000))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.result.id").value(1));

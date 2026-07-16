@@ -21,6 +21,11 @@ public class DoctorResponse {
     // Thông tin từ bảng Doctor
     private String degree;
     private String biography;
+    private String imageUrl;
+    
+    private Double averageRating;
+    private Long reviewCount;
+    private String clinicAddress;
     private Long specialtyId;
     private String specialtyName;
 }

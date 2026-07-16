@@ -25,7 +25,6 @@ public class PaymentController {
 
     private final InvoiceRepository invoiceRepository;
     private final InvoiceService invoiceService;
-    private final RetailService retailService;
     private final PaymentService paymentService;
 
     @PostMapping("/create-url")

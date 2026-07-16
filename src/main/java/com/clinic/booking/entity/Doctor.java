@@ -28,6 +28,8 @@ public class Doctor {
 
     private String degree;
 
+    private String imageUrl;
+
     @Column(columnDefinition = "TEXT")
     private String biography;
 

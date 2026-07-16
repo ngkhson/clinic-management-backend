@@ -4,6 +4,7 @@ import com.clinic.booking.exception.AppException;
 import com.clinic.booking.exception.ErrorCode;
 
 import com.clinic.booking.dto.doctor.DoctorCreationRequest;
+import com.clinic.booking.dto.doctor.DoctorUpdateRequest;
 import com.clinic.booking.dto.doctor.AdminDoctorResponse;
 import com.clinic.booking.entity.Doctor;
 import com.clinic.booking.entity.Specialty;
@@ -80,6 +81,7 @@ public class AdminDoctorService {
                 .specialty(specialty)
                 .degree(request.getDegree())
                 .biography(request.getBiography())
+                .imageUrl(request.getImageUrl())
                 .build();
         doctor = doctorRepository.save(doctor);
 
@@ -96,6 +98,7 @@ public class AdminDoctorService {
                 .biography(doctor.getBiography())
                 .specialtyId(doctor.getSpecialty() != null ? doctor.getSpecialty().getId() : null)
                 .specialtyName(doctor.getSpecialty() != null ? doctor.getSpecialty().getName() : null)
+                .imageUrl(doctor.getImageUrl())
                 .email(user.getEmail())
                 .phone(user.getPhone())
                 .gender(user.getGender())
@@ -106,7 +109,7 @@ public class AdminDoctorService {
     }
 
     @Transactional
-    public AdminDoctorResponse updateDoctor(Long id, DoctorCreationRequest request) {
+    public AdminDoctorResponse updateDoctor(Long id, DoctorUpdateRequest request) {
         Doctor doctor = doctorRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.DOCTOR_NOT_FOUND));
         User user = doctor.getUser();
 
@@ -126,6 +129,7 @@ public class AdminDoctorService {
         doctor.setSpecialty(specialty);
         doctor.setDegree(request.getDegree());
         doctor.setBiography(request.getBiography());
+        doctor.setImageUrl(request.getImageUrl());
 
         userRepository.save(user);
         doctor = doctorRepository.save(doctor);

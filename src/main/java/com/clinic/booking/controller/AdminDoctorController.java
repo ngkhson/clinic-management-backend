@@ -1,6 +1,7 @@
 package com.clinic.booking.controller;
 
 import com.clinic.booking.dto.doctor.DoctorCreationRequest;
+import com.clinic.booking.dto.doctor.DoctorUpdateRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import com.clinic.booking.dto.common.ApiResponse;
@@ -45,7 +46,7 @@ public class AdminDoctorController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<Object> updateDoctor(@PathVariable Long id, @Valid @RequestBody DoctorCreationRequest request) {
+    public ApiResponse<Object> updateDoctor(@PathVariable Long id, @Valid @RequestBody DoctorUpdateRequest request) {
         return ApiResponse.success(adminDoctorService.updateDoctor(id, request));
     }
 

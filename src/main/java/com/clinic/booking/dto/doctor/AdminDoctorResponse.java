@@ -18,6 +18,7 @@ public class AdminDoctorResponse {
     private String fullName;
     private String degree;
     private String biography;
+    private String imageUrl;
     private Long specialtyId;
     private String specialtyName;
     

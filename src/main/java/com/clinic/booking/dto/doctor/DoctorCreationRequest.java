@@ -37,5 +37,8 @@ public class DoctorCreationRequest {
     @NotNull(message = "Vui lòng chọn chuyên khoa")
     private Long specialtyId;
     private String degree;
+
+    private String imageUrl;
+
     private String biography;
 }
