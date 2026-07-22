@@ -213,6 +213,8 @@ public class DoctorPortalService {
                 .id(record.getId())
                 .appointmentId(record.getAppointment().getId())
                 .patientName(record.getAppointment().getPatient().getFullName())
+                .doctorName(record.getAppointment().getDoctor().getUser().getFullName())
+                .doctorSignatureUrl(record.getAppointment().getDoctor().getUser().getSignatureUrl())
 
                 // --- MAP CHỈ SỐ SINH HIỆU TRẢ VỀ FRONT-END ---
                 .pulse(record.getPulse())

@@ -18,4 +18,5 @@ public class AuthenticationResponse {
 
     // Thêm trường roles để Front-end biết danh sách quyền của User
     private List<String> roles;
+    private List<String> permissions;
 }

@@ -7,6 +7,7 @@ import com.clinic.booking.dto.record.MedicalRecordRequest;
 import com.clinic.booking.dto.record.MedicalRecordResponse;
 import com.clinic.booking.service.DoctorPortalService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
@@ -16,6 +17,7 @@ import java.util.List;
 @RequestMapping("/api/doctor")
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN') or hasRole('DOCTOR') or hasAuthority('EXAMINE_PATIENT')")
 public class DoctorPortalController {
 
     private final DoctorPortalService doctorPortalService;

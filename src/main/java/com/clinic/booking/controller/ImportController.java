@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import com.clinic.booking.dto.common.ApiResponse;
 import com.clinic.booking.service.ImportService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
@@ -12,6 +13,7 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/imports")
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN') or hasAuthority('MANAGE_MEDICINE')")
 public class ImportController {
 
     private final ImportService importService;

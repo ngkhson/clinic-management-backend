@@ -4,6 +4,7 @@ import com.clinic.booking.dto.pharmacy.PharmacyReportResponse;
 import com.clinic.booking.dto.common.ApiResponse;
 import com.clinic.booking.service.PharmacyExtraService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -12,6 +13,7 @@ import java.util.Map;
 @RequestMapping("/api/medicines/extra")
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN') or hasAuthority('MANAGE_MEDICINE') or hasAuthority('DISPENSE_MEDICINE')")
 public class PharmacyExtraController {
 
     private final PharmacyExtraService pharmacyExtraService;

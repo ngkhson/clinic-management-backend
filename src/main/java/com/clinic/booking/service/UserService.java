@@ -31,6 +31,7 @@ public class UserService {
                 .gender(user.getGender())
                 .dateOfBirth(user.getDateOfBirth())
                 .address(user.getAddress())
+                .signatureUrl(user.getSignatureUrl())
                 .build();
     }
 
@@ -44,6 +45,7 @@ public class UserService {
         if (dto.getGender() != null) user.setGender(dto.getGender());
         if (dto.getDateOfBirth() != null) user.setDateOfBirth(dto.getDateOfBirth());
         if (dto.getAddress() != null) user.setAddress(dto.getAddress());
+        if (dto.getSignatureUrl() != null) user.setSignatureUrl(dto.getSignatureUrl());
 
         userRepository.save(user);
         return getMyProfile();

@@ -4,6 +4,7 @@ import com.clinic.booking.entity.Supplier;
 import com.clinic.booking.dto.common.ApiResponse;
 import com.clinic.booking.service.SupplierService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
 @RequestMapping("/api/suppliers")
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN') or hasAuthority('MANAGE_MEDICINE')")
 public class SupplierController {
 
     private final SupplierService supplierService;

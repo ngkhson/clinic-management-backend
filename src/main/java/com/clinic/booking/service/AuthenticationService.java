@@ -60,10 +60,14 @@ public class AuthenticationService {
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = refreshTokenService.createRefreshToken(user.getId());
         List<String> roleNames = user.getRoles().stream().map(com.clinic.booking.entity.Role::getName).toList();
+        List<String> permissions = user.getAuthorities().stream()
+                .map(org.springframework.security.core.GrantedAuthority::getAuthority)
+                .toList();
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .refreshToken(refreshToken.getToken())
                 .roles(roleNames)
+                .permissions(permissions)
                 .build();
     }
 
@@ -75,10 +79,14 @@ public class AuthenticationService {
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = refreshTokenService.createRefreshToken(user.getId());
         List<String> roleNames = user.getRoles().stream().map(com.clinic.booking.entity.Role::getName).toList();
+        List<String> permissions = user.getAuthorities().stream()
+                .map(org.springframework.security.core.GrantedAuthority::getAuthority)
+                .toList();
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .refreshToken(refreshToken.getToken())
                 .roles(roleNames)
+                .permissions(permissions)
                 .build();
     }
 

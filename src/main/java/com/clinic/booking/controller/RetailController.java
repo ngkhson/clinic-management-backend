@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import com.clinic.booking.dto.common.ApiResponse;
 import com.clinic.booking.service.RetailService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
@@ -13,6 +14,7 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/retail")
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN') or hasAuthority('DISPENSE_MEDICINE')")
 public class RetailController {
 
     private final RetailService retailService;

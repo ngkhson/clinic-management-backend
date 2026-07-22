@@ -68,6 +68,8 @@ public class PatientPortalService {
                 .id(record.getId())
                 .appointmentId(appointment.getId())
                 .patientName(appointment.getPatient().getFullName())
+                .doctorName(appointment.getDoctor().getUser().getFullName())
+                .doctorSignatureUrl(appointment.getDoctor().getUser().getSignatureUrl())
                 .diagnosis(record.getDiagnosis())
                 .treatmentPlan(record.getTreatmentPlan())
                 .prescription(record.getPrescription())

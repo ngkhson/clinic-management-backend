@@ -18,6 +18,8 @@ public class MedicalRecordResponse {
     private Long id;
     private Long appointmentId;
     private String patientName;
+    private String doctorName;
+    private String doctorSignatureUrl;
 
     // --- CÁC CHỈ SỐ SINH HIỆU BỔ SUNG ---
     private Integer pulse;

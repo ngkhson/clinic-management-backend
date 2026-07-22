@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,6 +40,7 @@ public class MedicalServiceController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('MANAGE_SYSTEM')")
     public ApiResponse<?> create(@RequestBody Object requestObj) {
         ObjectMapper objectMapper = new ObjectMapper();
         if (requestObj instanceof List) {
@@ -51,11 +53,13 @@ public class MedicalServiceController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('MANAGE_SYSTEM')")
     public ApiResponse<MedicalService> update(@PathVariable Long id, @RequestBody MedicalService service) {
         return ApiResponse.success(medicalServiceService.updateService(id, service));
     }
 
     @PatchMapping("/{id}/toggle-status")
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('MANAGE_SYSTEM')")
     public ApiResponse<Void> toggleStatus(@PathVariable Long id) {
         medicalServiceService.toggleStatus(id);
         return ApiResponse.success();

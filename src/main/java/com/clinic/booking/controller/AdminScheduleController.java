@@ -8,6 +8,7 @@ import com.clinic.booking.exception.ErrorCode;
 import com.clinic.booking.dto.schedule.ScheduleGenerateRequest;
 import com.clinic.booking.service.AdminScheduleService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
@@ -15,6 +16,7 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/admin/schedules")
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN') or hasAuthority('MANAGE_SYSTEM')")
 public class AdminScheduleController {
 
     private final AdminScheduleService adminScheduleService;

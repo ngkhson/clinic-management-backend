@@ -8,6 +8,7 @@ import com.clinic.booking.dto.common.ApiResponse;
 import com.clinic.booking.dto.doctor.AdminDoctorResponse;
 import com.clinic.booking.service.AdminDoctorService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
@@ -17,6 +18,7 @@ import java.util.List;
 @RequestMapping("/api/admin/doctors")
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN') or hasAuthority('MANAGE_SYSTEM')")
 public class AdminDoctorController {
 
     private final AdminDoctorService adminDoctorService;

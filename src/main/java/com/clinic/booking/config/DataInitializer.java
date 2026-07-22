@@ -3,6 +3,7 @@ package com.clinic.booking.config;
 import com.clinic.booking.entity.User;
 import com.clinic.booking.repository.RoleRepository;
 import com.clinic.booking.repository.UserRepository;
+import com.clinic.booking.repository.PermissionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,6 +18,7 @@ public class DataInitializer implements CommandLineRunner {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final PermissionRepository permissionRepository;
     private final PasswordEncoder passwordEncoder;
     private final JdbcTemplate jdbcTemplate;
 
@@ -28,6 +30,57 @@ public class DataInitializer implements CommandLineRunner {
             if (roleRepository.findByName(roleName).isEmpty()) {
                 roleRepository.save(com.clinic.booking.entity.Role.builder().name(roleName).build());
             }
+        }
+
+        // --- TẠO CÁC PERMISSIONS ---
+        String[] permissionNames = {
+            "MANAGE_APPOINTMENT", "RECEPTION_PATIENT", "VIEW_PATIENT_LIST", // Lễ tân
+            "EXAMINE_PATIENT", "VIEW_MEDICAL_RECORD", // Bác sĩ
+            "MANAGE_MEDICINE", "DISPENSE_MEDICINE", // Kho & Dược
+            "MANAGE_BILLING", // Thu ngân
+            "MANAGE_SYSTEM" // Hệ thống
+        };
+
+        for (String pName : permissionNames) {
+            if (permissionRepository.findByName(pName).isEmpty()) {
+                permissionRepository.save(com.clinic.booking.entity.Permission.builder().name(pName).description("Quyền " + pName).build());
+            }
+        }
+
+        // Tự động gán quyền cho RECEPTIONIST
+        com.clinic.booking.entity.Role receptionistRole = roleRepository.findByName("RECEPTIONIST").orElse(null);
+        if (receptionistRole != null) {
+            java.util.Set<com.clinic.booking.entity.Permission> perms = new java.util.HashSet<>();
+            permissionRepository.findByName("MANAGE_APPOINTMENT").ifPresent(perms::add);
+            permissionRepository.findByName("RECEPTION_PATIENT").ifPresent(perms::add);
+            permissionRepository.findByName("VIEW_PATIENT_LIST").ifPresent(perms::add);
+            permissionRepository.findByName("MANAGE_BILLING").ifPresent(perms::add);
+            receptionistRole.setPermissions(perms);
+            roleRepository.save(receptionistRole);
+        }
+
+        // Tự động gán quyền cho PHARMACIST
+        com.clinic.booking.entity.Role pharmacistRole = roleRepository.findByName("PHARMACIST").orElse(null);
+        if (pharmacistRole != null) {
+            java.util.Set<com.clinic.booking.entity.Permission> perms = new java.util.HashSet<>();
+            permissionRepository.findByName("MANAGE_MEDICINE").ifPresent(perms::add);
+            permissionRepository.findByName("DISPENSE_MEDICINE").ifPresent(perms::add);
+            permissionRepository.findByName("VIEW_MEDICAL_RECORD").ifPresent(perms::add);
+            permissionRepository.findByName("VIEW_PATIENT_LIST").ifPresent(perms::add);
+            permissionRepository.findByName("MANAGE_BILLING").ifPresent(perms::add);
+            pharmacistRole.setPermissions(perms);
+            roleRepository.save(pharmacistRole);
+        }
+
+        // Tự động gán quyền cho DOCTOR
+        com.clinic.booking.entity.Role doctorRole = roleRepository.findByName("DOCTOR").orElse(null);
+        if (doctorRole != null) {
+            java.util.Set<com.clinic.booking.entity.Permission> perms = new java.util.HashSet<>();
+            permissionRepository.findByName("EXAMINE_PATIENT").ifPresent(perms::add);
+            permissionRepository.findByName("VIEW_MEDICAL_RECORD").ifPresent(perms::add);
+            permissionRepository.findByName("VIEW_PATIENT_LIST").ifPresent(perms::add);
+            doctorRole.setPermissions(perms);
+            roleRepository.save(doctorRole);
         }
 
         String adminEmail = "mediproadmin@gmail.com";

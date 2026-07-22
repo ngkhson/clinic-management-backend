@@ -122,8 +122,15 @@ public class SecurityConfiguration {
                             System.err.println("❌ [SPRING SECURITY] LÝ DO: " + accessDeniedException.getMessage());
                             System.err.println("❌ [SPRING SECURITY] USER HIỆN TẠI CÓ QUYỀN: " + request.getUserPrincipal());
 
-                            // response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                            // response.getWriter().write("Bi chan boi Security: " + accessDeniedException.getMessage());
+                            response.setStatus(jakarta.servlet.http.HttpServletResponse.SC_FORBIDDEN);
+                            response.setContentType("application/json;charset=UTF-8");
+                            response.getWriter().write("{\"code\": 403, \"message\": \"Access Denied\"}");
+                        })
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            System.err.println("❌ [SPRING SECURITY] LỖI XÁC THỰC (401) TẠI: " + request.getRequestURI());
+                            response.setStatus(jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType("application/json;charset=UTF-8");
+                            response.getWriter().write("{\"code\": 401, \"message\": \"Unauthorized\"}");
                         })
                 )
 
@@ -152,15 +159,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                         // CÁC ĐƯỜNG DẪN CẦN PHÂN QUYỀN
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/doctor/**").hasRole("DOCTOR")
-
-                        // Định nghĩa chính xác cho /api/medicines và các sub-path
-                        .requestMatchers("/api/medicines", "/api/medicines/**", "/api/services", "/api/services/**").hasAnyRole("ADMIN", "DOCTOR")
-                        .requestMatchers("/api/suppliers", "/api/suppliers/**", "/api/imports", "/api/imports/**").hasAnyRole("ADMIN", "DOCTOR")
-                        .requestMatchers("/api/retail", "/api/retail/**").hasAnyRole("ADMIN", "DOCTOR")
-
-                        // Các đường dẫn còn lại bắt buộc phải có Token
+                        // Xóa các hasRole cứng vì đã dùng @PreAuthorize ở Controller
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -43,6 +43,9 @@ public class User implements UserDetails {
 
     private String address;
 
+    @Column(name = "signature_url")
+    private String signatureUrl;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",

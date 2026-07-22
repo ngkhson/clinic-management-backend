@@ -7,6 +7,7 @@ import com.clinic.booking.service.SpecialtyService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
@@ -16,6 +17,7 @@ import java.util.List;
 @RequestMapping("/api/admin/specialties")
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN') or hasAuthority('MANAGE_SYSTEM')")
 public class AdminSpecialtyController {
 
     private final SpecialtyService specialtyService;
