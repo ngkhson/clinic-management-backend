@@ -22,6 +22,10 @@ public class Medicine {
 
     private String category;
 
+    @ManyToOne
+    @JoinColumn(name = "supplier_id")
+    private Supplier supplier;
+
     // SỬA: Đổi int thành Integer, double thành Double để tránh lỗi Parse JSON null
     private Integer minQuantity;
 

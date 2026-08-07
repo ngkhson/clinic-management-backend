@@ -13,7 +13,10 @@ import com.clinic.booking.repository.AppointmentRepository;
 import com.clinic.booking.repository.DoctorRepository;
 import com.clinic.booking.repository.ScheduleRepository;
 import com.clinic.booking.repository.UserRepository;
+import com.clinic.booking.dto.notification.EmailMessage;
 import lombok.RequiredArgsConstructor;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +35,8 @@ public class AppointmentService {
     private final DoctorRepository doctorRepository;
     private final UserRepository userRepository;
     private final NotificationService notificationService;
+    private final EmailProducer emailProducer;
+    private final RedissonClient redissonClient;
 
     @Transactional
     public AppointmentResponse createAppointment(AppointmentRequest request) {
@@ -47,33 +53,74 @@ public class AppointmentService {
             throw new AppException(ErrorCode.INVALID_APPOINTMENT_TIME);
         }
 
-        List<Schedule> availableSchedules = scheduleRepository.findAvailableSchedules(
-                request.getSpecialtyId(), request.getAppointmentDate(), request.getTimeSlot());
+        // --- DISTRIBUTED LOCK VỚI REDIS ---
+        // Tạo key đặc trưng cho khung giờ khám của chuyên khoa này
+        String lockKey = String.format("booking:lock:specialty:%d:date:%s:time:%s", 
+                                       request.getSpecialtyId(), 
+                                       request.getAppointmentDate(), 
+                                       request.getTimeSlot());
+        
+        RLock lock = redissonClient.getLock(lockKey);
+        
+        try {
+            // Cố gắng lấy khóa, đợi tối đa 3 giây, nếu lấy được thì khóa sẽ tự nhả sau 10 giây
+            boolean isLocked = lock.tryLock(3, 10, TimeUnit.SECONDS);
+            if (!isLocked) {
+                // Có quá nhiều người đang cố đặt cùng lúc và không lấy được khóa
+                throw new AppException(ErrorCode.SCHEDULE_FULL); // Có thể tạo ErrorCode.SYSTEM_BUSY
+            }
 
-        if (availableSchedules.isEmpty()) {
-            throw new AppException(ErrorCode.SCHEDULE_FULL);
+            // Đã lấy được khóa -> Tiến hành check DB an toàn
+            List<Schedule> availableSchedules = scheduleRepository.findAvailableSchedules(
+                    request.getSpecialtyId(), request.getAppointmentDate(), request.getTimeSlot());
+
+            if (availableSchedules.isEmpty()) {
+                throw new AppException(ErrorCode.SCHEDULE_FULL);
+            }
+
+            Schedule schedule = availableSchedules.get(0);
+            Doctor doctor = schedule.getDoctor();
+
+            Appointment appointment = Appointment.builder()
+                    .patient(patient)
+                    .doctor(doctor)
+                    .schedule(schedule)
+                    .appointmentDate(schedule.getWorkDate())
+                    .status("PENDING")
+                    .symptoms(request.getSymptoms())
+                    .build();
+
+            appointment = appointmentRepository.save(appointment);
+
+            schedule.setCurrentPatients(schedule.getCurrentPatients() + 1);
+            scheduleRepository.save(schedule);
+
+            notificationService.sendNotification(patient, "Đặt lịch khám thành công. Lịch hẹn của bạn đang chờ xác nhận từ Lễ tân.");
+
+            // --- GỬI EMAIL BẤT ĐỒNG BỘ QUA RABBITMQ ---
+            EmailMessage emailMessage = EmailMessage.builder()
+                    .toEmail(patient.getEmail())
+                    .subject("Xác nhận Đặt Lịch Khám Thành Công - MediPro")
+                    .body("Kính chào " + patient.getFullName() + ",\n\n"
+                            + "Lịch khám của bạn đã được ghi nhận trên hệ thống.\n"
+                            + "Thông tin chi tiết:\n"
+                            + "- Bác sĩ: " + doctor.getUser().getFullName() + "\n"
+                            + "- Ngày khám: " + schedule.getWorkDate() + "\n"
+                            + "- Khung giờ: " + schedule.getTimeSlot() + "\n\n"
+                            + "Vui lòng đến đúng giờ. Cảm ơn bạn đã tin tưởng phòng khám MediPro!")
+                    .build();
+            emailProducer.sendEmailMessage(emailMessage);
+
+            return mapToDTO(appointment);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("Có lỗi xảy ra khi lấy khóa Redis", e);
+        } finally {
+            // Quan trọng: Luôn nhả khóa sau khi xử lý xong (kể cả khi thành công hay bị lỗi)
+            if (lock.isHeldByCurrentThread()) {
+                lock.unlock();
+            }
         }
-
-        Schedule schedule = availableSchedules.get(0);
-        Doctor doctor = schedule.getDoctor();
-
-        Appointment appointment = Appointment.builder()
-                .patient(patient)
-                .doctor(doctor)
-                .schedule(schedule)
-                .appointmentDate(schedule.getWorkDate())
-                .status("PENDING")
-                .symptoms(request.getSymptoms())
-                .build();
-
-        appointment = appointmentRepository.save(appointment);
-
-        schedule.setCurrentPatients(schedule.getCurrentPatients() + 1);
-        scheduleRepository.save(schedule);
-
-        notificationService.sendNotification(patient, "Đặt lịch khám thành công. Lịch hẹn của bạn đang chờ xác nhận từ Lễ tân.");
-
-        return mapToDTO(appointment);
     }
 
     private AppointmentResponse mapToDTO(Appointment appointment) {

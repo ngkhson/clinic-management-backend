@@ -4,8 +4,12 @@ import com.clinic.booking.exception.AppException;
 import com.clinic.booking.exception.ErrorCode;
 
 import com.clinic.booking.entity.Medicine;
+import com.clinic.booking.entity.Supplier;
 import com.clinic.booking.repository.MedicineRepository;
+import com.clinic.booking.repository.SupplierRepository;
+import com.clinic.booking.dto.notification.AuditEvent;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +20,8 @@ import java.util.List;
 public class MedicineService {
 
     private final MedicineRepository medicineRepository;
+    private final SupplierRepository supplierRepository;
+    private final KafkaAuditProducer kafkaAuditProducer;
 
     // THÊM MỚI: Lấy toàn bộ danh sách thuốc (kể cả đã ẩn) cho Admin xem
     public List<Medicine> getAllMedicines() {
@@ -43,7 +49,23 @@ public class MedicineService {
 
     @Transactional
     public Medicine createMedicine(Medicine medicine) {
-        return medicineRepository.save(medicine);
+        if (medicine.getSupplier() != null && medicine.getSupplier().getId() != null) {
+            Supplier supplier = supplierRepository.findById(medicine.getSupplier().getId()).orElse(null);
+            medicine.setSupplier(supplier);
+        }
+        Medicine savedMedicine = medicineRepository.save(medicine);
+
+        // Ghi log qua Kafka
+        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        kafkaAuditProducer.sendAuditLog(AuditEvent.builder()
+                .userEmail(userEmail)
+                .action("CREATE")
+                .entityName("Medicine")
+                .details("Tạo mới thuốc: " + savedMedicine.getName())
+                .timestamp(java.time.LocalDateTime.now())
+                .build());
+
+        return savedMedicine;
     }
 
     @Transactional
@@ -56,9 +78,29 @@ public class MedicineService {
         medicine.setCategory(medicineDetails.getCategory());
         medicine.setMinQuantity(medicineDetails.getMinQuantity());
         medicine.setSellingPrice(medicineDetails.getSellingPrice());
+        
+        if (medicineDetails.getSupplier() != null && medicineDetails.getSupplier().getId() != null) {
+            Supplier supplier = supplierRepository.findById(medicineDetails.getSupplier().getId()).orElse(null);
+            medicine.setSupplier(supplier);
+        } else {
+            medicine.setSupplier(null);
+        }
+        
         // Lưu ý: Không cập nhật currentQuantity ở đây, số lượng chỉ thay đổi qua phiếu Nhập hoặc Kê đơn
 
-        return medicineRepository.save(medicine);
+        Medicine updatedMedicine = medicineRepository.save(medicine);
+
+        // Ghi log qua Kafka
+        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        kafkaAuditProducer.sendAuditLog(AuditEvent.builder()
+                .userEmail(userEmail)
+                .action("UPDATE")
+                .entityName("Medicine")
+                .details("Cập nhật thông tin thuốc: " + updatedMedicine.getName())
+                .timestamp(java.time.LocalDateTime.now())
+                .build());
+
+        return updatedMedicine;
     }
 
     @Transactional
@@ -74,5 +116,16 @@ public class MedicineService {
         medicine.setIsActive(!currentStatus);
 
         medicineRepository.save(medicine);
+
+        // Ghi log qua Kafka
+        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        String actionStr = medicine.getIsActive() ? "KÍCH HOẠT" : "VÔ HIỆU HÓA";
+        kafkaAuditProducer.sendAuditLog(AuditEvent.builder()
+                .userEmail(userEmail)
+                .action("TOGGLE_STATUS")
+                .entityName("Medicine")
+                .details(actionStr + " thuốc: " + medicine.getName())
+                .timestamp(java.time.LocalDateTime.now())
+                .build());
     }
 }

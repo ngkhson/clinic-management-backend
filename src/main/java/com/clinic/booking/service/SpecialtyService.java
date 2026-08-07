@@ -8,6 +8,8 @@ import com.clinic.booking.dto.specialty.SpecialtyResponse;
 import com.clinic.booking.entity.Specialty;
 import com.clinic.booking.repository.SpecialtyRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,6 +33,7 @@ public class SpecialtyService {
     }
 
     // Lấy tất cả (Dùng cho cả public và admin)
+    @Cacheable(value = "specialties")
     public List<SpecialtyResponse> getAllSpecialties() {
         return specialtyRepository.findAll()
                 .stream()
@@ -38,6 +41,7 @@ public class SpecialtyService {
                 .collect(Collectors.toList());
     }
 
+    @Cacheable(value = "specialty", key = "#id")
     public SpecialtyResponse getSpecialtyById(Long id) {
         Specialty specialty = specialtyRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.SPECIALTY_NOT_FOUND));
@@ -45,6 +49,7 @@ public class SpecialtyService {
     }
 
     // THÊM CHUYÊN KHOA
+    @CacheEvict(value = "specialties", allEntries = true)
     public SpecialtyResponse createSpecialty(SpecialtyRequest dto) {
         Specialty specialty = Specialty.builder()
                 .name(dto.getName())
@@ -56,6 +61,7 @@ public class SpecialtyService {
     }
 
     // THÊM NHIỀU CHUYÊN KHOA
+    @CacheEvict(value = "specialties", allEntries = true)
     public List<SpecialtyResponse> createSpecialties(List<SpecialtyRequest> dtos) {
         List<Specialty> specialties = dtos.stream().map(dto -> Specialty.builder()
                 .name(dto.getName())
@@ -67,6 +73,7 @@ public class SpecialtyService {
     }
 
     // CẬP NHẬT CHUYÊN KHOA
+    @CacheEvict(value = {"specialties", "specialty"}, allEntries = true)
     public SpecialtyResponse updateSpecialty(Long id, SpecialtyRequest dto) {
         Specialty specialty = specialtyRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.SPECIALTY_NOT_FOUND));
@@ -80,6 +87,7 @@ public class SpecialtyService {
     }
 
     // XÓA CHUYÊN KHOA
+    @CacheEvict(value = {"specialties", "specialty"}, allEntries = true)
     public void deleteSpecialty(Long id) {
         if (!specialtyRepository.existsById(id)) {
             throw new AppException(ErrorCode.SPECIALTY_NOT_FOUND);

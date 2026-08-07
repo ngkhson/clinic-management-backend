@@ -42,9 +42,17 @@ public class AuthController {
                 .map(user -> {
                     String token = jwtService.generateToken(user);
                     java.util.List<String> roleNames = user.getRoles().stream().map(com.clinic.booking.entity.Role::getName).toList();
+                    
+                    String finalRefreshToken = requestRefreshToken;
+                    // TÍNH NĂNG SLIDING WINDOW CHO PATIENT
+                    if (roleNames.contains("PATIENT")) {
+                        RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(user.getId());
+                        finalRefreshToken = newRefreshToken.getToken();
+                    }
+
                     return ApiResponse.success(AuthenticationResponse.builder()
                             .token(token)
-                            .refreshToken(requestRefreshToken)
+                            .refreshToken(finalRefreshToken)
                             .roles(roleNames)
                             .build());
                 })
